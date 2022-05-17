@@ -63,9 +63,6 @@ func startListen() {
 	}
 }
 
-
-
-
 func InitConfig() {
 	workDir, _ := os.Getwd()
 	viper.SetConfigName("config")
@@ -76,4 +73,3 @@ func InitConfig() {
 		panic(err)
 	}
 }
-
