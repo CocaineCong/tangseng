@@ -15,13 +15,6 @@ type User struct {
 	PasswordDigest string
 }
 
-func BuildUser(item User) *service.UserModel {
-	userModel := service.UserModel{
-		UserID:    uint32(item.UserID),
-		UserName:  item.UserName,
-	}
-	return &userModel
-}
 
 const (
 	PassWordCost = 12 // 密码加密难度
@@ -67,7 +60,7 @@ func (*User) Create (req *service.UserRequest) error {
 	}
 	user = User{
 		UserName: req.UserName,
-		NickName: req.UserName,
+		NickName: req.NickName,
 	}
 	_ = user.SetPassword(req.Password)
 	if err := DB.Create(&user).Error; err != nil {
@@ -77,3 +70,12 @@ func (*User) Create (req *service.UserRequest) error {
 	return nil
 }
 
+// 视图返回
+func BuildUser(item User) *service.UserModel {
+	userModel := service.UserModel{
+		UserID:   uint32(item.UserID),
+		NickName: item.NickName,
+		UserName: item.UserName,
+	}
+	return &userModel
+}

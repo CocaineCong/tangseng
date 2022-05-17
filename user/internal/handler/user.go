@@ -23,7 +23,7 @@ func (*UserService) UserLogin(ctx context.Context,req *service.UserRequest) (res
 		resp.Code = e.ERROR
 		return resp,err
 	}
-	//resp.UserDetail = repository.BuildUser(user)
+	resp.UserDetail = repository.BuildUser(user)
 	return resp,nil
 }
 

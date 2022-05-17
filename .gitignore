@@ -19,3 +19,7 @@ favorites/config/config.yml
 search-engine/config/config.yml
 user/config/config.yml
 .idea
+user/logs
+api-gateway/logs
+favorites/logs
+search-engine/logs

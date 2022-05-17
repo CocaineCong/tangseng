@@ -1,5 +1,5 @@
 server:
-  port: :3000
+  port: :4000
   version: 1.0
   jwtSecret: 38324
 
