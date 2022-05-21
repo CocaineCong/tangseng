@@ -1,15 +1,16 @@
 package repository
 
 import (
+	"favorites/pkg/util"
 	"os"
-	"user/pkg/util"
 )
 
 func migration() {
 	//自动迁移模式
 	err := DB.Set("gorm:table_options", "charset=utf8mb4").
 		AutoMigrate(
-			&User{},
+			&Favorites{},
+			&FavoritesDetails{},
 		)
 	if err != nil {
 		util.LogrusObj.Infoln("register table fail")
