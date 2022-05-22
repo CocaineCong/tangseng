@@ -1,0 +1,25 @@
+syntax="proto3";
+package pb;
+option go_package = "/internal/service;service";
+
+//protoc -I internal/service/pb internal/service/pb/*.proto --go_out=plugins=grpc:.
+
+message FavoritesModel {
+    // @inject_tag: json:"favorite_id"
+    uint32 FavoriteID=1;
+    // @inject_tag: json:"user_id"
+    uint32 UserID=2;
+    // @inject_tag: json:"favorite_name"
+    string FavoriteName=3;
+    // @inject_tag: json:"url_info"
+    repeated UrlModel UrlInfo=4;
+}
+
+message UrlModel {
+    // @inject_tag: json:"url_id"
+    uint32 UrlID=5;
+    // @inject_tag: json:"url"
+    string Url=6;
+    // @inject_tag: json:"desc"
+    string Desc=7;
+}

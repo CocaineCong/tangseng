@@ -66,11 +66,37 @@ func (*Favorites) Update(req *service.FavoritesRequest) error {
 	return err
 }
 
-// 视图返回
-//func BuildFavorites(item Favorites) *service.FavoritesModel {
-//	return &service.FavoritesModel{
-//		FavoriteID:uint32(item.FavoriteID),
-//		FavoriteName:item.FavoriteName,
-//		UrlInfo:
-//	}
-//}
+func BuildFavorites(item []Favorites) (fList []*service.FavoritesModel) {
+	for _,v := range item{
+		f := BuildFavorite(v)
+		fList = append(fList,f)
+	}
+	return fList
+}
+
+func BuildFavorite(item Favorites) *service.FavoritesModel {
+	urlInfo := []*service.UrlModel{}
+	urlInfo = BuildUrlInfos(item.FavoritesDetail)
+	return &service.FavoritesModel{
+		FavoriteID:uint32(item.FavoriteID),
+		FavoriteName:item.FavoriteName,
+		UserID:uint32(item.UserID),
+		UrlInfo: urlInfo,
+	}
+}
+
+func BuildUrlInfo(item FavoritesDetails) *service.UrlModel {
+	return &service.UrlModel{
+		UrlID: uint32(item.UrlID),
+		Url:   item.Url,
+		Desc:  item.Desc,
+	}
+}
+
+func BuildUrlInfos(item []FavoritesDetails) (urlList []*service.UrlModel) {
+	for _,v:=range item{
+		u := BuildUrlInfo(v)
+		urlList = append(urlList,u)
+	}
+	return urlList
+}

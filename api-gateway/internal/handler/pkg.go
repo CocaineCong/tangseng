@@ -14,9 +14,9 @@ func PanicIfUserError(err error) {
 	}
 }
 
-func PanicIfTaskError(err error) {
+func PanicIfFavoriteError(err error) {
 	if err != nil {
-		err = errors.New("taskService--" + err.Error())
+		err = errors.New("favoriteService--" + err.Error())
 		util.LogrusObj.Info(err)
 		panic(err)
 	}

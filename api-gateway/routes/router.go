@@ -27,11 +27,14 @@ func NewRouter(service ...interface{}) *gin.Engine {
 		authed := v1.Group("/")
 		authed.Use(middleware.JWT())
 		{
-			//authed.GET("tasks", handler.GetTaskList)
-			//authed.POST("task", handler.CreateTask)
-			//authed.GET("task/:id", handler.GetTaskDetail) // task_id
-			//authed.PUT("task/:id", handler.UpdateTask)    // task_id
-			//authed.DELETE("task/:id", handler.DeleteTask) // task_id
+			authed.GET("favorites", handler.GetFavoriteList)
+			authed.POST("favorites", handler.CreateFavorite)
+			authed.PUT("favorites", handler.UpdateFavorite)
+			authed.DELETE("favorites", handler.DeleteFavorite)
+
+			authed.GET("favorites-detail", handler.GetFavoriteDetail)
+			authed.POST("favorites-detail", handler.CreateFavoriteDetail)
+			authed.DELETE("favorites-detail", handler.DeleteFavoriteDetail)
 		}
 	}
 	return ginRouter

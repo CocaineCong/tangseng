@@ -107,6 +107,22 @@ redis:
   password:
 ```
 
+# 导入接口文档
+
+打开postman，点击导入
+
+![postman导入](doc/1.点击import导入.png)
+
+选择导入文件
+![选择导入接口文件](doc/2.选择文件.png)
+
+![导入](doc/3.导入.png)
+
+效果
+
+![postman](doc/4.效果.png)
+
+
 # 项目启动
 - 在各模块下进行
 

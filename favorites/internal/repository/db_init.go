@@ -4,6 +4,7 @@ import (
 	"favorites/pkg/util"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -15,14 +16,14 @@ import (
 var DB *gorm.DB
 
 func InitDB() {
-	//host := viper.GetString("datasource.host")
-	//port := viper.GetString("datasource.port")
-	//database := viper.GetString("datasource.database")
-	//username := viper.GetString("datasource.username")
-	//password := viper.GetString("datasource.password")
-	//charset := viper.GetString("datasource.charset")
-	//dsn := strings.Join([]string{username, ":", password, "@tcp(", host, ":", port, ")/", database, "?charset=" + charset + "&parseTime=true"}, "")
-	dsn := strings.Join([]string{"root", ":", "root", "@tcp(", "127.0.0.1", ":", "3306", ")/", "basicInfo", "?charset=" + "utf8mb4" + "&parseTime=true"}, "")
+	host := viper.GetString("mysqlSalve2.host")
+	port := viper.GetString("mysqlSalve2.port")
+	database := viper.GetString("mysqlSalve2.database")
+	username := viper.GetString("mysqlSalve2.username")
+	password := viper.GetString("mysqlSalve2.password")
+	charset := viper.GetString("mysqlSalve2.charset")
+	dsn := strings.Join([]string{username, ":", password, "@tcp(", host, ":", port, ")/", database, "?charset=" + charset + "&parseTime=true"}, "")
+	//dsn := strings.Join([]string{"root", ":", "root", "@tcp(", "127.0.0.1", ":", "3306", ")/", "basicInfo", "?charset=" + "utf8mb4" + "&parseTime=true"}, "")
 	err := Database(dsn)
 	if err != nil {
 		fmt.Println(err)

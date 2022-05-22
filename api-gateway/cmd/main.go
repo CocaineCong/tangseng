@@ -39,9 +39,12 @@ func startListen() {
 		grpc.WithInsecure(),
 	}
 	userConn, _ := grpc.Dial("127.0.0.1:10001", opts...)
-
 	userService := service.NewUserServiceClient(userConn)
-	ginRouter := routes.NewRouter(userService)
+
+	favoriteConn, _ := grpc.Dial("127.0.0.1:10002", opts...)
+	favoriteService := service.NewFavoritesServiceClient(favoriteConn)
+
+	ginRouter := routes.NewRouter(userService,favoriteService)
 	server := &http.Server{
 		Addr:           viper.GetString("server.port"),
 		Handler:        ginRouter,

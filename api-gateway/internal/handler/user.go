@@ -34,7 +34,7 @@ func UserLogin(ginCtx *gin.Context) {
 	userService := ginCtx.Keys["user"].(service.UserServiceClient)
 	userResp, err := userService.UserLogin(context.Background(), &userReq)
 	PanicIfUserError(err)
-	token, err := util.GenerateToken(userReq.UserName)
+	token, err := util.GenerateToken(uint(userResp.UserDetail.UserID))
 	r := res.Response{
 		Data:   res.TokenData{User: userResp.UserDetail, Token: token},
 		Status: uint(userResp.Code),
