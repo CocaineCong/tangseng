@@ -29,7 +29,7 @@ func main() {
 	server := grpc.NewServer()
 	defer server.Stop()
 	// 绑定service
-	service.RegisterUserServiceServer(server, handler.NewUserService())
+	service.RegisterSearchEngineServiceServer(server, handler.NewSearchEngineService())
 	lis, err := net.Listen("tcp", grpcAddress)
 	if err != nil {
 		panic(err)

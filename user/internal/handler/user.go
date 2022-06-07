@@ -21,10 +21,10 @@ func (*UserService) UserLogin(ctx context.Context,req *service.UserRequest) (res
 	err = user.ShowUserInfo(req)
 	if err != nil {
 		resp.Code = e.ERROR
-		return resp,err
+		return resp, err
 	}
 	resp.UserDetail = repository.BuildUser(user)
-	return resp,nil
+	return resp, nil
 }
 
 func (*UserService) UserRegister(ctx context.Context, req *service.UserRequest) (resp *service.UserDetailResponse,err error) {

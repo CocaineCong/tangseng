@@ -44,7 +44,10 @@ func startListen() {
 	favoriteConn, _ := grpc.Dial("127.0.0.1:10002", opts...)
 	favoriteService := service.NewFavoritesServiceClient(favoriteConn)
 
-	ginRouter := routes.NewRouter(userService,favoriteService)
+	searchEngineConn, _ := grpc.Dial("127.0.0.1:10004", opts...)
+	searchEngineService := service.NewSearchEngineServiceClient(searchEngineConn)
+
+	ginRouter := routes.NewRouter(userService, favoriteService, searchEngineService)
 	server := &http.Server{
 		Addr:           viper.GetString("server.port"),
 		Handler:        ginRouter,

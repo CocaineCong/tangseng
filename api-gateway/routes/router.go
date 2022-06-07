@@ -24,14 +24,24 @@ func NewRouter(service ...interface{}) *gin.Engine {
 		v1.POST("/user/login", handler.UserLogin)
 
 		// 需要登录保护
+		v1.POST("/add", handler.Add)
+		// 搜索引擎
+		v1.GET("/search", handler.Search)
+		//authed.GET("/:table/allindex", handler.AllIndex)
+		//authed.GET("/:table/allindexcount", handler.AllIndexCount)
+
 		authed := v1.Group("/")
 		authed.Use(middleware.JWT())
 		{
+
+
+			// 收藏夹模块
 			authed.GET("favorites", handler.GetFavoriteList)
 			authed.POST("favorites", handler.CreateFavorite)
 			authed.PUT("favorites", handler.UpdateFavorite)
 			authed.DELETE("favorites", handler.DeleteFavorite)
 
+			// 收藏夹详情模块
 			authed.GET("favorites-detail", handler.GetFavoriteDetail)
 			authed.POST("favorites-detail", handler.CreateFavoriteDetail)
 			authed.DELETE("favorites-detail", handler.DeleteFavoriteDetail)

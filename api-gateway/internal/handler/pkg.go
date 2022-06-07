@@ -21,3 +21,11 @@ func PanicIfFavoriteError(err error) {
 		panic(err)
 	}
 }
+
+func PanicIfSearchEngineError(err error) {
+	if err != nil {
+		err = errors.New("searchEngineService--" + err.Error())
+		util.LogrusObj.Info(err)
+		panic(err)
+	}
+}

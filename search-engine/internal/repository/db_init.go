@@ -8,20 +8,20 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
+	"se/pkg/util"
 	"strings"
 	"time"
-	"se/pkg/util"
 )
 
 var DB *gorm.DB
 
 func InitDB() {
-	host := viper.GetString("mysqlSalve2.host")
-	port := viper.GetString("mysqlSalve2.port")
-	database := viper.GetString("mysqlSalve2.database")
-	username := viper.GetString("mysqlSalve2.username")
-	password := viper.GetString("mysqlSalve2.password")
-	charset := viper.GetString("mysqlSalve2.charset")
+	host := viper.GetString("datasource.host")
+	port := viper.GetString("datasource.port")
+	database := viper.GetString("datasource.database")
+	username := viper.GetString("datasource.username")
+	password := viper.GetString("datasource.password")
+	charset := viper.GetString("datasource.charset")
 	dsn := strings.Join([]string{username, ":", password, "@tcp(", host, ":", port, ")/", database, "?charset=" + charset + "&parseTime=true"}, "")
 	err := Database(dsn)
 	if err != nil {
@@ -58,6 +58,6 @@ func Database(connString string) error {
 	sqlDB.SetMaxOpenConns(100) //打开
 	sqlDB.SetConnMaxLifetime(time.Second * 30)
 	DB = db
-	migration()
+	//migration()
 	return err
 }

@@ -1,0 +1,37 @@
+syntax="proto3";
+package pb;
+import "searchEngineModels.proto";
+option go_package = "/internal/service;service";
+
+message SearchEngineRequest{
+    SearchEngineModel SearchEngineReq=1;
+    string Key=2;
+    string Table=3;
+    repeated PostData Data=4;
+}
+
+message PostData{
+    string Key=1;
+    string Value=2;
+}
+
+message SearchEngineList {
+   uint32 UrlID=1;
+   string Desc=2;
+   string Url=3;
+}
+
+message SearchEngineResponse{
+  repeated SearchEngineList SearchEngineInfoList =1;
+  string Msg=2;
+  repeated string Data=3;
+  uint32 Code=4;
+}
+
+
+service SearchEngineService{
+  rpc SearchEngineAdd(SearchEngineRequest) returns(SearchEngineResponse);
+  rpc SearchEngineSearch(SearchEngineRequest) returns(SearchEngineResponse);
+  rpc SearchEngineAllIndex(SearchEngineRequest) returns(SearchEngineResponse);
+  rpc SearchEngineAllIndexCount(SearchEngineRequest) returns(SearchEngineResponse);
+}
