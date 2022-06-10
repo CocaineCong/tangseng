@@ -27,14 +27,14 @@ func NewRouter(service ...interface{}) *gin.Engine {
 		v1.POST("/add", handler.Add)
 		// 搜索引擎
 		v1.GET("/search", handler.Search)
-		//authed.GET("/:table/allindex", handler.AllIndex)
-		//authed.GET("/:table/allindexcount", handler.AllIndexCount)
+		v1.GET("/allindex", handler.AllIndex)
+		v1.GET("/allindexcount", handler.AllIndexCount)
+		v1.GET("/search-word", handler.SearchWord)
+
 
 		authed := v1.Group("/")
 		authed.Use(middleware.JWT())
 		{
-
-
 			// 收藏夹模块
 			authed.GET("favorites", handler.GetFavoriteList)
 			authed.POST("favorites", handler.CreateFavorite)

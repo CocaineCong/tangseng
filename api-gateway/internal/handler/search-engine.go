@@ -38,3 +38,33 @@ func Search(ginCtx *gin.Context) {
 	}
 	ginCtx.JSON(http.StatusOK, r)
 }
+
+func AllIndex(ginCtx *gin.Context) {
+	var seReq service.SearchEngineRequest
+	PanicIfSearchEngineError(ginCtx.ShouldBind(&seReq))
+	// 从gin.Key中取出服务实例
+	searchEngineService := ginCtx.Keys["se"].(service.SearchEngineServiceClient)
+	searchEngineResp, err := searchEngineService.SearchEngineAllIndex(context.Background(), &seReq)
+	PanicIfSearchEngineError(err)
+	r := res.Response{
+		Data:   searchEngineResp,
+		Status: uint(searchEngineResp.Code),
+		Msg:    e.GetMsg(uint(searchEngineResp.Code)),
+	}
+	ginCtx.JSON(http.StatusOK, r)
+}
+
+func AllIndexCount(ginCtx *gin.Context) {
+	var seReq service.SearchEngineRequest
+	PanicIfSearchEngineError(ginCtx.ShouldBind(&seReq))
+	// 从gin.Key中取出服务实例
+	searchEngineService := ginCtx.Keys["se"].(service.SearchEngineServiceClient)
+	searchEngineResp, err := searchEngineService.SearchEngineAllIndexCount(context.Background(), &seReq)
+	PanicIfSearchEngineError(err)
+	r := res.Response{
+		Data:   searchEngineResp,
+		Status: uint(searchEngineResp.Code),
+		Msg:    e.GetMsg(uint(searchEngineResp.Code)),
+	}
+	ginCtx.JSON(http.StatusOK, r)
+}
