@@ -9,22 +9,22 @@ import (
 
 // Response 基础序列化器
 type Response struct {
-	Status uint         `json:"status"`
-	Data   interface{} `json:"data"`
-	Msg    string      `json:"msg"`
-	Error  string      `json:"error"`
+	Status uint        `json:"Status"`
+	Data   interface{} `json:"Data"`
+	Msg    string      `json:"Msg"`
+	Error  string      `json:"Error"`
 }
 
 //DataList 带有总数的Data结构
 type DataList struct {
-	Item  interface{} `json:"item"`
-	Total uint        `json:"total"`
+	Item  interface{} `json:"Item"`
+	Total uint        `json:"Total"`
 }
 
 //TokenData 带有token的Data结构
 type TokenData struct {
-	User  interface{} `json:"user"`
-	Token string      `json:"token"`
+	User  interface{} `json:"User"`
+	Token string      `json:"Token"`
 }
 
 // 返回200 自定义code data
