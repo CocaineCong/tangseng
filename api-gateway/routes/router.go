@@ -11,7 +11,8 @@ import (
 
 func NewRouter(service ...interface{}) *gin.Engine {
 	ginRouter := gin.Default()
-	ginRouter.Use(middleware.Cors(), middleware.InitMiddleware(service), middleware.ErrorMiddleware())
+	ginRouter.Use(middleware.Cors(), middleware.InitMiddleware(service),
+		middleware.ErrorMiddleware())
 	store := cookie.NewStore([]byte("something-very-secret"))
 	ginRouter.Use(sessions.Sessions("mysession", store))
 	v1 := ginRouter.Group("/api/v1")
@@ -30,7 +31,6 @@ func NewRouter(service ...interface{}) *gin.Engine {
 		v1.GET("/allindex", handler.AllIndex)
 		v1.GET("/allindexcount", handler.AllIndexCount)
 		v1.GET("/search-word", handler.SearchWord)
-
 
 		authed := v1.Group("/")
 		authed.Use(middleware.JWT())
