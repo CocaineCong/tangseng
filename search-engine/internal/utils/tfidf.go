@@ -106,18 +106,6 @@ func FeatureSelect(listWords [][]string) *mat.Dense {
 	return tfIdf
 }
 
-func Load() []string {
-	//数据
-	slice := []string{
-		"I am nigger",
-		"fuck you nigger",
-		"nigger you are",
-		"small nigger",
-		"fuck me nigger",
-	}
-	return slice
-}
-
 
 func getKeys(m map[string]float64) []string {
 	// 数组默认长度为map长度,后面append时,不需要重新申请内存和拷贝,效率很高
