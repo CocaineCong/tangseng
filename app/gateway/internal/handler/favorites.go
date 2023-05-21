@@ -1,14 +1,14 @@
 package handler
 
 import (
-	"api-gateway/internal/service"
-	"api-gateway/pkg/e"
-	"api-gateway/pkg/res"
-	"api-gateway/pkg/util"
 	"context"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+
+	"github.com/CocaineCong/Go-SearchEngine/pkg/e"
+	"github.com/CocaineCong/Go-SearchEngine/pkg/res"
 )
 
 func GetFavoriteList(ginCtx *gin.Context) {
@@ -59,7 +59,6 @@ func UpdateFavorite(ginCtx *gin.Context) {
 	}
 	ginCtx.JSON(http.StatusOK, r)
 }
-
 
 func DeleteFavorite(ginCtx *gin.Context) {
 	var fReq service.FavoritesRequest

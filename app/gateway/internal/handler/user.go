@@ -1,44 +1,56 @@
 package handler
 
 import (
-	"api-gateway/internal/service"
-	"api-gateway/pkg/e"
-	"api-gateway/pkg/res"
-	"api-gateway/pkg/util"
-	"context"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+
+	"github.com/CocaineCong/Go-SearchEngine/app/gateway/rpc"
+	pb "github.com/CocaineCong/Go-SearchEngine/idl/pb/user"
+	"github.com/CocaineCong/Go-SearchEngine/pkg/ctl"
+	"github.com/CocaineCong/Go-SearchEngine/pkg/jwt"
+	"github.com/CocaineCong/Go-SearchEngine/types"
 )
 
-// 用户注册
-func UserRegister(ginCtx *gin.Context) {
-	var userReq service.UserRequest
-	PanicIfUserError(ginCtx.Bind(&userReq))
-	// 从gin.Key中取出服务实例
-	userService := ginCtx.Keys["user"].(service.UserServiceClient)
-	userResp, err := userService.UserRegister(context.Background(), &userReq)
-	PanicIfUserError(err)
-	r := res.Response{
-		Data:   userResp,
-		Status: uint(userResp.Code),
-		Msg:    e.GetMsg(uint(userResp.Code)),
+// UserRegister 用户注册
+func UserRegister(ctx *gin.Context) {
+	var userReq pb.UserRegisterReq
+	if err := ctx.Bind(&userReq); err != nil {
+		ctx.JSON(http.StatusBadRequest, ctl.RespError(ctx, err, "绑定参数错误"))
+		return
 	}
-	ginCtx.JSON(http.StatusOK, r)
+	r, err := rpc.UserRegister(ctx, &userReq)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "UserRegister RPC服务调用错误"))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, ctl.RespSuccess(ctx, r))
 }
 
-// 用户登录
-func UserLogin(ginCtx *gin.Context) {
-	var userReq service.UserRequest
-	PanicIfUserError(ginCtx.Bind(&userReq))
-	// 从gin.Key中取出服务实例
-	userService := ginCtx.Keys["user"].(service.UserServiceClient)
-	userResp, err := userService.UserLogin(context.Background(), &userReq)
-	PanicIfUserError(err)
-	token, err := util.GenerateToken(uint(userResp.UserDetail.UserID))
-	r := res.Response{
-		Data:   res.TokenData{User: userResp.UserDetail, Token: token},
-		Status: uint(userResp.Code),
-		Msg:    e.GetMsg(uint(userResp.Code)),
+// UserLogin 用户登录
+func UserLogin(ctx *gin.Context) {
+	var req pb.UserLoginReq
+	if err := ctx.Bind(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, ctl.RespError(ctx, err, "绑定参数错误"))
+		return
 	}
-	ginCtx.JSON(http.StatusOK, r)
+
+	userResp, err := rpc.UserLogin(ctx, &req)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "UserLogin RPC服务调用错误"))
+		return
+	}
+
+	aToken, rToken, err := jwt.GenerateToken(userResp.UserDetail.UserId, userResp.UserDetail.UserName)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "加密错误"))
+		return
+	}
+	uResp := &types.UserTokenData{
+		User:         userResp,
+		AccessToken:  aToken,
+		RefreshToken: rToken,
+	}
+	ctx.JSON(http.StatusOK, ctl.RespSuccess(ctx, uResp))
 }

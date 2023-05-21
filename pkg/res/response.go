@@ -1,62 +1,78 @@
 package res
 
 import (
-	"api-gateway/pkg/e"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+
+	"github.com/CocaineCong/Go-SearchEngine/pkg/e"
 )
 
 // Response 基础序列化器
 type Response struct {
-	Status uint         `json:"status"`
-	Data   interface{} `json:"data"`
-	Msg    string      `json:"msg"`
-	Error  string      `json:"error"`
+	Status  int         `json:"status"`
+	Data    interface{} `json:"data"`
+	Msg     string      `json:"msg"`
+	Error   string      `json:"error"`
+	TrackId string      `json:"track_id"`
 }
 
-//DataList 带有总数的Data结构
-type DataList struct {
-	Item  interface{} `json:"item"`
-	Total uint        `json:"total"`
+// TrackedErrorResponse 有追踪信息的错误反应
+type TrackedErrorResponse struct {
+	Response
+	TrackId string `json:"track_id"`
 }
 
-//TokenData 带有token的Data结构
-type TokenData struct {
-	User  interface{} `json:"user"`
-	Token string      `json:"token"`
-}
-
-// 返回200 自定义code data
-func Ok(ctx *gin.Context, msgCode int, data interface{}) {
-	ctx.JSON(http.StatusOK, ginH(msgCode, data))
-}
-
-// 无权限err
-func Unauthorized(ctx *gin.Context, msgCode int) {
-	ctx.JSON(http.StatusUnauthorized, ginH(msgCode, nil))
-}
-
-// 内部err
-func InternalError(ctx *gin.Context) {
-	ctx.JSON(http.StatusInternalServerError, ginH(e.ERROR, nil))
-}
-
-// 禁止访问err
-func ForbiddenError(ctx *gin.Context, msgCode int) {
-	ctx.JSON(http.StatusForbidden, ginH(msgCode, nil))
-}
-
-// 自定义 err
-func Error(ctx *gin.Context, httpCode, msgCode int) {
-	ctx.JSON(httpCode, ginH(msgCode, nil))
-}
-
-func ginH(msgCode int, data interface{}) gin.H {
-	return gin.H{
-		"code": msgCode,
-		"msg":  e.GetMsg(msgCode),
-		"data": data,
+// RespSuccess 带data成功返回
+func RespSuccess(ctx *gin.Context, data interface{}, code ...int) *Response {
+	trackId, _ := getTrackIdFromCtx(ctx)
+	status := e.SUCCESS
+	if code != nil {
+		status = code[0]
 	}
+
+	if data == nil {
+		data = "操作成功"
+	}
+
+	r := &Response{
+		Status:  status,
+		Data:    data,
+		Msg:     e.GetMsg(status),
+		TrackId: trackId,
+	}
+
+	return r
 }
 
+// RespError 错误返回
+func RespError(ctx *gin.Context, err error, data string, code ...int) *TrackedErrorResponse {
+	trackId, _ := getTrackIdFromCtx(ctx)
+	status := e.ERROR
+	if code != nil {
+		status = code[0]
+	}
+
+	r := &TrackedErrorResponse{
+		Response: Response{
+			Status: status,
+			Msg:    e.GetMsg(status),
+			Data:   data,
+			Error:  err.Error(),
+		},
+		TrackId: trackId,
+	}
+
+	return r
+}
+
+func getTrackIdFromCtx(ctx *gin.Context) (trackId string, err error) {
+	return
+	// spanCtxInterface, _ := ctx.Get(consts.SpanCTX)
+	// str := fmt.Sprintf("%v", spanCtxInterface)
+	// re := regexp.MustCompile(`([0-9a-fA-F]{16})`)
+	//
+	// match := re.FindStringSubmatch(str)
+	// if len(match) > 0 {
+	// 	return match[1], nil
+	// }
+	// return "", errors.New("获取 track id 错误")
+}
