@@ -1,0 +1,34 @@
+syntax="proto3";
+package pb;
+import "favoriteModels.pb";
+option go_package = "/internal/service;service";
+
+message FavoritesRequest{
+    uint32 FavoriteID=1;
+    string FavoriteName=2;
+    uint32 UserID=3;
+    UrlModel UrlInfo=4;
+    uint32 FavoriteDetailID=5;
+}
+
+
+message FavoritesDetailResponse{
+  repeated FavoritesModel FavoritesDetail=1;
+  uint32 Code=2;
+}
+
+message CommonResponse{
+    uint32 Code=1;
+    string Msg=2;
+    string Data=3;
+}
+
+service FavoritesService{
+  rpc FavoriteCreate(FavoritesRequest) returns(CommonResponse);
+  rpc FavoriteUpdate(FavoritesRequest) returns(CommonResponse);
+  rpc FavoriteShow(FavoritesRequest) returns(FavoritesDetailResponse);
+  rpc FavoriteDelete(FavoritesRequest) returns(CommonResponse);
+  rpc FavoriteDetailsCreate(FavoritesRequest) returns(CommonResponse);
+  rpc FavoriteDetailsShow(FavoritesRequest) returns(FavoritesDetailResponse);
+  rpc FavoriteDetailsDelete(FavoritesRequest) returns(CommonResponse);
+}

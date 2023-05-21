@@ -14,13 +14,13 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
-api-gateway/config/config.yml
-favorites/config/config.yml
-search-engine/config/config.yml
-user/config/config.yml
+config/config.yml
+app/favorites/config/config.yml
+app/search-engine/config/config.yml
+app/user/config/config.yml
 .idea
-user/logs
-api-gateway/logs
-favorites/logs
-search-engine/logs
-search-engine/internal/data
+app/user/logs
+app/gateway/logs
+app/favorites/logs
+app/search-engine/logs
+app/search-engine/internal/data

@@ -1,0 +1,42 @@
+syntax="proto3";
+option go_package = "/search_engine;";
+
+message SearchEngineModel {
+	int64 user_id=1;
+	string user_name=2;
+	string key_word=3;
+	string info=4;
+}
+
+message SearchEngineRequest{
+	SearchEngineModel search_engine_req=1;
+	string key=2;
+	string table=3;
+	repeated PostData data=4;
+}
+
+message PostData{
+	string key=1;
+	string value=2;
+}
+
+message SearchEngineList {
+	int64 url_id=1;
+	string desc=2;
+	string url=3;
+}
+
+message SearchEngineResponse{
+	int64 code=4;
+	string msg=2;
+	repeated SearchEngineList search_engine_info_list =1;
+	repeated string data=3;
+}
+
+
+service SearchEngineService{
+	rpc SearchEngineAdd(SearchEngineRequest) returns(SearchEngineResponse);
+	rpc SearchEngineSearch(SearchEngineRequest) returns(SearchEngineResponse);
+	rpc SearchEngineAllIndex(SearchEngineRequest) returns(SearchEngineResponse);
+	rpc SearchEngineAllIndexCount(SearchEngineRequest) returns(SearchEngineResponse);
+}

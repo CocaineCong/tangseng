@@ -1,0 +1,90 @@
+syntax="proto3";
+option go_package = "/favorite;";
+
+message UrlModel {
+	int64  url_id = 1;
+	string url = 2;
+	string desc = 3;
+}
+
+message FavoriteResp {
+	int64  favorite_id = 1;
+	string favorite_name = 2;
+	int64 user_id = 3;
+	repeated UrlModel url_info=4;
+}
+
+message FavoriteCreateReq {
+	string favorite_name = 1;
+	int64 user_id = 2;
+}
+
+message FavoriteUpdateReq {
+	int64 user_id = 1;
+	int64 favorite_id = 2;
+	string favorite_name = 3;
+}
+
+message FavoriteListReq {
+	int64 user_id = 1;
+	int64 favorite_id = 2;
+}
+
+message FavoriteDeleteReq {
+	int64 user_id = 1;
+	int64 favorite_id = 2;
+}
+
+message FavoriteDetailCreateReq {
+	int64 user_id = 1;
+	int64 favorite_id = 2;
+	int64 url_id = 3;
+	string url = 4;
+	string desc = 5;
+}
+
+message FavoriteDetailListReq {
+	int64 user_id = 1;
+	int64 favorite_id = 2;
+	int64 url_id = 3;
+}
+
+message FavoriteDetailDeleteReq {
+	int64 favorite_id = 1;
+	int64 favorite_detail_id = 2;
+	int64 user_id = 3;
+}
+
+message FavoriteCommonResponse {
+	int64 code = 1;
+	string msg = 2;
+	string data = 3;
+	string error = 4;
+}
+
+message FavoriteDetailListResponse {
+	int64 code = 1;
+	repeated FavoriteResp items=2;
+	int64 total = 3;
+}
+
+message FavoriteListItemResp{
+	int64 favorite_id = 2;
+	string favorite_name = 3;
+}
+
+message FavoriteListResponse {
+	int64 code = 1;
+	repeated FavoriteListItemResp items=2;
+	int64 total = 3;
+}
+
+service FavoritesService{
+	rpc FavoriteCreate(FavoriteCreateReq) returns(FavoriteCommonResponse);
+	rpc FavoriteUpdate(FavoriteUpdateReq) returns(FavoriteCommonResponse);
+	rpc FavoriteList(FavoriteListReq) returns(FavoriteListResponse);
+	rpc FavoriteDelete(FavoriteDeleteReq) returns(FavoriteCommonResponse);
+	rpc FavoriteDetailCreate(FavoriteDetailCreateReq) returns(FavoriteCommonResponse);
+	rpc FavoriteDetailList(FavoriteDetailListReq) returns(FavoriteDetailListResponse);
+	rpc FavoriteDetailDelete(FavoriteDetailDeleteReq) returns(FavoriteCommonResponse);
+}
