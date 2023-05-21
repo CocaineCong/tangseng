@@ -1,125 +1,158 @@
 package handler
 
 import (
-	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/CocaineCong/Go-SearchEngine/pkg/e"
-	"github.com/CocaineCong/Go-SearchEngine/pkg/res"
+	"github.com/CocaineCong/Go-SearchEngine/app/gateway/rpc"
+	pb "github.com/CocaineCong/Go-SearchEngine/idl/pb/favorite"
+	"github.com/CocaineCong/Go-SearchEngine/pkg/ctl"
 )
 
-func GetFavoriteList(ginCtx *gin.Context) {
-	var fReq service.FavoritesRequest
-	PanicIfFavoriteError(ginCtx.Bind(&fReq))
-	claim, _ := util.ParseToken(ginCtx.GetHeader("Authorization"))
-	fReq.UserID = uint32(claim.UserID)
-	favoriteService := ginCtx.Keys["favorites"].(service.FavoritesServiceClient)
-	fmt.Println(fReq)
-	favoriteResp, err := favoriteService.FavoriteShow(context.Background(), &fReq)
-	PanicIfFavoriteError(err)
-	r := res.Response{
-		Data:   favoriteResp,
-		Status: uint(favoriteResp.Code),
-		Msg:    e.GetMsg(uint(favoriteResp.Code)),
+func ListFavorite(ctx *gin.Context) {
+	var req pb.FavoriteListReq
+	if err := ctx.Bind(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, ctl.RespError(ctx, err, "绑定参数错误"))
+		return
 	}
-	ginCtx.JSON(http.StatusOK, r)
+	user, err := ctl.GetUserInfo(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "获取用户信息错误"))
+		return
+	}
+	req.UserId = user.Id
+	r, err := rpc.FavoriteList(ctx, &req)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "FavoriteList RPC服务调用错误"))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, ctl.RespSuccess(ctx, r))
 }
 
-func CreateFavorite(ginCtx *gin.Context) {
-	var fReq service.FavoritesRequest
-	PanicIfFavoriteError(ginCtx.Bind(&fReq))
-	claim, _ := util.ParseToken(ginCtx.GetHeader("Authorization"))
-	fReq.UserID = uint32(claim.UserID)
-	favoriteService := ginCtx.Keys["favorites"].(service.FavoritesServiceClient)
-	favoriteResp, err := favoriteService.FavoriteCreate(context.Background(), &fReq)
-	PanicIfFavoriteError(err)
-	r := res.Response{
-		Data:   favoriteResp,
-		Status: uint(favoriteResp.Code),
-		Msg:    e.GetMsg(uint(favoriteResp.Code)),
+func CreateFavorite(ctx *gin.Context) {
+	var req pb.FavoriteCreateReq
+	if err := ctx.Bind(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, ctl.RespError(ctx, err, "绑定参数错误"))
+		return
 	}
-	ginCtx.JSON(http.StatusOK, r)
+	user, err := ctl.GetUserInfo(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "获取用户信息错误"))
+		return
+	}
+	req.UserId = user.Id
+	r, err := rpc.FavoriteCreate(ctx, &req)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "FavoriteCreateReq RPC服务调用错误"))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, ctl.RespSuccess(ctx, r))
 }
 
-func UpdateFavorite(ginCtx *gin.Context) {
-	var fReq service.FavoritesRequest
-	PanicIfFavoriteError(ginCtx.Bind(&fReq))
-	claim, _ := util.ParseToken(ginCtx.GetHeader("Authorization"))
-	fReq.UserID = uint32(claim.UserID)
-	favoriteService := ginCtx.Keys["favorites"].(service.FavoritesServiceClient)
-	favoriteResp, err := favoriteService.FavoriteUpdate(context.Background(), &fReq)
-	PanicIfFavoriteError(err)
-	r := res.Response{
-		Data:   favoriteResp,
-		Status: uint(favoriteResp.Code),
-		Msg:    e.GetMsg(uint(favoriteResp.Code)),
+func UpdateFavorite(ctx *gin.Context) {
+	var req pb.FavoriteCreateReq
+	if err := ctx.Bind(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, ctl.RespError(ctx, err, "绑定参数错误"))
+		return
 	}
-	ginCtx.JSON(http.StatusOK, r)
+	user, err := ctl.GetUserInfo(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "获取用户信息错误"))
+		return
+	}
+	req.UserId = user.Id
+	r, err := rpc.FavoriteCreate(ctx, &req)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "UpdateFavorite RPC服务调用错误"))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, ctl.RespSuccess(ctx, r))
 }
 
-func DeleteFavorite(ginCtx *gin.Context) {
-	var fReq service.FavoritesRequest
-	PanicIfFavoriteError(ginCtx.Bind(&fReq))
-	claim, _ := util.ParseToken(ginCtx.GetHeader("Authorization"))
-	fReq.UserID = uint32(claim.UserID)
-	favoriteService := ginCtx.Keys["favorites"].(service.FavoritesServiceClient)
-	favoriteResp, err := favoriteService.FavoriteDelete(context.Background(), &fReq)
-	PanicIfFavoriteError(err)
-	r := res.Response{
-		Data:   favoriteResp,
-		Status: uint(favoriteResp.Code),
-		Msg:    e.GetMsg(uint(favoriteResp.Code)),
+func DeleteFavorite(ctx *gin.Context) {
+	var req pb.FavoriteDeleteReq
+	if err := ctx.Bind(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, ctl.RespError(ctx, err, "绑定参数错误"))
+		return
 	}
-	ginCtx.JSON(http.StatusOK, r)
+	user, err := ctl.GetUserInfo(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "获取用户信息错误"))
+		return
+	}
+	req.UserId = user.Id
+	r, err := rpc.FavoriteDelete(ctx, &req)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "DeleteFavorite RPC服务调用错误"))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, ctl.RespSuccess(ctx, r))
 }
 
-func GetFavoriteDetail(ginCtx *gin.Context) {
-	var fReq service.FavoritesRequest
-	PanicIfFavoriteError(ginCtx.Bind(&fReq))
-	claim, _ := util.ParseToken(ginCtx.GetHeader("Authorization"))
-	fReq.UserID = uint32(claim.UserID)
-	favoriteService := ginCtx.Keys["favorites"].(service.FavoritesServiceClient)
-	favoriteResp, err := favoriteService.FavoriteDetailsShow(context.Background(), &fReq)
-	PanicIfFavoriteError(err)
-	r := res.Response{
-		Data:   favoriteResp,
-		Status: uint(favoriteResp.Code),
-		Msg:    e.GetMsg(uint(favoriteResp.Code)),
+func ListFavoriteDetail(ctx *gin.Context) {
+	var req pb.FavoriteDetailListReq
+	if err := ctx.Bind(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, ctl.RespError(ctx, err, "绑定参数错误"))
+		return
 	}
-	ginCtx.JSON(http.StatusOK, r)
+	user, err := ctl.GetUserInfo(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "获取用户信息错误"))
+		return
+	}
+	req.UserId = user.Id
+	r, err := rpc.FavoriteDetailList(ctx, &req)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "FavoriteDetailList RPC服务调用错误"))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, ctl.RespSuccess(ctx, r))
 }
 
-func CreateFavoriteDetail(ginCtx *gin.Context) {
-	var fReq service.FavoritesRequest
-	PanicIfFavoriteError(ginCtx.Bind(&fReq))
-	claim, _ := util.ParseToken(ginCtx.GetHeader("Authorization"))
-	fReq.UserID = uint32(claim.UserID)
-	favoriteService := ginCtx.Keys["favorites"].(service.FavoritesServiceClient)
-	favoriteResp, err := favoriteService.FavoriteDetailsCreate(context.Background(), &fReq)
-	PanicIfFavoriteError(err)
-	r := res.Response{
-		Data:   favoriteResp,
-		Status: uint(favoriteResp.Code),
-		Msg:    e.GetMsg(uint(favoriteResp.Code)),
+func CreateFavoriteDetail(ctx *gin.Context) {
+	var req pb.FavoriteDetailCreateReq
+	if err := ctx.Bind(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, ctl.RespError(ctx, err, "绑定参数错误"))
+		return
 	}
-	ginCtx.JSON(http.StatusOK, r)
+	user, err := ctl.GetUserInfo(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "获取用户信息错误"))
+		return
+	}
+	req.UserId = user.Id
+	r, err := rpc.FavoriteDetailCreate(ctx, &req)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "FavoriteDetailCreate RPC服务调用错误"))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, ctl.RespSuccess(ctx, r))
 }
 
-func DeleteFavoriteDetail(ginCtx *gin.Context) {
-	var fReq service.FavoritesRequest
-	PanicIfFavoriteError(ginCtx.Bind(&fReq))
-	claim, _ := util.ParseToken(ginCtx.GetHeader("Authorization"))
-	fReq.UserID = uint32(claim.UserID)
-	favoriteService := ginCtx.Keys["favorites"].(service.FavoritesServiceClient)
-	favoriteResp, err := favoriteService.FavoriteDetailsDelete(context.Background(), &fReq)
-	PanicIfFavoriteError(err)
-	r := res.Response{
-		Data:   favoriteResp,
-		Status: uint(favoriteResp.Code),
-		Msg:    e.GetMsg(uint(favoriteResp.Code)),
+func DeleteFavoriteDetail(ctx *gin.Context) {
+	var req pb.FavoriteDetailDeleteReq
+	if err := ctx.Bind(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, ctl.RespError(ctx, err, "绑定参数错误"))
+		return
 	}
-	ginCtx.JSON(http.StatusOK, r)
+	user, err := ctl.GetUserInfo(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "获取用户信息错误"))
+		return
+	}
+	req.UserId = user.Id
+	r, err := rpc.FavoriteDetailDelete(ctx, &req)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "FavoriteDetailDelete RPC服务调用错误"))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, ctl.RespSuccess(ctx, r))
 }
