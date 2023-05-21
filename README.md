@@ -1,4 +1,4 @@
-# Go-SearchEngine
+# Go-SearchEngine 重构中...
 
 基于Go语言的搜索引擎
 
