@@ -8,8 +8,8 @@ import (
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 
-	"github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/handler"
-	"github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/repository"
+	"github.com/CocaineCong/Go-SearchEngine/app/search-engine-old/internal/handler"
+	"github.com/CocaineCong/Go-SearchEngine/app/search-engine-old/internal/repository"
 	"github.com/CocaineCong/Go-SearchEngine/config"
 	pb "github.com/CocaineCong/Go-SearchEngine/idl/pb/search_engine"
 	"github.com/CocaineCong/Go-SearchEngine/pkg/discovery"

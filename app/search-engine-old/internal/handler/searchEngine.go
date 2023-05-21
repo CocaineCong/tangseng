@@ -5,8 +5,8 @@ import (
 	"errors"
 	"sync"
 
-	inputData "github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/inputdata"
-	"github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/repository"
+	inputData "github.com/CocaineCong/Go-SearchEngine/app/search-engine-old/internal/inputdata"
+	"github.com/CocaineCong/Go-SearchEngine/app/search-engine-old/internal/repository"
 	pb "github.com/CocaineCong/Go-SearchEngine/idl/pb/search_engine"
 	"github.com/CocaineCong/Go-SearchEngine/pkg/e"
 )

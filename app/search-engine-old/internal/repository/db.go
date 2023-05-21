@@ -8,9 +8,9 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/index"
-	inputData "github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/inputdata"
-	"github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/utils"
+	"github.com/CocaineCong/Go-SearchEngine/app/search-engine-old/internal/index"
+	inputData "github.com/CocaineCong/Go-SearchEngine/app/search-engine-old/internal/inputdata"
+	"github.com/CocaineCong/Go-SearchEngine/app/search-engine-old/internal/utils"
 )
 
 type Table struct {

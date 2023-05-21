@@ -13,7 +13,7 @@ import (
 	_ "github.com/go-sql-driver/mysql" // 初始化
 	"gonum.org/v1/gonum/floats"
 
-	"github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/utils"
+	"github.com/CocaineCong/Go-SearchEngine/app/search-engine-old/internal/utils"
 )
 
 var (

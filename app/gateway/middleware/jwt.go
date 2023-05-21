@@ -6,7 +6,7 @@ import (
 	"github.com/CocaineCong/Go-SearchEngine/consts"
 	"github.com/CocaineCong/Go-SearchEngine/pkg/ctl"
 	"github.com/CocaineCong/Go-SearchEngine/pkg/e"
-	"github.com/CocaineCong/Go-SearchEngine/pkg/util/jwt"
+	"github.com/CocaineCong/Go-SearchEngine/pkg/jwt"
 )
 
 // AuthMiddleware token验证中间件

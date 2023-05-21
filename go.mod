@@ -3,8 +3,8 @@ module github.com/CocaineCong/Go-SearchEngine
 go 1.20
 
 require (
-	github.com/CocaineCong/grpc-todolist v0.0.0-20230520101949-f3f83f57679b
 	github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5
+	github.com/boltdb/bolt v1.3.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-contrib/sessions v0.0.5
 	github.com/gin-gonic/gin v1.9.0
@@ -54,6 +54,7 @@ require (
 	github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c // indirect
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
+	github.com/smartystreets/goconvey v1.8.0 // indirect
 	github.com/spf13/afero v1.9.3 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect

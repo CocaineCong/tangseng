@@ -4,7 +4,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/utils"
+	"github.com/CocaineCong/Go-SearchEngine/app/search-engine-old/internal/utils"
 )
 
 // 倒排索引
