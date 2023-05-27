@@ -3,14 +3,13 @@ package ctl
 import (
 	"context"
 	"errors"
+
+	"github.com/CocaineCong/Go-SearchEngine/consts"
 )
 
-type key int64
-
-var userKey key
-
 type UserInfo struct {
-	Id int64 `json:"id"`
+	Id       int64  `json:"id"`
+	UserName string `json:"user_name"`
 }
 
 func GetUserInfo(ctx context.Context) (*UserInfo, error) {
@@ -22,11 +21,11 @@ func GetUserInfo(ctx context.Context) (*UserInfo, error) {
 }
 
 func NewContext(ctx context.Context, u *UserInfo) context.Context {
-	return context.WithValue(ctx, userKey, u)
+	return context.WithValue(ctx, consts.UserInfoKey, u)
 }
 
 func FromContext(ctx context.Context) (*UserInfo, bool) {
-	u, ok := ctx.Value(userKey).(*UserInfo)
+	u, ok := ctx.Value(consts.UserInfoKey).(*UserInfo)
 	return u, ok
 }
 

@@ -16,7 +16,7 @@ func ListFavorite(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, ctl.RespError(ctx, err, "绑定参数错误"))
 		return
 	}
-	user, err := ctl.GetUserInfo(ctx)
+	user, err := ctl.GetUserInfo(ctx.Request.Context())
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "获取用户信息错误"))
 		return
@@ -33,11 +33,11 @@ func ListFavorite(ctx *gin.Context) {
 
 func CreateFavorite(ctx *gin.Context) {
 	var req pb.FavoriteCreateReq
-	if err := ctx.Bind(&req); err != nil {
+	if err := ctx.ShouldBind(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, ctl.RespError(ctx, err, "绑定参数错误"))
 		return
 	}
-	user, err := ctl.GetUserInfo(ctx)
+	user, err := ctl.GetUserInfo(ctx.Request.Context())
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "获取用户信息错误"))
 		return
@@ -58,7 +58,7 @@ func UpdateFavorite(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, ctl.RespError(ctx, err, "绑定参数错误"))
 		return
 	}
-	user, err := ctl.GetUserInfo(ctx)
+	user, err := ctl.GetUserInfo(ctx.Request.Context())
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "获取用户信息错误"))
 		return
@@ -79,7 +79,7 @@ func DeleteFavorite(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, ctl.RespError(ctx, err, "绑定参数错误"))
 		return
 	}
-	user, err := ctl.GetUserInfo(ctx)
+	user, err := ctl.GetUserInfo(ctx.Request.Context())
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "获取用户信息错误"))
 		return
@@ -100,7 +100,7 @@ func ListFavoriteDetail(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, ctl.RespError(ctx, err, "绑定参数错误"))
 		return
 	}
-	user, err := ctl.GetUserInfo(ctx)
+	user, err := ctl.GetUserInfo(ctx.Request.Context())
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "获取用户信息错误"))
 		return
@@ -121,7 +121,7 @@ func CreateFavoriteDetail(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, ctl.RespError(ctx, err, "绑定参数错误"))
 		return
 	}
-	user, err := ctl.GetUserInfo(ctx)
+	user, err := ctl.GetUserInfo(ctx.Request.Context())
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "获取用户信息错误"))
 		return
@@ -142,7 +142,7 @@ func DeleteFavoriteDetail(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, ctl.RespError(ctx, err, "绑定参数错误"))
 		return
 	}
-	user, err := ctl.GetUserInfo(ctx)
+	user, err := ctl.GetUserInfo(ctx.Request.Context())
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "获取用户信息错误"))
 		return

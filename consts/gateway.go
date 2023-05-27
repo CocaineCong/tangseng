@@ -12,3 +12,5 @@ const (
 	AccessTokenExpireDuration  = 24 * time.Hour
 	RefreshTokenExpireDuration = 10 * 24 * time.Hour
 )
+
+const UserInfoKey = "user_info_key"
