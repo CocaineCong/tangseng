@@ -14,6 +14,7 @@ import (
 	"github.com/CocaineCong/Go-SearchEngine/app/gateway/routes"
 	"github.com/CocaineCong/Go-SearchEngine/app/gateway/rpc"
 	"github.com/CocaineCong/Go-SearchEngine/config"
+	"github.com/CocaineCong/Go-SearchEngine/loading"
 	"github.com/CocaineCong/Go-SearchEngine/pkg/discovery"
 	"github.com/CocaineCong/Go-SearchEngine/pkg/util/shutdown"
 )
@@ -21,6 +22,7 @@ import (
 func main() {
 	config.InitConfig()
 	rpc.Init()
+	loading.Loading()
 	// etcd注册
 	etcdAddress := []string{config.Conf.Etcd.Address}
 	etcdRegister := discovery.NewResolver(etcdAddress, logrus.New())

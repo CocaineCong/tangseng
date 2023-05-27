@@ -13,6 +13,7 @@ type Config struct {
 	MySQL    *MySQL              `yaml:"mysql"`
 	Redis    *Redis              `yaml:"redis"`
 	Etcd     *Etcd               `yaml:"etcd"`
+	Es       *Es                 `yaml:"es"`
 	Services map[string]*Service `yaml:"services"`
 	Domain   map[string]*Domain  `yaml:"domain"`
 }
@@ -31,6 +32,12 @@ type MySQL struct {
 	UserName   string `yaml:"username"`
 	Password   string `yaml:"password"`
 	Charset    string `yaml:"charset"`
+}
+
+type Es struct {
+	EsHost  string `yaml:"esHost"`
+	EsPort  string `yaml:"esPort"`
+	EsIndex string `yaml:"esIndex"`
 }
 
 type Redis struct {

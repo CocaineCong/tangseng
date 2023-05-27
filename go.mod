@@ -3,15 +3,18 @@ module github.com/CocaineCong/Go-SearchEngine
 go 1.20
 
 require (
+	github.com/CocaineCong/eslogrus v1.0.1
 	github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5
 	github.com/boltdb/bolt v1.3.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/elastic/go-elasticsearch v0.0.0
 	github.com/gin-contrib/sessions v0.0.5
 	github.com/gin-gonic/gin v1.9.0
 	github.com/go-ego/gse v0.80.2
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/micro/go-micro/v2 v2.9.1
 	github.com/sirupsen/logrus v1.9.2
+	github.com/spf13/cast v1.5.0
 	github.com/spf13/viper v1.15.0
 	go.etcd.io/etcd/client/v3 v3.5.9
 	golang.org/x/crypto v0.9.0
@@ -56,7 +59,6 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
 	github.com/smartystreets/goconvey v1.8.0 // indirect
 	github.com/spf13/afero v1.9.3 // indirect
-	github.com/spf13/cast v1.5.0 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.4.2 // indirect
