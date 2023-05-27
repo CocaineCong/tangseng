@@ -6,8 +6,8 @@ import (
 
 	"github.com/CocaineCong/Go-SearchEngine/app/favorites/internal/repository/db/dao"
 	"github.com/CocaineCong/Go-SearchEngine/app/favorites/internal/repository/db/model"
+	e2 "github.com/CocaineCong/Go-SearchEngine/consts/e"
 	pb "github.com/CocaineCong/Go-SearchEngine/idl/pb/favorite"
-	"github.com/CocaineCong/Go-SearchEngine/pkg/e"
 )
 
 var FavoriteSrvIns *FavoriteSrv
@@ -25,23 +25,23 @@ func GetFavoriteSrv() *FavoriteSrv {
 }
 func (s *FavoriteSrv) FavoriteCreate(ctx context.Context, req *pb.FavoriteCreateReq) (resp *pb.FavoriteCommonResponse, err error) {
 	resp = new(pb.FavoriteCommonResponse)
-	resp.Code = e.SUCCESS
+	resp.Code = e2.SUCCESS
 	err = dao.NewFavoriteDao(ctx).CreateFavorite(req)
 	if err != nil {
 		resp.Error = err.Error()
 		return
 	}
 
-	resp.Msg = e.GetMsg(int(resp.Code))
+	resp.Msg = e2.GetMsg(int(resp.Code))
 	return resp, nil
 }
 
 func (s *FavoriteSrv) FavoriteList(ctx context.Context, req *pb.FavoriteListReq) (resp *pb.FavoriteListResponse, err error) {
 	resp = new(pb.FavoriteListResponse)
 	f, err := dao.NewFavoriteDao(ctx).ListFavorite(req)
-	resp.Code = e.SUCCESS
+	resp.Code = e2.SUCCESS
 	if err != nil {
-		resp.Code = e.ERROR
+		resp.Code = e2.ERROR
 		return
 	}
 	for i := range f {
@@ -56,65 +56,65 @@ func (s *FavoriteSrv) FavoriteList(ctx context.Context, req *pb.FavoriteListReq)
 
 func (s *FavoriteSrv) FavoriteUpdate(ctx context.Context, req *pb.FavoriteUpdateReq) (resp *pb.FavoriteCommonResponse, err error) {
 	resp = new(pb.FavoriteCommonResponse)
-	resp.Code = e.SUCCESS
+	resp.Code = e2.SUCCESS
 	err = dao.NewFavoriteDao(ctx).UpdateFavorite(req)
 	if err != nil {
-		resp.Code = e.ERROR
+		resp.Code = e2.ERROR
 		resp.Error = err.Error()
 		return
 	}
 
-	resp.Msg = e.GetMsg(int(resp.Code))
+	resp.Msg = e2.GetMsg(int(resp.Code))
 	return resp, nil
 }
 
 func (s *FavoriteSrv) FavoriteDelete(ctx context.Context, req *pb.FavoriteDeleteReq) (resp *pb.FavoriteCommonResponse, err error) {
 	resp = new(pb.FavoriteCommonResponse)
-	resp.Code = e.SUCCESS
+	resp.Code = e2.SUCCESS
 	err = dao.NewFavoriteDao(ctx).DeleteFavorite(req)
 	if err != nil {
-		resp.Code = e.ERROR
+		resp.Code = e2.ERROR
 		resp.Error = err.Error()
 		return
 	}
 
-	resp.Msg = e.GetMsg(int(resp.Code))
+	resp.Msg = e2.GetMsg(int(resp.Code))
 	return
 }
 
 func (s *FavoriteSrv) FavoriteDetailCreate(ctx context.Context, req *pb.FavoriteDetailCreateReq) (resp *pb.FavoriteCommonResponse, err error) {
 	resp = new(pb.FavoriteCommonResponse)
-	resp.Code = e.SUCCESS
+	resp.Code = e2.SUCCESS
 	err = dao.NewFavoriteDetailDao(ctx).CreateFavoriteDetail(req)
 	if err != nil {
-		resp.Code = e.ERROR
+		resp.Code = e2.ERROR
 		resp.Error = err.Error()
 		return
 	}
-	resp.Msg = e.GetMsg(int(resp.Code))
+	resp.Msg = e2.GetMsg(int(resp.Code))
 	return
 }
 
 func (s *FavoriteSrv) FavoriteDetailDelete(ctx context.Context, req *pb.FavoriteDetailDeleteReq) (resp *pb.FavoriteCommonResponse, err error) {
 	resp = new(pb.FavoriteCommonResponse)
-	resp.Code = e.SUCCESS
+	resp.Code = e2.SUCCESS
 	err = dao.NewFavoriteDetailDao(ctx).DeleteFavoriteDetail(req)
 	if err != nil {
-		resp.Code = e.ERROR
+		resp.Code = e2.ERROR
 		resp.Error = err.Error()
 		return
 	}
 
-	resp.Msg = e.GetMsg(int(resp.Code))
+	resp.Msg = e2.GetMsg(int(resp.Code))
 	return
 }
 
 func (s *FavoriteSrv) FavoriteDetailList(ctx context.Context, req *pb.FavoriteDetailListReq) (resp *pb.FavoriteDetailListResponse, err error) {
 	resp = new(pb.FavoriteDetailListResponse)
-	resp.Code = e.SUCCESS
+	resp.Code = e2.SUCCESS
 	fdResp, err := dao.NewFavoriteDetailDao(ctx).ListFavoriteDetail(req)
 	if err != nil {
-		resp.Code = e.ERROR
+		resp.Code = e2.ERROR
 		return
 	}
 

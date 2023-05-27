@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
+	"github.com/CocaineCong/Go-SearchEngine/consts/e"
 	userPb "github.com/CocaineCong/Go-SearchEngine/idl/pb/user"
-	"github.com/CocaineCong/Go-SearchEngine/pkg/e"
 )
 
 func UserLogin(ctx context.Context, req *userPb.UserLoginReq) (resp *userPb.UserDetailResponse, err error) {

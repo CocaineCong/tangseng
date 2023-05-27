@@ -7,8 +7,8 @@ import (
 
 	inputData "github.com/CocaineCong/Go-SearchEngine/app/search-engine-old/internal/inputdata"
 	"github.com/CocaineCong/Go-SearchEngine/app/search-engine-old/internal/repository"
+	e2 "github.com/CocaineCong/Go-SearchEngine/consts/e"
 	pb "github.com/CocaineCong/Go-SearchEngine/idl/pb/search_engine"
-	"github.com/CocaineCong/Go-SearchEngine/pkg/e"
 )
 
 var SearchEngineSrvIns *SearchEngineSrv
@@ -34,10 +34,10 @@ func (s *SearchEngineSrv) SearchEngineAdd(ctx context.Context, req *pb.SearchEng
 		Key:  postKey,
 		Data: data,
 	}
-	resp.Code = e.SUCCESS
+	resp.Code = e2.SUCCESS
 	_, err = table.Insert(inData)
 	if err != nil {
-		resp.Code = e.ERROR
+		resp.Code = e2.ERROR
 		return resp, err
 	}
 	table.Save()
@@ -49,9 +49,9 @@ func (s *SearchEngineSrv) SearchEngineSearch(ctx context.Context, req *pb.Search
 	indexName := req.Key
 	valueName := req.Key
 	resp = new(pb.SearchEngineResponse)
-	resp.Code = e.SUCCESS
+	resp.Code = e2.SUCCESS
 	if indexName == "" {
-		resp.Code = e.ERROR
+		resp.Code = e2.ERROR
 		resp.Msg = errors.New("必须为查询指定一个索引，用法：/:table?index=index1&value=value1").Error()
 		return
 	}
@@ -60,13 +60,13 @@ func (s *SearchEngineSrv) SearchEngineSearch(ctx context.Context, req *pb.Search
 	}
 	table := repository.GetTable(tableName)
 	if !table.CheckIndexExist(indexName) {
-		resp.Code = e.ERROR
+		resp.Code = e2.ERROR
 		resp.Msg = errors.New("index[" + indexName + "]不存在").Error()
 		return
 	}
 	res, err := table.Search(indexName, valueName)
 	if err != nil {
-		resp.Code = e.ERROR
+		resp.Code = e2.ERROR
 		resp.Msg = err.Error()
 		return
 	}
@@ -79,8 +79,8 @@ func (s *SearchEngineSrv) SearchEngineAllIndex(ctx context.Context, req *pb.Sear
 	table := repository.GetTable(tableName)
 	table.AllIndex(50)
 	resp = new(pb.SearchEngineResponse)
-	resp.Code = e.SUCCESS
-	resp.Msg = e.GetMsg(e.SUCCESS)
+	resp.Code = e2.SUCCESS
+	resp.Msg = e2.GetMsg(e2.SUCCESS)
 	return resp, err
 }
 
@@ -89,7 +89,7 @@ func (s *SearchEngineSrv) SearchEngineAllIndexCount(ctx context.Context, req *pb
 	table := repository.GetTable(tableName)
 	table.AllIndexCount()
 	resp = new(pb.SearchEngineResponse)
-	resp.Code = e.SUCCESS
-	resp.Msg = e.GetMsg(e.SUCCESS)
+	resp.Code = e2.SUCCESS
+	resp.Msg = e2.GetMsg(e2.SUCCESS)
 	return resp, err
 }

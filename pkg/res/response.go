@@ -3,7 +3,7 @@ package res
 import (
 	"github.com/gin-gonic/gin"
 
-	"github.com/CocaineCong/Go-SearchEngine/pkg/e"
+	e2 "github.com/CocaineCong/Go-SearchEngine/consts/e"
 )
 
 // Response 基础序列化器
@@ -24,7 +24,7 @@ type TrackedErrorResponse struct {
 // RespSuccess 带data成功返回
 func RespSuccess(ctx *gin.Context, data interface{}, code ...int) *Response {
 	trackId, _ := getTrackIdFromCtx(ctx)
-	status := e.SUCCESS
+	status := e2.SUCCESS
 	if code != nil {
 		status = code[0]
 	}
@@ -36,7 +36,7 @@ func RespSuccess(ctx *gin.Context, data interface{}, code ...int) *Response {
 	r := &Response{
 		Status:  status,
 		Data:    data,
-		Msg:     e.GetMsg(status),
+		Msg:     e2.GetMsg(status),
 		TrackId: trackId,
 	}
 
@@ -46,7 +46,7 @@ func RespSuccess(ctx *gin.Context, data interface{}, code ...int) *Response {
 // RespError 错误返回
 func RespError(ctx *gin.Context, err error, data string, code ...int) *TrackedErrorResponse {
 	trackId, _ := getTrackIdFromCtx(ctx)
-	status := e.ERROR
+	status := e2.ERROR
 	if code != nil {
 		status = code[0]
 	}
@@ -54,7 +54,7 @@ func RespError(ctx *gin.Context, err error, data string, code ...int) *TrackedEr
 	r := &TrackedErrorResponse{
 		Response: Response{
 			Status: status,
-			Msg:    e.GetMsg(status),
+			Msg:    e2.GetMsg(status),
 			Data:   data,
 			Error:  err.Error(),
 		},

@@ -4,8 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/CocaineCong/Go-SearchEngine/consts"
+	e2 "github.com/CocaineCong/Go-SearchEngine/consts/e"
 	"github.com/CocaineCong/Go-SearchEngine/pkg/ctl"
-	"github.com/CocaineCong/Go-SearchEngine/pkg/e"
 	"github.com/CocaineCong/Go-SearchEngine/pkg/jwt"
 )
 
@@ -13,14 +13,14 @@ import (
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var code int
-		code = e.SUCCESS
+		code = e2.SUCCESS
 		accessToken := c.GetHeader("access_token")
 		refreshToken := c.GetHeader("refresh_token")
 		if accessToken == "" {
-			code = e.InvalidParams
+			code = e2.InvalidParams
 			c.JSON(200, gin.H{
 				"status": code,
-				"msg":    e.GetMsg(code),
+				"msg":    e2.GetMsg(code),
 				"data":   "Token不能为空",
 			})
 			c.Abort()
@@ -28,12 +28,12 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 		newAccessToken, newRefreshToken, err := jwt.ParseRefreshToken(accessToken, refreshToken)
 		if err != nil {
-			code = e.ErrorAuthCheckTokenFail
+			code = e2.ErrorAuthCheckTokenFail
 		}
-		if code != e.SUCCESS {
+		if code != e2.SUCCESS {
 			c.JSON(200, gin.H{
 				"status": code,
-				"msg":    e.GetMsg(code),
+				"msg":    e2.GetMsg(code),
 				"data":   "鉴权失败",
 				"error":  err.Error(),
 			})
@@ -42,10 +42,10 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 		claims, err := jwt.ParseToken(newAccessToken)
 		if err != nil {
-			code = e.ErrorAuthCheckTokenFail
+			code = e2.ErrorAuthCheckTokenFail
 			c.JSON(200, gin.H{
 				"status": code,
-				"msg":    e.GetMsg(code),
+				"msg":    e2.GetMsg(code),
 				"data":   err.Error(),
 			})
 			c.Abort()

@@ -1,7 +1,7 @@
 version: '3.7'
 
 networks:
-  todolist:
+  search_engine:
     driver: bridge
 
 services:
@@ -20,7 +20,7 @@ services:
     ports:
       - "3306:3306"
     networks:
-      - todolist
+      - search_engine
 
   etcd:
     image: "quay.io/coreos/etcd:v3.5.5"
@@ -40,7 +40,7 @@ services:
       - ETCD_AUTH_USER="todolist"
       - ETCD_AUTH_PASSWORD="todolist"
     networks:
-      - todolist
+      - search_engine
 
 
   etcd-keeper:
@@ -56,4 +56,4 @@ services:
     ports:
       - "8080:8080"
     networks:
-      - todolist
+      - search_engine

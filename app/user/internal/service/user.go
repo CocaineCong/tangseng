@@ -5,8 +5,8 @@ import (
 	"sync"
 
 	"github.com/CocaineCong/Go-SearchEngine/app/user/internal/repository/db/dao"
+	e2 "github.com/CocaineCong/Go-SearchEngine/consts/e"
 	pb "github.com/CocaineCong/Go-SearchEngine/idl/pb/user"
-	"github.com/CocaineCong/Go-SearchEngine/pkg/e"
 )
 
 var UserSrvIns *UserSrv
@@ -25,10 +25,10 @@ func GetUserSrv() *UserSrv {
 
 func (u *UserSrv) UserLogin(ctx context.Context, req *pb.UserLoginReq) (resp *pb.UserDetailResponse, err error) {
 	resp = new(pb.UserDetailResponse)
-	resp.Code = e.SUCCESS
+	resp.Code = e2.SUCCESS
 	r, err := dao.NewUserDao(ctx).GetUserInfo(req)
 	if err != nil {
-		resp.Code = e.ERROR
+		resp.Code = e2.ERROR
 		return
 	}
 	resp.UserDetail = &pb.UserResp{
@@ -41,12 +41,12 @@ func (u *UserSrv) UserLogin(ctx context.Context, req *pb.UserLoginReq) (resp *pb
 
 func (u *UserSrv) UserRegister(ctx context.Context, req *pb.UserRegisterReq) (resp *pb.UserCommonResponse, err error) {
 	resp = new(pb.UserCommonResponse)
-	resp.Code = e.SUCCESS
+	resp.Code = e2.SUCCESS
 	err = dao.NewUserDao(ctx).CreateUser(req)
 	if err != nil {
-		resp.Code = e.ERROR
+		resp.Code = e2.ERROR
 		return
 	}
-	resp.Data = e.GetMsg(int(resp.Code))
+	resp.Data = e2.GetMsg(int(resp.Code))
 	return
 }
