@@ -42,7 +42,6 @@ services:
     networks:
       - search_engine
 
-
   etcd-keeper:
     image: "evildecay/etcdkeeper:latest"
     container_name: etcd-keeper
@@ -55,5 +54,50 @@ services:
       - etcd
     ports:
       - "8080:8080"
+    networks:
+      - search_engine
+
+  elasticsearch:
+    image: elasticsearch:8.4.2
+    container_name: elasticsearch
+    environment:
+      bootstrap.memory_lock: "true"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      discovery.type: single-node
+      ingest.geoip.downloader.enabled: "false"
+      TZ: Asia/Shanghai
+      xpack.security.enabled: "false"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health || exit 1"] #⼼跳检测，成功之后不再执⾏后⾯的退出
+      interval: 60s #⼼跳检测间隔周期
+      timeout: 10s
+      retries: 3
+      start_period: 60s #⾸次检测延迟时间
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - /usr/local/elasticsearch/data:/usr/local/elasticsearch/data
+      - /usr/local/elasticsearch/config/es/config:/usr/local/elasticsearch/config
+    ports:
+      - "9200:9200"
+    restart: always
+    networks:
+      - search_engine
+
+  kibana:
+    image: kibana:8.4.2
+    container_name: kibana
+    environment:
+      - I18N_LOCALE=zh-CN
+      - XPACK_GRAPH_ENABLED=true
+      - TIMELION_ENABLED=true
+      - XPACK_MONITORING_COLLECTION_ENABLED="true"
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    ports:
+      - "5601:5601"
     networks:
       - search_engine
