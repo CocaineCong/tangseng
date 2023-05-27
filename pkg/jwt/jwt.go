@@ -6,11 +6,10 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 
-	"github.com/CocaineCong/Go-SearchEngine/config"
 	"github.com/CocaineCong/Go-SearchEngine/consts"
 )
 
-var jwtSecret = []byte(config.Conf.Server.JwtSecret)
+var jwtSecret = []byte("38324-search-engine") // TODO 从配置文件读取
 
 type Claims struct {
 	ID       int64  `json:"id"`

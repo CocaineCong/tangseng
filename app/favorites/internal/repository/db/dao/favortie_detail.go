@@ -52,7 +52,7 @@ func (dao *FavoriteDetailDao) DeleteFavoriteDetail(req *favoritePb.FavoriteDetai
 	var f model.Favorite
 	var fd model.FavoriteDetail
 	dao.DB.Where("favorite_id = ?", req.FavoriteId).First(&f)
-	dao.DB.Where("favorite_detail_id = ?", req.FavoritesDetailId).First(&fd)
+	dao.DB.Where("favorite_detail_id = ?", req.FavoriteDetailId).First(&fd)
 	err := dao.DB.Model(&f).Association("FavoritesDetail").Delete(&fd)
 	return err
 }

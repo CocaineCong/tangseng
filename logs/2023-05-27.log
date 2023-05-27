@@ -1,0 +1,8 @@
+time="2023-05-27 14:41:34" level=info msg="register table success"
+time="2023-05-27 14:42:21" level=info msg="register table success"
+time="2023-05-27 14:53:09" level=info msg="register table success"
+time="2023-05-27 14:53:22" level=info msg="register table success"
+time="2023-05-27 14:58:21" level=info msg="register table success"
+time="2023-05-27 14:58:30" level=error msg="UserRegister:rpc error: code = Unknown desc = UserName Exist"
+time="2023-05-27 14:58:41" level=error msg="UserRegister:rpc error: code = Unknown desc = UserName Exist"
+time="2023-05-27 15:02:05" level=error msg="UserRegister:rpc error: code = Unknown desc = UserName Exist"

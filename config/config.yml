@@ -1,7 +1,7 @@
 server:
   port: :4000
   version: 1.0
-  jwtSecret: 38324-search-engine
+  jwtSecret: "38324-search-engine"
 
 mysql:
   driverName: mysql
@@ -40,7 +40,7 @@ services:
       - 127.0.0.1:10003
 
   searchEngine:
-    name: favorite
+    name: searchEngine
     loadBalance: false
     addr:
       - 127.0.0.1:10004

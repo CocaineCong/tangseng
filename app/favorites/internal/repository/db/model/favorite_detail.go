@@ -8,12 +8,3 @@ type FavoriteDetail struct {
 	Desc             string      // url的描述
 	Favorite         []*Favorite `gorm:"many2many:f_to_fd;"`
 }
-
-type FavoritesDetailsResp struct {
-	FavoriteID        int64
-	UserID            int64
-	FavoritesDetailID int64
-	FavoritesName     string
-	Url               string
-	Desc              string
-}

@@ -9,18 +9,21 @@ import (
 	pb "github.com/CocaineCong/Go-SearchEngine/idl/pb/user"
 	"github.com/CocaineCong/Go-SearchEngine/pkg/ctl"
 	"github.com/CocaineCong/Go-SearchEngine/pkg/jwt"
+	"github.com/CocaineCong/Go-SearchEngine/pkg/util/logger"
 	"github.com/CocaineCong/Go-SearchEngine/types"
 )
 
 // UserRegister 用户注册
 func UserRegister(ctx *gin.Context) {
 	var userReq pb.UserRegisterReq
-	if err := ctx.Bind(&userReq); err != nil {
+	if err := ctx.ShouldBind(&userReq); err != nil {
+		logger.LogrusObj.Errorf("Bind:%v", err)
 		ctx.JSON(http.StatusBadRequest, ctl.RespError(ctx, err, "绑定参数错误"))
 		return
 	}
 	r, err := rpc.UserRegister(ctx, &userReq)
 	if err != nil {
+		logger.LogrusObj.Errorf("UserRegister:%v", err)
 		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "UserRegister RPC服务调用错误"))
 		return
 	}
@@ -31,7 +34,7 @@ func UserRegister(ctx *gin.Context) {
 // UserLogin 用户登录
 func UserLogin(ctx *gin.Context) {
 	var req pb.UserLoginReq
-	if err := ctx.Bind(&req); err != nil {
+	if err := ctx.ShouldBind(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, ctl.RespError(ctx, err, "绑定参数错误"))
 		return
 	}

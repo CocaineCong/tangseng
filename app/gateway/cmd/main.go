@@ -12,6 +12,7 @@ import (
 	"google.golang.org/grpc/resolver"
 
 	"github.com/CocaineCong/Go-SearchEngine/app/gateway/routes"
+	"github.com/CocaineCong/Go-SearchEngine/app/gateway/rpc"
 	"github.com/CocaineCong/Go-SearchEngine/config"
 	"github.com/CocaineCong/Go-SearchEngine/pkg/discovery"
 	"github.com/CocaineCong/Go-SearchEngine/pkg/util/shutdown"
@@ -19,6 +20,7 @@ import (
 
 func main() {
 	config.InitConfig()
+	rpc.Init()
 	// etcd注册
 	etcdAddress := []string{config.Conf.Etcd.Address}
 	etcdRegister := discovery.NewResolver(etcdAddress, logrus.New())
@@ -31,7 +33,6 @@ func main() {
 		s := <-osSignals
 		fmt.Println("exit! ", s)
 	}
-	fmt.Println("gateway listen on :3000")
 }
 
 func startListen() {
@@ -46,7 +47,9 @@ func startListen() {
 	if err := server.ListenAndServe(); err != nil {
 		fmt.Printf("绑定HTTP到 %s 失败！可能是端口已经被占用，或用户权限不足 \n", config.Conf.Server.Port)
 		fmt.Println(err)
+		return
 	}
+	fmt.Printf("gateway listen on :%v \n", config.Conf.Server.Port)
 	go func() {
 		// 优雅关闭
 		shutdown.GracefullyShutdown(server)

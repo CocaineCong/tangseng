@@ -159,8 +159,10 @@ type FavoriteCreateReq struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// @inject_tag:form:"favorite_name" uri:"favorite_name"
 	FavoriteName string `protobuf:"bytes,1,opt,name=favorite_name,json=favoriteName,proto3" json:"favorite_name,omitempty"`
-	UserId       int64  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// @inject_tag:form:"user_id" uri:"user_id"
+	UserId int64 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 }
 
 func (x *FavoriteCreateReq) Reset() {
@@ -214,8 +216,11 @@ type FavoriteUpdateReq struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	UserId       int64  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	FavoriteId   int64  `protobuf:"varint,2,opt,name=favorite_id,json=favoriteId,proto3" json:"favorite_id,omitempty"`
+	// @inject_tag:form:"user_id" uri:"user_id"
+	UserId int64 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// @inject_tag:form:"favorite_id" uri:"favorite_id"
+	FavoriteId int64 `protobuf:"varint,2,opt,name=favorite_id,json=favoriteId,proto3" json:"favorite_id,omitempty"`
+	// @inject_tag:form:"favorite_name" uri:"favorite_name"
 	FavoriteName string `protobuf:"bytes,3,opt,name=favorite_name,json=favoriteName,proto3" json:"favorite_name,omitempty"`
 }
 
@@ -277,7 +282,9 @@ type FavoriteListReq struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	UserId     int64 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// @inject_tag:form:"user_id" uri:"user_id"
+	UserId int64 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// @inject_tag:form:"favorite_id" uri:"favorite_id"
 	FavoriteId int64 `protobuf:"varint,2,opt,name=favorite_id,json=favoriteId,proto3" json:"favorite_id,omitempty"`
 }
 
@@ -332,7 +339,9 @@ type FavoriteDeleteReq struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	UserId     int64 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// @inject_tag:form:"user_id" uri:"user_id"
+	UserId int64 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// @inject_tag:form:"favorite_id" uri:"favorite_id"
 	FavoriteId int64 `protobuf:"varint,2,opt,name=favorite_id,json=favoriteId,proto3" json:"favorite_id,omitempty"`
 }
 
@@ -387,11 +396,16 @@ type FavoriteDetailCreateReq struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	UserId     int64  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	FavoriteId int64  `protobuf:"varint,2,opt,name=favorite_id,json=favoriteId,proto3" json:"favorite_id,omitempty"`
-	UrlId      int64  `protobuf:"varint,3,opt,name=url_id,json=urlId,proto3" json:"url_id,omitempty"`
-	Url        string `protobuf:"bytes,4,opt,name=url,proto3" json:"url,omitempty"`
-	Desc       string `protobuf:"bytes,5,opt,name=desc,proto3" json:"desc,omitempty"`
+	// @inject_tag:form:"user_id" uri:"user_id"
+	UserId int64 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// @inject_tag:form:"favorite_id" uri:"favorite_id"
+	FavoriteId int64 `protobuf:"varint,2,opt,name=favorite_id,json=favoriteId,proto3" json:"favorite_id,omitempty"`
+	// @inject_tag:form:"url_id" uri:"url_id"
+	UrlId int64 `protobuf:"varint,3,opt,name=url_id,json=urlId,proto3" json:"url_id,omitempty"`
+	// @inject_tag:form:"url" uri:"url"
+	Url string `protobuf:"bytes,4,opt,name=url,proto3" json:"url,omitempty"`
+	// @inject_tag:form:"desc" uri:"desc"
+	Desc string `protobuf:"bytes,5,opt,name=desc,proto3" json:"desc,omitempty"`
 }
 
 func (x *FavoriteDetailCreateReq) Reset() {
@@ -466,9 +480,12 @@ type FavoriteDetailListReq struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	UserId     int64 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// @inject_tag:form:"user_id" uri:"user_id"
+	UserId int64 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// @inject_tag:form:"favorite_id" uri:"favorite_id"
 	FavoriteId int64 `protobuf:"varint,2,opt,name=favorite_id,json=favoriteId,proto3" json:"favorite_id,omitempty"`
-	UrlId      int64 `protobuf:"varint,3,opt,name=url_id,json=urlId,proto3" json:"url_id,omitempty"`
+	// @inject_tag:form:"url_id" uri:"url_id"
+	UrlId int64 `protobuf:"varint,3,opt,name=url_id,json=urlId,proto3" json:"url_id,omitempty"`
 }
 
 func (x *FavoriteDetailListReq) Reset() {
@@ -529,9 +546,12 @@ type FavoriteDetailDeleteReq struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	FavoriteId       int64 `protobuf:"varint,1,opt,name=favorite_id,json=favoriteId,proto3" json:"favorite_id,omitempty"`
+	// @inject_tag:form:"favorite_id" uri:"favorite_id"
+	FavoriteId int64 `protobuf:"varint,1,opt,name=favorite_id,json=favoriteId,proto3" json:"favorite_id,omitempty"`
+	// @inject_tag:form:"favorite_detail_id" uri:"favorite_detail_id"
 	FavoriteDetailId int64 `protobuf:"varint,2,opt,name=favorite_detail_id,json=favoriteDetailId,proto3" json:"favorite_detail_id,omitempty"`
-	UserId           int64 `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// @inject_tag:form:"user_id" uri:"user_id"
+	UserId int64 `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 }
 
 func (x *FavoriteDetailDeleteReq) Reset() {

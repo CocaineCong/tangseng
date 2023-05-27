@@ -15,43 +15,63 @@ message FavoriteResp {
 }
 
 message FavoriteCreateReq {
+	// @inject_tag:form:"favorite_name" uri:"favorite_name"
 	string favorite_name = 1;
+	// @inject_tag:form:"user_id" uri:"user_id"
 	int64 user_id = 2;
 }
 
 message FavoriteUpdateReq {
+	// @inject_tag:form:"user_id" uri:"user_id"
 	int64 user_id = 1;
+	// @inject_tag:form:"favorite_id" uri:"favorite_id"
 	int64 favorite_id = 2;
+	// @inject_tag:form:"favorite_name" uri:"favorite_name"
 	string favorite_name = 3;
 }
 
 message FavoriteListReq {
+	// @inject_tag:form:"user_id" uri:"user_id"
 	int64 user_id = 1;
+	// @inject_tag:form:"favorite_id" uri:"favorite_id"
 	int64 favorite_id = 2;
 }
 
 message FavoriteDeleteReq {
+	// @inject_tag:form:"user_id" uri:"user_id"
 	int64 user_id = 1;
+	// @inject_tag:form:"favorite_id" uri:"favorite_id"
 	int64 favorite_id = 2;
 }
 
 message FavoriteDetailCreateReq {
+	// @inject_tag:form:"user_id" uri:"user_id"
 	int64 user_id = 1;
+	// @inject_tag:form:"favorite_id" uri:"favorite_id"
 	int64 favorite_id = 2;
+	// @inject_tag:form:"url_id" uri:"url_id"
 	int64 url_id = 3;
+	// @inject_tag:form:"url" uri:"url"
 	string url = 4;
+	// @inject_tag:form:"desc" uri:"desc"
 	string desc = 5;
 }
 
 message FavoriteDetailListReq {
+	// @inject_tag:form:"user_id" uri:"user_id"
 	int64 user_id = 1;
+	// @inject_tag:form:"favorite_id" uri:"favorite_id"
 	int64 favorite_id = 2;
+	// @inject_tag:form:"url_id" uri:"url_id"
 	int64 url_id = 3;
 }
 
 message FavoriteDetailDeleteReq {
+	// @inject_tag:form:"favorite_id" uri:"favorite_id"
 	int64 favorite_id = 1;
+	// @inject_tag:form:"favorite_detail_id" uri:"favorite_detail_id"
 	int64 favorite_detail_id = 2;
+	// @inject_tag:form:"user_id" uri:"user_id"
 	int64 user_id = 3;
 }
 
