@@ -41,7 +41,7 @@ func (dao *FavoriteDetailDao) ListFavoriteDetail(req *favoritePb.FavoriteDetailL
 	var f []*model.Favorite
 	dao.DB.Where("user_id = ?", req.UserId).Find(&f)
 	for _, v := range f {
-		_ = dao.DB.Model(&v).Association("FavoritesDetail").Find(&v.FavoriteDetail)
+		_ = dao.DB.Model(&v).Association("FavoriteDetail").Find(&v.FavoriteDetail)
 		r = append(r, v)
 	}
 
@@ -53,6 +53,6 @@ func (dao *FavoriteDetailDao) DeleteFavoriteDetail(req *favoritePb.FavoriteDetai
 	var fd model.FavoriteDetail
 	dao.DB.Where("favorite_id = ?", req.FavoriteId).First(&f)
 	dao.DB.Where("favorite_detail_id = ?", req.FavoriteDetailId).First(&fd)
-	err := dao.DB.Model(&f).Association("FavoritesDetail").Delete(&fd)
+	err := dao.DB.Model(&f).Association("FavoriteDetail").Delete(&fd)
 	return err
 }

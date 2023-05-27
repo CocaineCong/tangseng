@@ -17,9 +17,9 @@ func FavoriteRegisterHandlers(rg *gin.RouterGroup) {
 
 	favoriteDetailGroup := rg.Group("/favorite_detail")
 	{
-		favoriteDetailGroup.POST("/create", handler.ListFavoriteDetail)
-		favoriteDetailGroup.GET("/list", handler.CreateFavoriteDetail)
-		favoriteDetailGroup.POST("/update", handler.DeleteFavoriteDetail)
+		favoriteDetailGroup.POST("/create", handler.CreateFavoriteDetail)
+		favoriteDetailGroup.GET("/list", handler.ListFavoriteDetail)
+		favoriteDetailGroup.POST("/delete", handler.DeleteFavoriteDetail)
 	}
 
 }
