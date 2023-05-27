@@ -24,3 +24,4 @@ app/gateway/logs
 app/favorites/logs
 app/search-engine/logs
 app/search-engine/internal/data
+logs
