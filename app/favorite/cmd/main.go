@@ -7,8 +7,8 @@ import (
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 
-	"github.com/CocaineCong/Go-SearchEngine/app/favorites/internal/repository/db/dao"
-	"github.com/CocaineCong/Go-SearchEngine/app/favorites/internal/service"
+	"github.com/CocaineCong/Go-SearchEngine/app/favorite/internal/repository/db/dao"
+	"github.com/CocaineCong/Go-SearchEngine/app/favorite/internal/service"
 	"github.com/CocaineCong/Go-SearchEngine/config"
 	favoritePb "github.com/CocaineCong/Go-SearchEngine/idl/pb/favorite"
 	"github.com/CocaineCong/Go-SearchEngine/pkg/discovery"

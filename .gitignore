@@ -15,13 +15,13 @@
 # vendor/
 
 config/config.yml
-app/favorites/config/config.yml
+app/favorite/config/config.yml
 app/search-engine/config/config.yml
 app/user/config/config.yml
 .idea
 app/user/logs
 app/gateway/logs
-app/favorites/logs
+app/favorite/logs
 app/search-engine/logs
 app/search-engine/internal/data
 logs

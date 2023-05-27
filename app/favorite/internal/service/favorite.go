@@ -4,8 +4,8 @@ import (
 	"context"
 	"sync"
 
-	"github.com/CocaineCong/Go-SearchEngine/app/favorites/internal/repository/db/dao"
-	"github.com/CocaineCong/Go-SearchEngine/app/favorites/internal/repository/db/model"
+	"github.com/CocaineCong/Go-SearchEngine/app/favorite/internal/repository/db/dao"
+	"github.com/CocaineCong/Go-SearchEngine/app/favorite/internal/repository/db/model"
 	e2 "github.com/CocaineCong/Go-SearchEngine/consts/e"
 	pb "github.com/CocaineCong/Go-SearchEngine/idl/pb/favorite"
 )

@@ -5,9 +5,10 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/CocaineCong/Go-SearchEngine/app/favorites/internal/repository/db/model"
-	favoritePb "github.com/CocaineCong/Go-SearchEngine/idl/pb/favorite"
 	logging "github.com/CocaineCong/Go-SearchEngine/pkg/util/logger"
+
+	"github.com/CocaineCong/Go-SearchEngine/app/favorite/internal/repository/db/model"
+	favoritePb "github.com/CocaineCong/Go-SearchEngine/idl/pb/favorite"
 )
 
 type FavoriteDao struct {
