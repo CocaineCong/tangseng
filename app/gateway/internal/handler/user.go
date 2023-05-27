@@ -9,7 +9,7 @@ import (
 	pb "github.com/CocaineCong/Go-SearchEngine/idl/pb/user"
 	"github.com/CocaineCong/Go-SearchEngine/pkg/ctl"
 	"github.com/CocaineCong/Go-SearchEngine/pkg/jwt"
-	"github.com/CocaineCong/Go-SearchEngine/pkg/util/logger"
+	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
 	"github.com/CocaineCong/Go-SearchEngine/types"
 )
 
@@ -17,13 +17,13 @@ import (
 func UserRegister(ctx *gin.Context) {
 	var userReq pb.UserRegisterReq
 	if err := ctx.ShouldBind(&userReq); err != nil {
-		logger.LogrusObj.Errorf("Bind:%v", err)
+		log.LogrusObj.Errorf("Bind:%v", err)
 		ctx.JSON(http.StatusBadRequest, ctl.RespError(ctx, err, "绑定参数错误"))
 		return
 	}
 	r, err := rpc.UserRegister(ctx, &userReq)
 	if err != nil {
-		logger.LogrusObj.Errorf("UserRegister:%v", err)
+		log.LogrusObj.Errorf("UserRegister:%v", err)
 		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "UserRegister RPC服务调用错误"))
 		return
 	}
@@ -35,18 +35,21 @@ func UserRegister(ctx *gin.Context) {
 func UserLogin(ctx *gin.Context) {
 	var req pb.UserLoginReq
 	if err := ctx.ShouldBind(&req); err != nil {
+		log.LogrusObj.Errorf("Bind:%v", err)
 		ctx.JSON(http.StatusBadRequest, ctl.RespError(ctx, err, "绑定参数错误"))
 		return
 	}
 
 	userResp, err := rpc.UserLogin(ctx, &req)
 	if err != nil {
+		log.LogrusObj.Errorf("RPC UserLogin:%v", err)
 		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "UserLogin RPC服务调用错误"))
 		return
 	}
 
 	aToken, rToken, err := jwt.GenerateToken(userResp.UserDetail.UserId, userResp.UserDetail.UserName)
 	if err != nil {
+		log.LogrusObj.Errorf("RPC GenerateToken:%v", err)
 		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "加密错误"))
 		return
 	}

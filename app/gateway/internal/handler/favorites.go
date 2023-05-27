@@ -8,22 +8,26 @@ import (
 	"github.com/CocaineCong/Go-SearchEngine/app/gateway/rpc"
 	pb "github.com/CocaineCong/Go-SearchEngine/idl/pb/favorite"
 	"github.com/CocaineCong/Go-SearchEngine/pkg/ctl"
+	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
 )
 
 func ListFavorite(ctx *gin.Context) {
 	var req pb.FavoriteListReq
 	if err := ctx.Bind(&req); err != nil {
+		log.LogrusObj.Errorf("Bind:%v", err)
 		ctx.JSON(http.StatusBadRequest, ctl.RespError(ctx, err, "绑定参数错误"))
 		return
 	}
 	user, err := ctl.GetUserInfo(ctx.Request.Context())
 	if err != nil {
+		log.LogrusObj.Errorf("GetUserInfo:%v", err)
 		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "获取用户信息错误"))
 		return
 	}
 	req.UserId = user.Id
 	r, err := rpc.FavoriteList(ctx, &req)
 	if err != nil {
+		log.LogrusObj.Errorf("FavoriteList:%v", err)
 		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "FavoriteList RPC服务调用错误"))
 		return
 	}
@@ -34,17 +38,20 @@ func ListFavorite(ctx *gin.Context) {
 func CreateFavorite(ctx *gin.Context) {
 	var req pb.FavoriteCreateReq
 	if err := ctx.ShouldBind(&req); err != nil {
+		log.LogrusObj.Errorf("ShouldBind:%v", err)
 		ctx.JSON(http.StatusBadRequest, ctl.RespError(ctx, err, "绑定参数错误"))
 		return
 	}
 	user, err := ctl.GetUserInfo(ctx.Request.Context())
 	if err != nil {
+		log.LogrusObj.Errorf("GetUserInfo:%v", err)
 		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "获取用户信息错误"))
 		return
 	}
 	req.UserId = user.Id
 	r, err := rpc.FavoriteCreate(ctx, &req)
 	if err != nil {
+		log.LogrusObj.Errorf("FavoriteCreate:%v", err)
 		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "FavoriteCreateReq RPC服务调用错误"))
 		return
 	}
@@ -55,17 +62,20 @@ func CreateFavorite(ctx *gin.Context) {
 func UpdateFavorite(ctx *gin.Context) {
 	var req pb.FavoriteCreateReq
 	if err := ctx.Bind(&req); err != nil {
+		log.LogrusObj.Errorf("Bind:%v", err)
 		ctx.JSON(http.StatusBadRequest, ctl.RespError(ctx, err, "绑定参数错误"))
 		return
 	}
 	user, err := ctl.GetUserInfo(ctx.Request.Context())
 	if err != nil {
+		log.LogrusObj.Errorf("GetUserInfo:%v", err)
 		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "获取用户信息错误"))
 		return
 	}
 	req.UserId = user.Id
 	r, err := rpc.FavoriteCreate(ctx, &req)
 	if err != nil {
+		log.LogrusObj.Errorf("FavoriteCreate:%v", err)
 		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "UpdateFavorite RPC服务调用错误"))
 		return
 	}
@@ -76,17 +86,20 @@ func UpdateFavorite(ctx *gin.Context) {
 func DeleteFavorite(ctx *gin.Context) {
 	var req pb.FavoriteDeleteReq
 	if err := ctx.Bind(&req); err != nil {
+		log.LogrusObj.Errorf("req:%v", err)
 		ctx.JSON(http.StatusBadRequest, ctl.RespError(ctx, err, "绑定参数错误"))
 		return
 	}
 	user, err := ctl.GetUserInfo(ctx.Request.Context())
 	if err != nil {
+		log.LogrusObj.Errorf("GetUserInfo:%v", err)
 		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "获取用户信息错误"))
 		return
 	}
 	req.UserId = user.Id
 	r, err := rpc.FavoriteDelete(ctx, &req)
 	if err != nil {
+		log.LogrusObj.Errorf("FavoriteDelete:%v", err)
 		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "DeleteFavorite RPC服务调用错误"))
 		return
 	}
@@ -97,17 +110,20 @@ func DeleteFavorite(ctx *gin.Context) {
 func ListFavoriteDetail(ctx *gin.Context) {
 	var req pb.FavoriteDetailListReq
 	if err := ctx.Bind(&req); err != nil {
+		log.LogrusObj.Errorf("Bind:%v", err)
 		ctx.JSON(http.StatusBadRequest, ctl.RespError(ctx, err, "绑定参数错误"))
 		return
 	}
 	user, err := ctl.GetUserInfo(ctx.Request.Context())
 	if err != nil {
+		log.LogrusObj.Errorf("GetUserInfo:%v", err)
 		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "获取用户信息错误"))
 		return
 	}
 	req.UserId = user.Id
 	r, err := rpc.FavoriteDetailList(ctx, &req)
 	if err != nil {
+		log.LogrusObj.Errorf("FavoriteDetailList:%v", err)
 		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "FavoriteDetailList RPC服务调用错误"))
 		return
 	}
@@ -118,17 +134,20 @@ func ListFavoriteDetail(ctx *gin.Context) {
 func CreateFavoriteDetail(ctx *gin.Context) {
 	var req pb.FavoriteDetailCreateReq
 	if err := ctx.Bind(&req); err != nil {
+		log.LogrusObj.Errorf("Bind:%v", err)
 		ctx.JSON(http.StatusBadRequest, ctl.RespError(ctx, err, "绑定参数错误"))
 		return
 	}
 	user, err := ctl.GetUserInfo(ctx.Request.Context())
 	if err != nil {
+		log.LogrusObj.Errorf("GetUserInfo:%v", err)
 		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "获取用户信息错误"))
 		return
 	}
 	req.UserId = user.Id
 	r, err := rpc.FavoriteDetailCreate(ctx, &req)
 	if err != nil {
+		log.LogrusObj.Errorf("FavoriteDetailCreate:%v", err)
 		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "FavoriteDetailCreate RPC服务调用错误"))
 		return
 	}
@@ -139,17 +158,20 @@ func CreateFavoriteDetail(ctx *gin.Context) {
 func DeleteFavoriteDetail(ctx *gin.Context) {
 	var req pb.FavoriteDetailDeleteReq
 	if err := ctx.Bind(&req); err != nil {
+		log.LogrusObj.Errorf("Bind:%v", err)
 		ctx.JSON(http.StatusBadRequest, ctl.RespError(ctx, err, "绑定参数错误"))
 		return
 	}
 	user, err := ctl.GetUserInfo(ctx.Request.Context())
 	if err != nil {
+		log.LogrusObj.Errorf("GetUserInfo:%v", err)
 		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "获取用户信息错误"))
 		return
 	}
 	req.UserId = user.Id
 	r, err := rpc.FavoriteDetailDelete(ctx, &req)
 	if err != nil {
+		log.LogrusObj.Errorf("FavoriteDetailDelete:%v", err)
 		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "FavoriteDetailDelete RPC服务调用错误"))
 		return
 	}
