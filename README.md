@@ -19,6 +19,19 @@
 - 创建/更新/删除/展示 收藏夹
 - 将搜索结果的url进行收藏夹的创建/删除/展示
 
+## 3. 搜索模块
+- 重构中...
+
+# 未来规划
+
+## 1.架构相关
+- [ ] 引入降级熔断
+- [ ] 引入jaeger进行链路追踪
+- [ ] 引入skywalking进行监控
+
+## 2.功能相关
+...
+
 # 项目主要依赖
 - gin
 - gorm
@@ -92,7 +105,8 @@ user/
 
 # 项目文件配置
 
-各模块下的`config/config.yml`文件
+将config文件夹下的`config.yml.example`文件重命名成`config.yml`即可。
+
 ```yaml
 server:
   port: :4000
@@ -148,6 +162,41 @@ domain:
     name: favorite
   searchEngine:
     name: searchEngine
+```
+
+
+# 项目启动
+## makefile启动
+
+启动命令
+
+```shell
+make env-up         # 启动容器环境
+make user           # 启动用户摸块
+make task           # 启动任务模块
+make gateway        # 启动网关
+make env-down       # 关闭并删除容器环境
+```
+
+其他命令
+```shell
+make proto # 生成proto文件，如果proto有改变的话，则需要重新生成文件
+```
+生成.pb文件所需要的工具有`protoc-gen-go`,`protoc-gen-go-grpc`,`protoc-go-inject-tag`
+
+
+## 手动启动
+
+1. 利用compose快速构建环境
+
+```shell
+docker-compose up -d
+```
+
+2. 保证mysql,etcd活跃, 在 app 文件夹下的各个模块的 cmd 下执行
+
+```go
+go run main.go
 ```
 
 # 导入接口文档
