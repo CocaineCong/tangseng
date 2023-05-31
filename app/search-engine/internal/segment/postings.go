@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"encoding/binary"
 
-	"github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/utils"
 	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
+	"github.com/CocaineCong/Go-SearchEngine/pkg/util/se"
 )
 
 // PostingsList 倒排列表
@@ -102,22 +102,22 @@ func decodePostings(buf *bytes.Buffer) (*PostingsList, int64, error) {
 // EncodePostings 编码
 func EncodePostings(postings *PostingsList, postingsLen int64) (*bytes.Buffer, error) {
 	buf := bytes.NewBuffer([]byte{})
-	err := utils.BinaryWrite(buf, postingsLen)
+	err := se.BinaryWrite(buf, postingsLen)
 	if err != nil {
 		return nil, err
 	}
 
 	for postings != nil {
 		log.LogrusObj.Infof("docid:%d,count:%d,positions:%v \n", postings.DocId, postings.PositionCount, postings.Positions)
-		err := utils.BinaryWrite(buf, postings.DocId)
+		err := se.BinaryWrite(buf, postings.DocId)
 		if err != nil {
 			return nil, err
 		}
-		err = utils.BinaryWrite(buf, postings.PositionCount)
+		err = se.BinaryWrite(buf, postings.PositionCount)
 		if err != nil {
 			return nil, err
 		}
-		err = utils.BinaryWrite(buf, postings.Positions)
+		err = se.BinaryWrite(buf, postings.Positions)
 		if err != nil {
 			return nil, err
 		}

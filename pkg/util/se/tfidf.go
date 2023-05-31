@@ -1,12 +1,13 @@
-package utils
+package se
 
 import (
 	"fmt"
+	"math"
+	"time"
+
 	_ "gonum.org/v1/gonum/blas/blas64"
 	"gonum.org/v1/gonum/floats"
 	"gonum.org/v1/gonum/mat"
-	"math"
-	"time"
 )
 
 type wordTfIdf struct {
@@ -105,7 +106,6 @@ func FeatureSelect(listWords [][]string) *mat.Dense {
 	}
 	return tfIdf
 }
-
 
 func getKeys(m map[string]float64) []string {
 	// 数组默认长度为map长度,后面append时,不需要重新申请内存和拷贝,效率很高
@@ -296,7 +296,7 @@ func DocsScore(qWords []string) *mat.Dense {
 	} else {
 		_idf, _tf_idf = idf, tfIdf
 	}
-	//fmt.Println(_idf)
+	// fmt.Println(_idf)
 	r, _ := _idf.Caps()
 	qTf := mat.NewDense(r, 1, nil)
 	qFrequency := make(map[string]int, 0)
@@ -351,4 +351,3 @@ func Reverse(arr *[]int) {
 		(*arr)[length-1-i] = temp
 	}
 }
-

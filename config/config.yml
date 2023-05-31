@@ -51,6 +51,15 @@ services:
     addr:
       - 127.0.0.1:10004
 
+SeConfig:
+  Version: "1.0.0"
+  StoragePath: "../data"
+  SourceFiles:
+    - "./source"
+    - "./"
+  MergeChannelSize:
+
+
 domain:
   user:
     name: user

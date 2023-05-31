@@ -4,7 +4,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/utils"
+	"github.com/CocaineCong/Go-SearchEngine/pkg/util/se"
 )
 
 // 倒排索引
@@ -32,7 +32,7 @@ func GetIndexSet(setFilePath string) *Set {
 	if err != nil { // 文件不存在则新建索引集合
 		indexSet := NewSet()
 		indexSet.Path = setFilePath
-		_, err := utils.DumpJson(setFilePath, indexSet)
+		_, err := se.DumpJson(setFilePath, indexSet)
 		if err != nil {
 			panic(err)
 		}
@@ -41,12 +41,12 @@ func GetIndexSet(setFilePath string) *Set {
 	}
 
 	indexSet := &Set{}
-	utils.LoadJson(setFilePath, indexSet)
+	se.LoadJson(setFilePath, indexSet)
 	return indexSet
 }
 
 func (indexSet *Set) Save() {
-	_, err := utils.DumpJson(indexSet.Path, indexSet)
+	_, err := se.DumpJson(indexSet.Path, indexSet)
 	if err != nil {
 		panic(err)
 	}
@@ -67,7 +67,7 @@ func GetRevIndex(revIndexFilePath string) *RevIndex {
 	if err != nil { // 文件不存在则新建索引集合
 		revIndex := NewRevIndex(indexName)
 		revIndex.Path = revIndexFilePath
-		_, err = utils.DumpJson(revIndexFilePath, revIndex)
+		_, err = se.DumpJson(revIndexFilePath, revIndex)
 		if err != nil {
 			panic(err)
 		}
@@ -76,12 +76,12 @@ func GetRevIndex(revIndexFilePath string) *RevIndex {
 	}
 
 	revIndex := &RevIndex{}
-	utils.LoadJson(revIndexFilePath, revIndex)
+	se.LoadJson(revIndexFilePath, revIndex)
 	return revIndex
 }
 
 func (revIndex *RevIndex) Save() {
-	_, err := utils.DumpJson(revIndex.Path, revIndex)
+	_, err := se.DumpJson(revIndex.Path, revIndex)
 	if err != nil {
 		panic(err)
 	}

@@ -10,7 +10,7 @@ import (
 
 	"github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/index"
 	inputData "github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/inputdata"
-	"github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/utils"
+	"github.com/CocaineCong/Go-SearchEngine/pkg/util/se"
 )
 
 type Table struct {
@@ -26,7 +26,7 @@ const (
 
 // select * from "abc" where viisible = 1
 func NewTable(name string) *Table {
-	utils.DirCHeckAndMk(path.Join(BasePathDir, name))
+	se.DirCHeckAndMk(path.Join(BasePathDir, name))
 	return &Table{
 		Name: name,
 	}
@@ -57,8 +57,8 @@ func GetTable(name string) *Table {
 
 	// 倒排文件
 	indexDir := path.Join(tableDir, "index")
-	utils.DirCHeckAndMk(indexDir)
-	files := utils.Walk(indexDir) // 倒排索引存放位置  // ./data/abc/index/rev_def
+	se.DirCHeckAndMk(indexDir)
+	files := se.Walk(indexDir) // 倒排索引存放位置  // ./data/abc/index/rev_def
 	for _, revfilepath := range files {
 		if strings.Index(revfilepath, "rev_") != -1 { // 倒排索引文件
 			revIndex := index.GetRevIndex(revfilepath)
@@ -127,13 +127,13 @@ func (t *Table) Save() {
 	defer t.mu.Unlock()
 
 	// 索引去重
-	t.IndexSet.Sets = utils.ArrayUnique(t.IndexSet.Sets)
+	t.IndexSet.Sets = se.ArrayUnique(t.IndexSet.Sets)
 	t.IndexSet.Save()
 
 	// 倒排去重
 	for index, revIndex := range t.RevIndex {
 		for val, _ := range revIndex.Data {
-			t.RevIndex[index].Data[val] = utils.ArrayUnique(t.RevIndex[index].Data[val])
+			t.RevIndex[index].Data[val] = se.ArrayUnique(t.RevIndex[index].Data[val])
 			t.RevIndex[index].Save()
 		}
 	}
@@ -189,7 +189,7 @@ func (t *Table) MultiSearch(indexName string, value []string) ([]string, error) 
 		ret = append(ret, res...)
 	}
 
-	return utils.ArrayUnique(ret), nil
+	return se.ArrayUnique(ret), nil
 }
 
 // AllIndex 获取所有index的倒排索引 todo::考虑limit

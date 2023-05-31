@@ -16,6 +16,14 @@ type Config struct {
 	Es       *Es                 `yaml:"es"`
 	Services map[string]*Service `yaml:"services"`
 	Domain   map[string]*Domain  `yaml:"domain"`
+	SeConfig *SeConfig           `yaml:"seConfig"`
+}
+
+type SeConfig struct {
+	StoragePath      string   `yaml:"storagePath"`
+	SourceFiles      []string `yaml:"sourceFiles"`
+	MergeChannelSize int64    `yaml:"mergeChannelSize"`
+	Version          string   `yaml:"version"`
 }
 
 type Server struct {

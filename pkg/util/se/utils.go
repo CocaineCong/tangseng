@@ -1,4 +1,4 @@
-package utils
+package se
 
 import (
 	"bytes"
@@ -47,7 +47,7 @@ func GetWd() string {
 	dataDir := ".tversion"
 	dataPath := path.Join(cpath, dataDir)
 	_, err = os.Stat(dataPath)
-	if err != nil { //文件不存在
+	if err != nil { // 文件不存在
 		err = os.Mkdir(dataPath, os.ModePerm)
 		if err != nil {
 			fmt.Printf("permission denied![%v]\n", err)
@@ -83,12 +83,12 @@ func CopyFile(src, dst string) (int64, error) {
 	return nBytes, err
 }
 
-func ArrayUnique(arr []string) []string{
+func ArrayUnique(arr []string) []string {
 	size := len(arr)
 	result := make([]string, 0, size)
 	temp := map[string]struct{}{}
-	for i:=0; i < size; i++ {
-		if _,ok := temp[arr[i]]; ok != true {
+	for i := 0; i < size; i++ {
+		if _, ok := temp[arr[i]]; ok != true {
 			temp[arr[i]] = struct{}{}
 			result = append(result, arr[i])
 		}

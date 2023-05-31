@@ -13,7 +13,7 @@ import (
 	_ "github.com/go-sql-driver/mysql" // 初始化
 	"gonum.org/v1/gonum/floats"
 
-	"github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/utils"
+	"github.com/CocaineCong/Go-SearchEngine/pkg/util/se"
 )
 
 var (
@@ -112,13 +112,13 @@ func main() {
 			}
 		}
 		// fmt.Println(docs)
-		utils.FeatureSelect(docs)
-		scores := utils.DocsScore(slice)
-		score := utils.Dense2slice(scores)
+		se.FeatureSelect(docs)
+		scores := se.DocsScore(slice)
+		score := se.Dense2slice(scores)
 		inds := make([]int, len(score))
 		floats.Argsort(score, inds)
 		last3 := inds[len(inds)-3:]
-		utils.Reverse(&last3)
+		se.Reverse(&last3)
 		// fmt.Println(last3)
 		fmt.Println("query:", query)
 		fmt.Println("最相似的三个结果")

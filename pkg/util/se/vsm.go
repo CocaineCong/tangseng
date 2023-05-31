@@ -1,4 +1,4 @@
-package utils
+package se
 
 import "math"
 
