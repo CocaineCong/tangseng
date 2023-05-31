@@ -60,3 +60,17 @@ func (m *SegMeta) UpdateSegMeta(segId SegId, indexCount int64) error {
 
 	return nil
 }
+
+func (m *SegMeta) NewSegmentItem() error {
+	m.Lock()
+	defer m.Unlock()
+	seg := newSegmentInfo(m.NextSeg)
+	if _, ok := m.SegInfo[seg.SegId]; ok {
+		return fmt.Errorf("seg:%d is exist", seg.SegId)
+	}
+	m.SegInfo[seg.SegId] = seg
+	m.SegCount++
+	m.NextSeg++
+
+	return nil
+}
