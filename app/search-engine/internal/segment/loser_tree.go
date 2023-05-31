@@ -1,6 +1,9 @@
 package segment
 
 import (
+	"bytes"
+	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/storage"
@@ -146,4 +149,75 @@ func (lt *LoserTree) Pop() (res *TermNode) {
 	time.Sleep(1e8)
 
 	return res
+}
+
+// MergeKTermSegments 多路归并，合并term数据，合并后需要一起处理合并倒排表数据
+func MergeKTermSegments(list []*TermNode, chList []chan storage.KvInfo) (InvertedIndexHash, error) {
+	// 初始化
+	lt := NewSegLoserTree(list, chList)
+	res := make(InvertedIndexHash)
+
+	for {
+		node := lt.Pop()
+		if node == nil {
+			break
+		}
+		log.LogrusObj.Infof("pop node key:%+v,value:%v", string(node.Key), node.Value)
+		val, err := storage.Bytes2TermVal(node.Value)
+		if err != nil {
+			return nil, err
+		}
+		log.LogrusObj.Infof("val:%+v", val)
+		c, err := node.Seg.GetInvertedDoc(val.Offset, val.Size)
+		if err != nil {
+			return nil, fmt.Errorf("FetchPostings getDocInfo err: %v", err)
+		}
+		pos, count, err := decodePostings(bytes.NewBuffer(c))
+		if err != nil {
+			return nil, fmt.Errorf("FetchPostings decodePostings err: %v", err)
+		}
+		log.LogrusObj.Infof("pop node key:%+v,value:%v,count:%d", string(node.Key), val, count)
+		if p, ok := res[string(node.Key)]; ok {
+			p.DocCount += count
+			p.PostingsList = MergePostings(p.PostingsList, pos)
+			continue
+		}
+		res[string(node.Key)] = &InvertedIndexValue{
+			Token:        string(node.Key),
+			DocCount:     count,
+			PostingsList: pos,
+		}
+	}
+
+	return res, nil
+}
+
+// MergeKForwardSegments 合并正排
+func MergeKForwardSegments(seg *Segment, list []*TermNode, chList []chan storage.KvInfo) error {
+	// 初始化
+	lt := NewSegLoserTree(list, chList)
+	count := uint64(0)
+	for {
+		node := lt.Pop()
+		if node == nil {
+			break
+		}
+		// 正排中的总数，需要单独操作 TODO 正排总数字段考虑下其他存储or实现方式
+		if string(node.Key) == storage.ForwardCountKey {
+			c, err := strconv.Atoi(string(node.Value))
+			if err != nil {
+				return fmt.Errorf("strconv.Atoi err:%s", err)
+			}
+			count += uint64(c)
+			continue
+		}
+		err := seg.PutForwardByKV(node.Key, node.Value)
+		if err != nil {
+			return fmt.Errorf("Put Error:%v", err)
+		}
+		log.LogrusObj.Infof("pop node key:%s,value:%s", node.Key, node.Value)
+
+	}
+	// 更新count
+	return seg.UpdateForwardCount(count)
 }

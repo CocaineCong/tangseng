@@ -6,7 +6,7 @@ import (
 	"github.com/boltdb/bolt"
 	"github.com/spf13/cast"
 
-	logging "github.com/CocaineCong/Go-SearchEngine/pkg/util/logger"
+	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
 )
 
 const forwardBucket = "forward"
@@ -40,6 +40,11 @@ func (f *ForwardDB) ForwardCount() (r int64, err error) {
 	return
 }
 
+// UpdateForwardCount 获取文档总数
+func (f *ForwardDB) UpdateForwardCount(count uint64) error {
+	return Put(f.db, forwardBucket, []byte(ForwardCountKey), []byte(cast.ToString(count)))
+}
+
 // GetForward 获取forward数据
 func (f *ForwardDB) GetForward(docId int64) (r []byte, err error) {
 	return Get(f.db, forwardBucket, []byte(cast.ToString(docId)))
@@ -67,7 +72,7 @@ func (f *ForwardDB) Close() error {
 func NewForwardDB(dbName string) (*ForwardDB, error) {
 	db, err := bolt.Open(dbName, 0600, nil)
 	if err != nil {
-		logging.LogrusObj.Errorf("NewForwardDB: %v", err.Error())
+		log.LogrusObj.Errorf("NewForwardDB: %v", err.Error())
 		return nil, err
 	}
 
