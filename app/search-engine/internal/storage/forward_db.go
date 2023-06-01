@@ -41,7 +41,7 @@ func (f *ForwardDB) ForwardCount() (r int64, err error) {
 }
 
 // UpdateForwardCount 获取文档总数
-func (f *ForwardDB) UpdateForwardCount(count uint64) error {
+func (f *ForwardDB) UpdateForwardCount(count int64) error {
 	return Put(f.db, forwardBucket, []byte(ForwardCountKey), []byte(cast.ToString(count)))
 }
 

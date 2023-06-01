@@ -196,7 +196,7 @@ func MergeKTermSegments(list []*TermNode, chList []chan storage.KvInfo) (Inverte
 func MergeKForwardSegments(seg *Segment, list []*TermNode, chList []chan storage.KvInfo) error {
 	// 初始化
 	lt := NewSegLoserTree(list, chList)
-	count := uint64(0)
+	count := int64(0)
 	for {
 		node := lt.Pop()
 		if node == nil {
@@ -208,7 +208,7 @@ func MergeKForwardSegments(seg *Segment, list []*TermNode, chList []chan storage
 			if err != nil {
 				return fmt.Errorf("strconv.Atoi err:%s", err)
 			}
-			count += uint64(c)
+			count += int64(c)
 			continue
 		}
 		err := seg.PutForwardByKV(node.Key, node.Value)

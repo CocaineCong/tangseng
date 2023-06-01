@@ -116,6 +116,7 @@ func (e *Segment) Flush(PostingsHashBuf InvertedIndexHash) error {
 	return nil
 }
 
+// storagePostings 落盘
 func (e *Segment) storagePostings(p *InvertedIndexValue) error {
 	if p == nil {
 		return fmt.Errorf("updatePostings p is nil")
@@ -137,6 +138,33 @@ func (e *Segment) Close() {
 	e.ForwardDB.Close()
 }
 
-func NewSegments(meta *SegMeta) {
+// NewSegments 创建新的segments 更新next seg
+func NewSegments(meta *SegMeta, mode Mode) (SegId, map[SegId]*Segment) {
+	segs := make(map[SegId]*Segment, 0)
+	if mode == MergeMode || mode == IndexMode {
+		segId := meta.NextSeg
+		err := meta.NewSegmentItem()
+		if err != nil {
+			return 0, nil
+		}
+		seg := NewSegment(segId)
+		segs[segId] = seg
+		return segId, segs
+	}
+	log.LogrusObj.Infof("meta:%v", meta)
+	for segId := range meta.SegInfo {
+		seg := NewSegment(segId)
+		log.LogrusObj.Infof("db init segId:%v,next:%v", segId, meta.NextSeg)
+		segs[segId] = seg
+	}
 
+	return -1, segs
+}
+
+func NewSegment(segId SegId) *Segment {
+	inDb, forDb := SegmentDbInit(segId)
+	return &Segment{
+		InvertedDB: inDb,
+		ForwardDB:  forDb,
+	}
 }
