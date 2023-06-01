@@ -5,10 +5,9 @@ import (
 
 	"gorm.io/gorm"
 
-	logging "github.com/CocaineCong/Go-SearchEngine/pkg/util/logger"
-
 	"github.com/CocaineCong/Go-SearchEngine/app/favorite/internal/repository/db/model"
 	favoritePb "github.com/CocaineCong/Go-SearchEngine/idl/pb/favorite"
+	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
 )
 
 type FavoriteDao struct {
@@ -35,7 +34,7 @@ func (dao *FavoriteDao) CreateFavorite(req *favoritePb.FavoriteCreateReq) (err e
 		UserID:       req.UserId,
 	}
 	if err = dao.DB.Create(&favorite).Error; err != nil {
-		logging.LogrusObj.Error("Insert Favorite Error:" + err.Error())
+		log.LogrusObj.Error("Insert Favorite Error:" + err.Error())
 		return
 	}
 

@@ -13,7 +13,7 @@ import (
 	"gorm.io/gorm/schema"
 
 	"github.com/CocaineCong/Go-SearchEngine/config"
-	logging "github.com/CocaineCong/Go-SearchEngine/pkg/util/logger"
+	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
 )
 
 var _db *gorm.DB
@@ -30,7 +30,7 @@ func InitDB() {
 	err := Database(dsn)
 	if err != nil {
 		fmt.Println(err)
-		logging.LogrusObj.Error(err)
+		log.LogrusObj.Error(err)
 	}
 }
 

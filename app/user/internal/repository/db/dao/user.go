@@ -8,7 +8,7 @@ import (
 
 	"github.com/CocaineCong/Go-SearchEngine/app/user/internal/repository/db/model"
 	userPb "github.com/CocaineCong/Go-SearchEngine/idl/pb/user"
-	"github.com/CocaineCong/Go-SearchEngine/pkg/util/logger"
+	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
 )
 
 type UserDao struct {
@@ -42,7 +42,7 @@ func (dao *UserDao) CreateUser(req *userPb.UserRegisterReq) (err error) {
 	}
 	_ = user.SetPassword(req.Password)
 	if err = dao.Model(&model.User{}).Create(&user).Error; err != nil {
-		logger.LogrusObj.Error("Insert User Error:" + err.Error())
+		log.LogrusObj.Error("Insert User Error:" + err.Error())
 		return
 	}
 

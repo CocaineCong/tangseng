@@ -3,9 +3,8 @@ package dao
 import (
 	"os"
 
-	logging "github.com/CocaineCong/Go-SearchEngine/pkg/util/logger"
-
 	"github.com/CocaineCong/Go-SearchEngine/app/favorite/internal/repository/db/model"
+	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
 )
 
 func migration() {
@@ -16,8 +15,8 @@ func migration() {
 			&model.FavoriteDetail{},
 		)
 	if err != nil {
-		logging.LogrusObj.Infoln("register table fail")
+		log.LogrusObj.Infoln("register table fail")
 		os.Exit(0)
 	}
-	logging.LogrusObj.Infoln("register table success")
+	log.LogrusObj.Infoln("register table success")
 }

@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/CocaineCong/Go-SearchEngine/app/user/internal/repository/db/model"
-	"github.com/CocaineCong/Go-SearchEngine/pkg/util/logger"
+	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
 )
 
 // 自动迁移模式
@@ -14,8 +14,8 @@ func migration() {
 			&model.User{},
 		)
 	if err != nil {
-		logger.LogrusObj.Infoln("register table fail")
+		log.LogrusObj.Infoln("register table fail")
 		os.Exit(0)
 	}
-	logger.LogrusObj.Infoln("register table success")
+	log.LogrusObj.Infoln("register table success")
 }

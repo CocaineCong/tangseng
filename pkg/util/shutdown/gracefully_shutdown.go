@@ -7,7 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/CocaineCong/Go-SearchEngine/pkg/util/logger"
+	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
 )
 
 func GracefullyShutdown(server *http.Server) {
@@ -20,10 +20,10 @@ func GracefullyShutdown(server *http.Server) {
 	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 	<-done
 
-	logger.LogrusObj.Println("closing http server gracefully ...")
+	log.LogrusObj.Println("closing http server gracefully ...")
 
 	if err := server.Shutdown(context.Background()); err != nil {
-		logger.LogrusObj.Fatalln("closing http server gracefully failed: ", err)
+		log.LogrusObj.Fatalln("closing http server gracefully failed: ", err)
 	}
 
 }

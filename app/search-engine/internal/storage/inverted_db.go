@@ -8,7 +8,7 @@ import (
 
 	"github.com/boltdb/bolt"
 
-	logging "github.com/CocaineCong/Go-SearchEngine/pkg/util/logger"
+	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
 	"github.com/CocaineCong/Go-SearchEngine/pkg/util/se"
 )
 
@@ -35,16 +35,16 @@ type TermValue struct {
 func NewInvertedDB(termName, postingsName string) *InvertedDB {
 	f, err := os.OpenFile(postingsName, os.O_CREATE|os.O_RDWR, 0644)
 	if err != nil {
-		logging.LogrusObj.Error(err)
+		log.LogrusObj.Error(err)
 	}
 	stat, err := f.Stat()
 	if err != nil {
-		logging.LogrusObj.Error(err)
+		log.LogrusObj.Error(err)
 	}
-	logging.LogrusObj.Infof("start op bolt:%s", termName)
+	log.LogrusObj.Infof("start op bolt:%s", termName)
 	db, err := bolt.Open(termName, 0600, nil)
 	if err != nil {
-		logging.LogrusObj.Error(err)
+		log.LogrusObj.Error(err)
 	}
 	return &InvertedDB{f, db, stat.Size()}
 }
