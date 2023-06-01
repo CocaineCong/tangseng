@@ -160,10 +160,12 @@ func (r *Recall) searchDoc() (Recalls, error) {
 	return recalls, nil
 }
 
+// calculateScore 计算相关性
 func (r *Recall) calculateScore(cursor []searchCursor, tokenCount int64) float64 {
 	return 0.0
 }
 
+// searchPhrase 返回检索出的短语数 查询query的倒排索引 tokenCursors是fetched文档的倒排索引
 func (r *Recall) searchPhrase(queryToken []*queryTokenHash, tokenCursors []searchCursor) int64 {
 	// 获取遍历查询query分词之后的词元总数
 	positionsSum := int64(0)
@@ -272,6 +274,20 @@ func (r *Recall) fetchPostingsBySegs(token string) (*segment.PostingsList, int64
 	log.LogrusObj.Infof("token:%v,pos:%v,doc:%v", token, postings, docCount)
 
 	return postings, docCount, nil
+}
+
+// NewRecall --
+func NewRecall(meta *engine.Meta) *Recall {
+	e := engine.NewEngine(meta, segment.SearchMode)
+	docCount := int64(0)
+	for _, seg := range e.Seg {
+		num, err := seg.ForwardCount()
+		if err != nil {
+			log.LogrusObj.Errorf("error:%v", err)
+		}
+		docCount += num
+	}
+	return &Recall{e, docCount, true}
 }
 
 // 排序
