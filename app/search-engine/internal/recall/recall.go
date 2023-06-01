@@ -98,7 +98,146 @@ func (r *Recall) searchDoc() (Recalls, error) {
 		tokens = append(tokens, t)
 	}
 
-	tokens = r.s
+	tokens = r.sortToken(tokens)
+
+	tokenCount := len(tokens)
+
+	cursors := make([]searchCursor, tokenCount)
+	for i, t := range tokens {
+		cursors[i].doc = t.fetchPostings
+		cursors[i].current = t.fetchPostings
+	}
+
+	// 整个遍历token来匹配doc
+	for cursors[0].current != nil {
+		var docId, nextDocId int64
+		// 拥有文档最少的token作为标尺
+		docId = cursors[0].current.DocId
+
+		// 匹配其他token的doc
+		for i := 1; i < tokenCount; i++ {
+			cur := &cursors[i]
+			for cur.current != nil && cur.current.DocId < docId {
+				cur.current = cur.current.Next
+			}
+
+			// 存在token关联的docid都小雨cursors[0]的docid,则跳出
+			if cur.current == nil {
+				log.LogrusObj.Infof("cur.current is nil\n")
+				break
+			}
+
+			// 对于除词元A以外的词元，如果其他document_id不等于词元A的document_id,那么就将这个document_id设定为next_doc_id
+			if cur.current.DocId != docId {
+				nextDocId = cur.current.DocId
+				break
+			}
+		}
+
+		log.LogrusObj.Infof("当前doc id：%v，next doc id:%v", docId, nextDocId)
+		if nextDocId > 0 {
+			// 不断获取A的下一个document_id，直到其当前的document_id不小于next_doc_id为止
+			for cursors[0].current != nil && cursors[0].current.DocId < nextDocId {
+				cursors[0].current = cursors[0].current.Next
+			}
+		} else {
+			// 有匹配的docid
+			phraseCount := int64(-1)
+			if r.enablePhrase {
+				phraseCount = r.searchPhrase(tokens, cursors)
+			}
+			score := 0.0
+			if phraseCount > 0 {
+				r.calculateScore(cursors, int64(tokenCount)) // TODO:计算相关性
+			}
+			cursors[0].current = cursors[0].current.Next
+			log.LogrusObj.Infof("匹配召回docID:%v,nextDocID:%v,phrase:%d", docId, nextDocId, phraseCount)
+			recalls = append(recalls, &SearchItem{DocId: docId, Score: score})
+		}
+	}
+	log.LogrusObj.Infof("recalls size:%v", len(recalls))
+
+	return recalls, nil
+}
+
+func (r *Recall) calculateScore(cursor []searchCursor, tokenCount int64) float64 {
+	return 0.0
+}
+
+func (r *Recall) searchPhrase(queryToken []*queryTokenHash, tokenCursors []searchCursor) int64 {
+	// 获取遍历查询query分词之后的词元总数
+	positionsSum := int64(0)
+	for _, t := range queryToken {
+		positionsSum += t.invertedIndex.PositionCount
+	}
+	cursors := make([]phraseCursor, positionsSum)
+	phraseCount := int64(0)
+	// 初始化游标 获取token关联的第一篇doc的pos相关数据
+	n := 0
+	for i, t := range queryToken {
+		for _, pos := range t.invertedIndex.PostingsList.Positions {
+			cursors[n].base = pos                                    // 记录查询中出现的位置
+			cursors[n].positions = tokenCursors[i].current.Positions // 获取token关联的文件中token
+			cursors[n].current = &cursors[i].positions[0]            // 获取文档中出现的位置
+			cursors[n].index = 0                                     // 获取文档中出现的索引位置
+			log.LogrusObj.Infof("token:%s,pos:%v cur:%v,positions:%v",
+				t.token, pos, *cursors[n].current, cursors[n].positions)
+			n++
+		}
+	}
+
+	for cursors[0].current != nil {
+		var relPos, nextRelPos int64
+		relPos = *cursors[0].current - cursors[0].base
+		nextRelPos = relPos
+		// 对于除词元A以外的词元，不断地向后读取其出现位置，直到其偏移量不小于词元A的偏移量为止
+		for i := 1; i < len(cursors); i++ {
+			cur := &cursors[i]
+			for cur.current != nil && *cur.current-cur.base < relPos {
+				cur.index++
+				if cur.index >= len(cur.positions) {
+					log.LogrusObj.Infof("cur.index >= len(cur.positions)\n")
+					cur.current = nil
+					break
+				}
+				cur.current = &cur.positions[cur.index]
+			}
+			if cur.current == nil {
+				break
+			}
+			if *cur.current-cur.base != relPos {
+				nextRelPos = *cur.current - cur.base
+				break
+			}
+		}
+
+		if nextRelPos > relPos {
+			// 不断向后读取，直到词元A的偏移量不小于next rel position为止
+			for cursors[0].current != nil && *cursors[0].current-cursors[0].base < nextRelPos {
+				cursors[0].index++
+				if cursors[0].index >= len(cursors[0].positions) {
+					log.LogrusObj.Infof("cursors[0].index >= len(cursors[0].positions)\n")
+					cursors[0].current = nil
+					break
+				}
+				cursors[0].current = &cursors[0].positions[cursors[0].index]
+			}
+		} else {
+			// 找到短语
+			phraseCount++
+			cursors[0].index++
+			// 判断是否有下一个命中的短语
+			if cursors[0].index >= len(cursors[0].positions) {
+				log.LogrusObj.Infof("cursors[0].index:%d>= len(cursors[0].positions):%d",
+					cursors[0].index, len(cursors[0].positions))
+				cursors[0].current = nil
+			} else {
+				cursors[0].current = &cursors[0].positions[cursors[0].index]
+			}
+		}
+	}
+
+	return phraseCount
 }
 
 // token 根据 doc count 升序排序
@@ -106,7 +245,12 @@ func (r *Recall) sortToken(tokens []*queryTokenHash) []*queryTokenHash {
 	for _, t := range tokens {
 		log.LogrusObj.Infof("token:%v,docCount:%v", t.token, t.invertedIndex.DocCount)
 	}
-	sort.Sort()
+	sort.Sort(docCountSort(tokens))
+	for _, t := range tokens {
+		log.LogrusObj.Infof("token:%v,docCount:%v", t.token, t.invertedIndex.DocCount)
+	}
+
+	return tokens
 }
 
 // 获取 token 所有seg的倒排表数据
