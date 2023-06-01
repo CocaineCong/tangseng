@@ -26,11 +26,10 @@ type Engine struct {
 	N int64 // ngram
 }
 
-
 // NewEngine 每次初始化的时候调整meta数据
-func NewEngine(meta *Meta,engineMode segment.Mode) *Engine {
+func NewEngine(meta *Meta, engineMode segment.Mode) *Engine {
 	sche := NewScheduler(meta)
-	segId,seg := segment.NewSegments(meta.SegMeta,engineMode)
+	segId, seg := segment.NewSegments(meta.SegMeta, engineMode)
 	return &Engine{
 		meta:            meta,
 		Scheduler:       sche,
@@ -44,7 +43,7 @@ func NewEngine(meta *Meta,engineMode segment.Mode) *Engine {
 
 // Close --
 func (e *Engine) Close() {
-	for _,seg := range e.Seg{
+	for _, seg := range e.Seg {
 		seg.Close()
 	}
 
@@ -65,25 +64,25 @@ func (e *Engine) AddDoc(doc *storage.Document) error {
 
 // Text2PostingsLists --
 func (e *Engine) Text2PostingsLists(text string, docId int64) error {
-	tokens, err := query.Ngram(text,docId)
+	tokens, err := query.Ngram(text, docId)
 	if err != nil {
-		return fmt.Errorf("text2PostingsLists Ngram err:%v",err)
+		return fmt.Errorf("text2PostingsLists Ngram err:%v", err)
 	}
 
 	bufInvertedHash := make(segment.InvertedIndexHash)
-	for _,token := range tokens{
-		err := segment.Token2PostingsLists(bufInvertedHash,token.Token,token.Position,docId)
+	for _, token := range tokens {
+		err := segment.Token2PostingsLists(bufInvertedHash, token.Token, token.Position, docId)
 		if err != nil {
 			return err
 		}
 	}
 
-	log.LogrusObj.Infof("buf InvertedHash :%v",bufInvertedHash)
+	log.LogrusObj.Infof("buf InvertedHash :%v", bufInvertedHash)
 
-	if e.PostingsHashBuf != nil && len(e.PostingsHashBuf) >0 {
+	if e.PostingsHashBuf != nil && len(e.PostingsHashBuf) > 0 {
 		// 合并命中相同的token的不同doc
-		segment.MergeInvertedIndex(e.PostingsHashBuf,bufInvertedHash)
-	}else{
+		segment.MergeInvertedIndex(e.PostingsHashBuf, bufInvertedHash)
+	} else {
 		// 已经初始化过了
 		e.PostingsHashBuf = bufInvertedHash
 	}
@@ -91,22 +90,23 @@ func (e *Engine) Text2PostingsLists(text string, docId int64) error {
 	e.BufCount++
 
 	// 达到阈值
-	if len(e.PostingsHashBuf)>0 &&(e.BufCount>=e.BufSize){
+	if len(e.PostingsHashBuf) > 0 && (e.BufCount >= e.BufSize) {
 		log.LogrusObj.Infof("text2PostingsLists need flush")
-		e.
+		e.Flush()
 	}
 
-	e
+	e.indexCount()
+	return nil
 }
 
 func (e *Engine) UpdateCount(num int64) error {
 	seg := e.Seg[e.CurrSegId]
-	count,err := seg.ForwardCount()
+	count, err := seg.ForwardCount()
 	if err != nil {
-		if err.Error() == ErrCountKeyNotFound{
+		if err.Error() == ErrCountKeyNotFound {
 			count = 0
-		}else{
-			return fmt.Errorf("updateCount err:%v",err)
+		} else {
+			return fmt.Errorf("updateCount err:%v", err)
 		}
 	}
 	count += num
@@ -117,12 +117,30 @@ func (e *Engine) Flush(isEnd ...bool) error {
 	e.Seg[e.CurrSegId].Flush(e.PostingsHashBuf)
 
 	// 更新 meta info
-	err := e.meta.UpdateSegMeta(e.CurrSegId,e.BufCount)
+	err := e.meta.UpdateSegMeta(e.CurrSegId, e.BufCount)
 	if err != nil {
 		return err
 	}
 
-	e.
+	e.UpdateCount(e.meta.IndexCount)
+	e.Seg[e.CurrSegId].Close()
+	delete(e.Seg, e.CurrSegId)
 
+	if len(e.meta.SegMeta.SegInfo) > 1 {
+		e.Scheduler.MayMerge()
+	}
 
+	// new
+	if len(isEnd) > 0 && isEnd[0] {
+		return nil
+	}
+
+	segId, seg := segment.NewSegments(e.meta.SegMeta, segment.IndexMode)
+
+	e.BufCount = 0
+	e.PostingsHashBuf = make(segment.InvertedIndexHash)
+	e.CurrSegId = segId
+	e.Seg = seg
+
+	return nil
 }
