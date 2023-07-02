@@ -9,7 +9,6 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/handler"
-	"github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/repository"
 	"github.com/CocaineCong/Go-SearchEngine/config"
 	pb "github.com/CocaineCong/Go-SearchEngine/idl/pb/search_engine"
 	"github.com/CocaineCong/Go-SearchEngine/pkg/discovery"
@@ -17,7 +16,6 @@ import (
 
 func main() {
 	config.InitConfig()
-	repository.InitDB()
 	// etcd 地址
 	etcdAddress := []string{viper.GetString("etcd.address")}
 	// 服务注册

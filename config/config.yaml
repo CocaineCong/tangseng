@@ -54,6 +54,7 @@ services:
 SeConfig:
   Version: "1.0.0"
   StoragePath: "../data"
+  SourceWuKoFile: "../data/wukong_100m.csv"
   SourceFiles:
     - "./source"
     - "./"

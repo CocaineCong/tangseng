@@ -17,6 +17,17 @@ type ForwardDB struct {
 	db *bolt.DB
 }
 
+// NewForwardDB 新建一个forward db对象
+func NewForwardDB(dbName string) (*ForwardDB, error) {
+	db, err := bolt.Open(dbName, 0600, nil)
+	if err != nil {
+		log.LogrusObj.Errorf("NewForwardDB: %v", err.Error())
+		return nil, err
+	}
+
+	return &ForwardDB{db}, nil
+}
+
 // AddForwardByDoc 通过doc进行存储
 func (f *ForwardDB) AddForwardByDoc(doc *Document) error {
 	key := cast.ToString(doc.DocId)
@@ -66,15 +77,4 @@ func (f *ForwardDB) GetForwardCursor(termCh chan KvInfo) error {
 // Close 关闭db
 func (f *ForwardDB) Close() error {
 	return f.db.Close()
-}
-
-// NewForwardDB 新建一个forward db对象
-func NewForwardDB(dbName string) (*ForwardDB, error) {
-	db, err := bolt.Open(dbName, 0600, nil)
-	if err != nil {
-		log.LogrusObj.Errorf("NewForwardDB: %v", err.Error())
-		return nil, err
-	}
-
-	return &ForwardDB{db}, nil
 }

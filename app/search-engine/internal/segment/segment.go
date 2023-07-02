@@ -162,7 +162,7 @@ func NewSegments(meta *SegMeta, mode Mode) (SegId, map[SegId]*Segment) {
 }
 
 func NewSegment(segId SegId) *Segment {
-	inDb, forDb := SegmentDbInit(segId)
+	inDb, forDb := InitSegmentDb(segId)
 	return &Segment{
 		InvertedDB: inDb,
 		ForwardDB:  forDb,

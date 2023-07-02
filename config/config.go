@@ -24,6 +24,7 @@ type SeConfig struct {
 	SourceFiles      []string `yaml:"sourceFiles"`
 	MergeChannelSize int64    `yaml:"mergeChannelSize"`
 	Version          string   `yaml:"version"`
+	SourceWuKoFile   string   `yaml:"sourceWuKoFile"`
 }
 
 type Server struct {

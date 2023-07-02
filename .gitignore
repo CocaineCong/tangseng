@@ -14,7 +14,7 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
-config/config.yml
+config/config.yaml
 app/favorite/config/config.yml
 app/search-engine/config/config.yml
 app/user/config/config.yml
