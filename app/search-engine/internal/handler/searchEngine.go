@@ -24,6 +24,7 @@ func GetSearchEngineSrv() *SearchEngineSrv {
 	})
 	return SearchEngineSrvIns
 }
+
 func (s *SearchEngineSrv) SearchEngineAdd(ctx context.Context, req *pb.SearchEngineRequest) (resp *pb.SearchEngineResponse, err error) {
 	tableName := req.Table // table
 	postKey := req.Key

@@ -20,18 +20,8 @@ type InvertedIndexValue struct {
 // InvertedIndexHash 倒排hash
 type InvertedIndexHash map[string]*InvertedIndexValue
 
-// CreateNewInvertedIndex 创建倒排索引
-func CreateNewInvertedIndex(token string, docCount int64) *InvertedIndexValue {
-	p := new(InvertedIndexValue)
-	p.DocCount = docCount
-	p.Token = token
-	p.PositionCount = 0
-	p.PostingsList = new(PostingsList)
-	return p
-}
-
-// SegmentDbInit 读取对应segment文件下的db
-func SegmentDbInit(segId SegId) (*storage.InvertedDB, *storage.ForwardDB) {
+// InitSegmentDb 读取对应segment文件下的db
+func InitSegmentDb(segId SegId) (*storage.InvertedDB, *storage.ForwardDB) {
 	if segId < 0 {
 		log.LogrusObj.Infof("db Init :%d<0", segId)
 	}
@@ -43,6 +33,16 @@ func SegmentDbInit(segId SegId) (*storage.InvertedDB, *storage.ForwardDB) {
 		return nil, nil
 	}
 	return storage.NewInvertedDB(termName, invertedName), forwardDB
+}
+
+// CreateNewInvertedIndex 创建倒排索引
+func CreateNewInvertedIndex(token string, docCount int64) *InvertedIndexValue {
+	p := new(InvertedIndexValue)
+	p.DocCount = docCount
+	p.Token = token
+	p.PositionCount = 0
+	p.PostingsList = new(PostingsList)
+	return p
 }
 
 // GetDbName 获取db的路径+名称

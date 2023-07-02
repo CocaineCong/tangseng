@@ -14,7 +14,7 @@ import (
 
 type TermNode struct {
 	*storage.KvInfo
-	Seg *Segment //
+	Seg *Segment
 }
 
 // LoserTree 败者数

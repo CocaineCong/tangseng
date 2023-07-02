@@ -16,7 +16,7 @@ type PostingsList struct {
 	Next          *PostingsList
 }
 
-// MergePostings 合并两个东西
+// MergePostings 合并两个posting
 func MergePostings(pa, pb *PostingsList) *PostingsList {
 	ret := new(PostingsList)
 	p := new(PostingsList)
