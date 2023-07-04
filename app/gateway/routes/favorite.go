@@ -3,7 +3,7 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 
-	"github.com/CocaineCong/Go-SearchEngine/app/gateway/internal/handler"
+	"github.com/CocaineCong/tangseng/app/gateway/internal/handler"
 )
 
 func FavoriteRegisterHandlers(rg *gin.RouterGroup) {

@@ -7,11 +7,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/segment"
-	"github.com/CocaineCong/Go-SearchEngine/config"
-	"github.com/CocaineCong/Go-SearchEngine/consts"
-	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
-	"github.com/CocaineCong/Go-SearchEngine/pkg/util/se"
+	"github.com/CocaineCong/tangseng/app/search-engine/internal/segment"
+	"github.com/CocaineCong/tangseng/config"
+	"github.com/CocaineCong/tangseng/consts"
+	log "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/CocaineCong/tangseng/pkg/util/se"
 )
 
 var metaFile = "segments.json" // 存储的元数据文件，包括各种属性信息

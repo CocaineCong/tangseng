@@ -3,10 +3,10 @@ package middleware
 import (
 	"github.com/gin-gonic/gin"
 
-	"github.com/CocaineCong/Go-SearchEngine/consts"
-	e2 "github.com/CocaineCong/Go-SearchEngine/consts/e"
-	"github.com/CocaineCong/Go-SearchEngine/pkg/ctl"
-	"github.com/CocaineCong/Go-SearchEngine/pkg/jwt"
+	"github.com/CocaineCong/tangseng/consts"
+	e2 "github.com/CocaineCong/tangseng/consts/e"
+	"github.com/CocaineCong/tangseng/pkg/ctl"
+	"github.com/CocaineCong/tangseng/pkg/jwt"
 )
 
 // AuthMiddleware token验证中间件

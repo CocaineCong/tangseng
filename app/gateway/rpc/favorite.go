@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/CocaineCong/Go-SearchEngine/consts/e"
-	favoritePb "github.com/CocaineCong/Go-SearchEngine/idl/pb/favorite"
+	"github.com/CocaineCong/tangseng/consts/e"
+	favoritePb "github.com/CocaineCong/tangseng/idl/pb/favorite"
 )
 
 func FavoriteCreate(ctx context.Context, req *favoritePb.FavoriteCreateReq) (resp *favoritePb.FavoriteCommonResponse, err error) {

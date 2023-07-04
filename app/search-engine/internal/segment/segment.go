@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/storage"
-	"github.com/CocaineCong/Go-SearchEngine/config"
-	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
+	"github.com/CocaineCong/tangseng/app/search-engine/internal/storage"
+	"github.com/CocaineCong/tangseng/config"
+	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
 type Segment struct {

@@ -5,10 +5,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/CocaineCong/Go-SearchEngine/app/gateway/rpc"
-	pb "github.com/CocaineCong/Go-SearchEngine/idl/pb/favorite"
-	"github.com/CocaineCong/Go-SearchEngine/pkg/ctl"
-	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
+	"github.com/CocaineCong/tangseng/app/gateway/rpc"
+	pb "github.com/CocaineCong/tangseng/idl/pb/favorite"
+	"github.com/CocaineCong/tangseng/pkg/ctl"
+	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
 func ListFavorite(ctx *gin.Context) {

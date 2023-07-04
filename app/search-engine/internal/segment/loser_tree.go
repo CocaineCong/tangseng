@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/storage"
-	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
+	"github.com/CocaineCong/tangseng/app/search-engine/internal/storage"
+	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
 // https://www.cnblogs.com/qianye/archive/2012/11/25/2787923.html 胜者树和败者树

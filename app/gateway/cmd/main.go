@@ -11,12 +11,12 @@ import (
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc/resolver"
 
-	"github.com/CocaineCong/Go-SearchEngine/app/gateway/routes"
-	"github.com/CocaineCong/Go-SearchEngine/app/gateway/rpc"
-	"github.com/CocaineCong/Go-SearchEngine/config"
-	"github.com/CocaineCong/Go-SearchEngine/loading"
-	"github.com/CocaineCong/Go-SearchEngine/pkg/discovery"
-	"github.com/CocaineCong/Go-SearchEngine/pkg/util/shutdown"
+	"github.com/CocaineCong/tangseng/app/gateway/routes"
+	"github.com/CocaineCong/tangseng/app/gateway/rpc"
+	"github.com/CocaineCong/tangseng/config"
+	"github.com/CocaineCong/tangseng/loading"
+	"github.com/CocaineCong/tangseng/pkg/discovery"
+	"github.com/CocaineCong/tangseng/pkg/util/shutdown"
 )
 
 func main() {

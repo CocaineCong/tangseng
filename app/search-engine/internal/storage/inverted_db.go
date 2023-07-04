@@ -8,8 +8,8 @@ import (
 
 	"github.com/boltdb/bolt"
 
-	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
-	"github.com/CocaineCong/Go-SearchEngine/pkg/util/se"
+	log "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/CocaineCong/tangseng/pkg/util/se"
 )
 
 const termBucket = "term"

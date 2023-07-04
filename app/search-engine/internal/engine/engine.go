@@ -3,10 +3,10 @@ package engine
 import (
 	"fmt"
 
-	"github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/query"
-	"github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/segment"
-	"github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/storage"
-	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
+	"github.com/CocaineCong/tangseng/app/search-engine/internal/query"
+	"github.com/CocaineCong/tangseng/app/search-engine/internal/segment"
+	"github.com/CocaineCong/tangseng/app/search-engine/internal/storage"
+	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
 // ErrCountKeyNotFound 计数key不存在

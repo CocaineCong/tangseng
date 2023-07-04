@@ -11,10 +11,10 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/resolver"
 
-	"github.com/CocaineCong/Go-SearchEngine/config"
-	"github.com/CocaineCong/Go-SearchEngine/idl/pb/favorite"
-	"github.com/CocaineCong/Go-SearchEngine/idl/pb/user"
-	"github.com/CocaineCong/Go-SearchEngine/pkg/discovery"
+	"github.com/CocaineCong/tangseng/config"
+	"github.com/CocaineCong/tangseng/idl/pb/favorite"
+	"github.com/CocaineCong/tangseng/idl/pb/user"
+	"github.com/CocaineCong/tangseng/pkg/discovery"
 )
 
 var (

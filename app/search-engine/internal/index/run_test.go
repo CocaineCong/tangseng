@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/CocaineCong/Go-SearchEngine/config"
-	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
+	"github.com/CocaineCong/tangseng/config"
+	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
 func TestMain(m *testing.M) {

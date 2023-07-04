@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/engine"
-	"github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/segment"
-	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
+	"github.com/CocaineCong/tangseng/app/search-engine/internal/engine"
+	"github.com/CocaineCong/tangseng/app/search-engine/internal/segment"
+	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
 // Recall 查询召回

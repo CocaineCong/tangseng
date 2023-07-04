@@ -4,7 +4,7 @@ import (
 	"os"
 	"strings"
 
-	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
+	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
 func readFiles(fileName []string) []string {

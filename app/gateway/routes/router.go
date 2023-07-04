@@ -6,8 +6,8 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 
-	"github.com/CocaineCong/Go-SearchEngine/app/gateway/internal/handler"
-	"github.com/CocaineCong/Go-SearchEngine/app/gateway/middleware"
+	"github.com/CocaineCong/tangseng/app/gateway/internal/handler"
+	"github.com/CocaineCong/tangseng/app/gateway/middleware"
 )
 
 func NewRouter() *gin.Engine {

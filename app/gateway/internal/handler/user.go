@@ -5,12 +5,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/CocaineCong/Go-SearchEngine/app/gateway/rpc"
-	pb "github.com/CocaineCong/Go-SearchEngine/idl/pb/user"
-	"github.com/CocaineCong/Go-SearchEngine/pkg/ctl"
-	"github.com/CocaineCong/Go-SearchEngine/pkg/jwt"
-	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
-	"github.com/CocaineCong/Go-SearchEngine/types"
+	"github.com/CocaineCong/tangseng/app/gateway/rpc"
+	pb "github.com/CocaineCong/tangseng/idl/pb/user"
+	"github.com/CocaineCong/tangseng/pkg/ctl"
+	"github.com/CocaineCong/tangseng/pkg/jwt"
+	log "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/CocaineCong/tangseng/types"
 )
 
 // UserRegister 用户注册

@@ -7,10 +7,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/segment"
-	"github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/storage"
-	"github.com/CocaineCong/Go-SearchEngine/config"
-	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
+	"github.com/CocaineCong/tangseng/app/search-engine/internal/segment"
+	"github.com/CocaineCong/tangseng/app/search-engine/internal/storage"
+	"github.com/CocaineCong/tangseng/config"
+	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
 // MergeScheduler 合并调度器

@@ -5,10 +5,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/engine"
-	"github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/recall"
-	"github.com/CocaineCong/Go-SearchEngine/config"
-	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
+	"github.com/CocaineCong/tangseng/app/search-engine/internal/engine"
+	"github.com/CocaineCong/tangseng/app/search-engine/internal/recall"
+	"github.com/CocaineCong/tangseng/config"
+	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
 // Recall 召回

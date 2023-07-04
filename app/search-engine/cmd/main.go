@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/CocaineCong/Go-SearchEngine/app/search-engine/internal/index"
-	"github.com/CocaineCong/Go-SearchEngine/config"
-	"github.com/CocaineCong/Go-SearchEngine/loading"
+	"github.com/CocaineCong/tangseng/app/search-engine/internal/index"
+	"github.com/CocaineCong/tangseng/config"
+	"github.com/CocaineCong/tangseng/loading"
 )
 
 func main() {

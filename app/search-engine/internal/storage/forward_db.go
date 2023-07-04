@@ -6,7 +6,7 @@ import (
 	"github.com/boltdb/bolt"
 	"github.com/spf13/cast"
 
-	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
+	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
 const forwardBucket = "forward"
