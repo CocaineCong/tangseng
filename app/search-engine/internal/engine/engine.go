@@ -64,7 +64,9 @@ func (e *Engine) AddDoc(doc *storage.Document) error {
 
 // Text2PostingsLists --
 func (e *Engine) Text2PostingsLists(text string, docId int64) error {
-	tokens, err := query.Ngram(text, docId)
+	fmt.Println("text", text)
+	fmt.Println("e.N", e)
+	tokens, err := query.Ngram(text, e.N)
 	if err != nil {
 		return fmt.Errorf("text2PostingsLists Ngram err:%v", err)
 	}

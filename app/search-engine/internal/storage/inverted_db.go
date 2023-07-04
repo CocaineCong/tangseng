@@ -41,7 +41,7 @@ func NewInvertedDB(termName, postingsName string) *InvertedDB {
 	if err != nil {
 		log.LogrusObj.Error(err)
 	}
-	log.LogrusObj.Infof("start op bolt:%s", termName)
+	log.LogrusObj.Infof("start op bolt:%v", termName)
 	db, err := bolt.Open(termName, 0600, nil)
 	if err != nil {
 		log.LogrusObj.Error(err)

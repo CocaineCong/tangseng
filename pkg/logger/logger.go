@@ -7,8 +7,6 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
-
-	"github.com/CocaineCong/Go-SearchEngine/pkg/es"
 )
 
 var LogrusObj *logrus.Logger
@@ -31,14 +29,8 @@ func InitLog() {
 	logger.SetFormatter(&logrus.JSONFormatter{
 		TimestampFormat: "2006-01-02 15:04:05",
 	})
-	/*
-		加个hook形成ELK体系
-		但是考虑到一些同学一下子接受不了那么多技术栈，
-		所以这里的ELK体系加了注释，如果想引入可以直接注释去掉，
-		如果不想引入这样注释掉也是没问题的。
-	*/
-	hook := es.EsHookLog()
-	logger.AddHook(hook)
+	// hook := es.EsHookLog()
+	// logger.AddHook(hook)
 	LogrusObj = logger
 }
 

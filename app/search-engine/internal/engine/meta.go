@@ -28,6 +28,7 @@ type Meta struct {
 func ParseMeta() (*Meta, error) {
 	// 文件不存在表示没有相关数据，第一次创建
 	metaFile = config.Conf.SeConfig.StoragePath + metaFile
+	fmt.Println("metaFile", metaFile)
 	if !se.ExistFile(metaFile) {
 		log.LogrusObj.Infof("segMetaFile:%s not exist", metaFile)
 		_, err := os.Create(metaFile)

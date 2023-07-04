@@ -64,7 +64,9 @@ func (r *Recall) Search(query string) (Recalls, error) {
 }
 
 func (r *Recall) splitQuery2Tokens(query string) error {
-	err := r.Text2PostingsLists(query, 0)
+	fmt.Println("query", query)
+	fmt.Println("r", r)
+	err := r.Text2PostingsLists(query, r.N)
 	if err != nil {
 		return fmt.Errorf("text2postingslists err: %v", err)
 	}
@@ -88,7 +90,7 @@ func (r *Recall) searchDoc() (Recalls, error) {
 		if postings == nil {
 			return nil, err
 		}
-		log.LogrusObj.Infof("token:%s,incvertedIndex:%s", token, postings.DocId)
+		log.LogrusObj.Infof("token:%s,incvertedIndex:%d", token, postings.DocId)
 		post.DocCount = count
 		t := &queryTokenHash{
 			token:         token,

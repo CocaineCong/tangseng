@@ -5,8 +5,8 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/CocaineCong/Go-SearchEngine/app/favorite/internal/repository/db/model"
-	favoritePb "github.com/CocaineCong/Go-SearchEngine/idl/pb/favorite"
+	"github.com/CocaineCong/tangseng/app/favorite/internal/repository/db/model"
+	favoritePb "github.com/CocaineCong/tangseng/idl/pb/favorite"
 )
 
 type FavoriteDetailDao struct {

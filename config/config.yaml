@@ -53,8 +53,8 @@ services:
 
 SeConfig:
   Version: "1.0.0"
-  StoragePath: "../data"
-  SourceWuKoFile: "../data/wukong_100m.csv"
+  StoragePath: "/Users/mac/GolandProjects/Go-SearchEngine/app/search-engine/data/"
+  SourceWuKoFile: "/Users/mac/GolandProjects/Go-SearchEngine/app/search-engine/data//wukong_100m.csv"
   SourceFiles:
     - "./source"
     - "./"

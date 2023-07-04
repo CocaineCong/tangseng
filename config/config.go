@@ -16,15 +16,15 @@ type Config struct {
 	Es       *Es                 `yaml:"es"`
 	Services map[string]*Service `yaml:"services"`
 	Domain   map[string]*Domain  `yaml:"domain"`
-	SeConfig *SeConfig           `yaml:"seConfig"`
+	SeConfig *SeConfig           `yaml:"SeConfig"`
 }
 
 type SeConfig struct {
-	StoragePath      string   `yaml:"storagePath"`
-	SourceFiles      []string `yaml:"sourceFiles"`
-	MergeChannelSize int64    `yaml:"mergeChannelSize"`
-	Version          string   `yaml:"version"`
-	SourceWuKoFile   string   `yaml:"sourceWuKoFile"`
+	StoragePath      string   `yaml:"StoragePath"`
+	SourceFiles      []string `yaml:"SourceFiles"`
+	MergeChannelSize int64    `yaml:"MergeChannelSize"`
+	Version          string   `yaml:"Version"`
+	SourceWuKoFile   string   `yaml:"SourceWuKoFile"`
 }
 
 type Server struct {
@@ -72,7 +72,7 @@ type Domain struct {
 func InitConfig() {
 	workDir, _ := os.Getwd()
 	viper.SetConfigName("config")
-	viper.SetConfigType("yml")
+	viper.SetConfigType("yaml")
 	viper.AddConfigPath(workDir + "/config")
 	err := viper.ReadInConfig()
 	if err != nil {

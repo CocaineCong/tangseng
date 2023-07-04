@@ -3,6 +3,7 @@ package index
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/spf13/cast"
 
@@ -11,6 +12,27 @@ import (
 	"github.com/CocaineCong/Go-SearchEngine/config"
 	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
 )
+
+func IndexRunning() {
+	meta, err := engine.ParseMeta()
+	if err != nil {
+		fmt.Println("ParseMeta err", err)
+		return
+	}
+	fmt.Printf("meta: %v", meta)
+	// 定时同步meta数据
+	ticker := time.NewTicker(time.Minute * 15)
+	go meta.SyncByTicker(ticker)
+	Run(meta)
+	func() {
+		// 最后同步元数据至文件
+		fmt.Println("close")
+		meta.SyncMeta()
+		fmt.Println("close")
+		ticker.Stop()
+		fmt.Println("close")
+	}()
+}
 
 func Run(meta *engine.Meta) {
 	index, err := NewIndexEngine(meta)

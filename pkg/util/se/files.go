@@ -49,11 +49,8 @@ func DirCHeckAndMk(dir string) {
 
 // ExistFile 判断所给的路径文件/文件夹是否存在
 func ExistFile(path string) bool {
-	_, err := os.Stat(path) // os.Stat 获取文件信息
-	if err != nil {
-		if os.IsExist(err) {
-			return true
-		}
+	_, err := os.Stat(path)
+	if os.IsNotExist(err) {
 		return false
 	}
 	return true

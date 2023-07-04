@@ -1,4 +1,4 @@
-module github.com/CocaineCong/Go-SearchEngine
+module github.com/CocaineCong/tangseng
 
 go 1.20
 

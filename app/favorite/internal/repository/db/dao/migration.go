@@ -3,8 +3,8 @@ package dao
 import (
 	"os"
 
-	"github.com/CocaineCong/Go-SearchEngine/app/favorite/internal/repository/db/model"
-	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
+	"github.com/CocaineCong/tangseng/app/favorite/internal/repository/db/model"
+	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
 func migration() {
