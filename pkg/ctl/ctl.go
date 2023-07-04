@@ -3,7 +3,7 @@ package ctl
 import (
 	"github.com/gin-gonic/gin"
 
-	e2 "github.com/CocaineCong/Go-SearchEngine/consts/e"
+	e2 "github.com/CocaineCong/tangseng/consts/e"
 )
 
 // Response 基础序列化器

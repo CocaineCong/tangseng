@@ -1,8 +1,8 @@
 package loading
 
 import (
-	"github.com/CocaineCong/Go-SearchEngine/pkg/es"
-	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
+	"github.com/CocaineCong/tangseng/pkg/es"
+	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
 // Loading 全局loading

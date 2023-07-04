@@ -8,7 +8,7 @@ import (
 	elastic "github.com/elastic/go-elasticsearch"
 	"github.com/sirupsen/logrus"
 
-	"github.com/CocaineCong/Go-SearchEngine/config"
+	"github.com/CocaineCong/tangseng/config"
 )
 
 var EsClient *elastic.Client

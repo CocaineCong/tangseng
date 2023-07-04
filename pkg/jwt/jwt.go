@@ -6,7 +6,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 
-	"github.com/CocaineCong/Go-SearchEngine/consts"
+	"github.com/CocaineCong/tangseng/consts"
 )
 
 var jwtSecret = []byte("38324-search-engine") // TODO 从配置文件读取

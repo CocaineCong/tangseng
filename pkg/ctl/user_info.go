@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/CocaineCong/Go-SearchEngine/consts"
+	"github.com/CocaineCong/tangseng/consts"
 )
 
 type UserInfo struct {
