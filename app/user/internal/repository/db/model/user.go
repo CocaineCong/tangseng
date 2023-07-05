@@ -3,7 +3,7 @@ package model
 import (
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/CocaineCong/Go-SearchEngine/consts"
+	"github.com/CocaineCong/tangseng/consts"
 )
 
 type User struct {

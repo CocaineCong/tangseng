@@ -3,8 +3,8 @@ package dao
 import (
 	"os"
 
-	"github.com/CocaineCong/Go-SearchEngine/app/user/internal/repository/db/model"
-	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
+	"github.com/CocaineCong/tangseng/app/user/internal/repository/db/model"
+	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
 // 自动迁移模式

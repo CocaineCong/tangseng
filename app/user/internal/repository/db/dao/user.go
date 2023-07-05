@@ -6,9 +6,9 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/CocaineCong/Go-SearchEngine/app/user/internal/repository/db/model"
-	userPb "github.com/CocaineCong/Go-SearchEngine/idl/pb/user"
-	log "github.com/CocaineCong/Go-SearchEngine/pkg/logger"
+	"github.com/CocaineCong/tangseng/app/user/internal/repository/db/model"
+	userPb "github.com/CocaineCong/tangseng/idl/pb/user"
+	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
 type UserDao struct {

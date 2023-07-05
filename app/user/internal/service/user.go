@@ -4,9 +4,9 @@ import (
 	"context"
 	"sync"
 
-	"github.com/CocaineCong/Go-SearchEngine/app/user/internal/repository/db/dao"
-	e2 "github.com/CocaineCong/Go-SearchEngine/consts/e"
-	pb "github.com/CocaineCong/Go-SearchEngine/idl/pb/user"
+	"github.com/CocaineCong/tangseng/app/user/internal/repository/db/dao"
+	e2 "github.com/CocaineCong/tangseng/consts/e"
+	pb "github.com/CocaineCong/tangseng/idl/pb/user"
 )
 
 var UserSrvIns *UserSrv

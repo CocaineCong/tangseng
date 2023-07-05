@@ -7,11 +7,11 @@ import (
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 
-	"github.com/CocaineCong/Go-SearchEngine/app/user/internal/repository/db/dao"
-	"github.com/CocaineCong/Go-SearchEngine/app/user/internal/service"
-	"github.com/CocaineCong/Go-SearchEngine/config"
-	pb "github.com/CocaineCong/Go-SearchEngine/idl/pb/user"
-	"github.com/CocaineCong/Go-SearchEngine/pkg/discovery"
+	"github.com/CocaineCong/tangseng/app/user/internal/repository/db/dao"
+	"github.com/CocaineCong/tangseng/app/user/internal/service"
+	"github.com/CocaineCong/tangseng/config"
+	pb "github.com/CocaineCong/tangseng/idl/pb/user"
+	"github.com/CocaineCong/tangseng/pkg/discovery"
 )
 
 func main() {
