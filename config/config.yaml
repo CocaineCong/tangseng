@@ -54,7 +54,7 @@ services:
 SeConfig:
   Version: "1.0.0"
   StoragePath: "/Users/mac/GolandProjects/Go-SearchEngine/app/search-engine/data/"
-  SourceWuKoFile: "/Users/mac/GolandProjects/Go-SearchEngine/app/search-engine/data//wukong_100m.csv"
+  SourceWuKoFile: "/Users/mac/GolandProjects/Go-SearchEngine/app/search-engine/data/movies.csv"
   SourceFiles:
     - "./source"
     - "./"

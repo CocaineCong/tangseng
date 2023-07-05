@@ -49,8 +49,8 @@ func addDoc(in *Index) {
 	// TODO: 后续配置文件改成多选择的
 	docList := readFiles([]string{config.Conf.SeConfig.SourceWuKoFile})
 	go in.Scheduler.Merge()
-	for i, item := range docList[1:] {
-		doc, err := doc2Struct(fmt.Sprintf("%d,%s", i, item))
+	for _, item := range docList[1:] {
+		doc, err := doc2Struct(item)
 		if err != nil {
 			log.LogrusObj.Errorf("index addDoc doc2Struct: %v", err)
 		}
@@ -67,18 +67,18 @@ func addDoc(in *Index) {
 }
 
 func doc2Struct(docStr string) (*storage.Document, error) {
-
+	docStr = strings.Replace(docStr, "\"", "", -1)
 	d := strings.Split(docStr, ",")
-
 	if len(d) < 3 {
 		return nil, fmt.Errorf("doc2Struct err: %v", "docStr is not right")
 	}
 
 	doc := &storage.Document{
 		DocId: cast.ToInt64(d[0]),
-		Title: d[2],
-		Body:  d[1],
+		Title: d[1],
+		Body:  d[16],
 	}
+	fmt.Println("doc", doc.DocId, doc.Title, doc.Body)
 
 	return doc, nil
 }

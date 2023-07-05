@@ -28,11 +28,10 @@ type Engine struct {
 
 // NewEngine 每次初始化的时候调整meta数据
 func NewEngine(meta *Meta, engineMode segment.Mode) *Engine {
-	sche := NewScheduler(meta)
 	segId, seg := segment.NewSegments(meta.SegMeta, engineMode)
 	return &Engine{
 		meta:            meta,
-		Scheduler:       sche,
+		Scheduler:       NewScheduler(meta),
 		BufSize:         5,
 		PostingsHashBuf: make(segment.InvertedIndexHash),
 		CurrSegId:       segId,
@@ -64,9 +63,8 @@ func (e *Engine) AddDoc(doc *storage.Document) error {
 
 // Text2PostingsLists --
 func (e *Engine) Text2PostingsLists(text string, docId int64) error {
-	fmt.Println("text", text)
-	fmt.Println("e.N", e)
-	tokens, err := query.Ngram(text, e.N)
+	// tokens, err := query.Ngram(text, e.N)
+	tokens, err := query.GseCut(text)
 	if err != nil {
 		return fmt.Errorf("text2PostingsLists Ngram err:%v", err)
 	}

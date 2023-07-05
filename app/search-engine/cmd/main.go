@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/CocaineCong/tangseng/app/search-engine/internal/index"
+	"github.com/CocaineCong/tangseng/app/search-engine/internal/query"
 	"github.com/CocaineCong/tangseng/config"
 	"github.com/CocaineCong/tangseng/loading"
 )
@@ -9,6 +10,7 @@ import (
 func main() {
 	config.InitConfig()
 	loading.Loading()
+	query.InitSeg()
 	index.IndexRunning()
 	// // etcd 地址
 	// etcdAddress := []string{viper.GetString("etcd.address")}

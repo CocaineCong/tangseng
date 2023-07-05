@@ -41,6 +41,21 @@ func Ngram(content string, n int64) ([]Tokenization, error) {
 	return token, nil
 }
 
+// GseCut 分词
+func GseCut(content string) ([]Tokenization, error) {
+	content = ignoredChar(content)
+	c := GobalSeg.Pos(content)
+	token := make([]Tokenization, 0)
+	for _, v := range c {
+		token = append(token, Tokenization{
+			Token:    v.Text,
+			Position: int64(strings.Index(content, v.Text)),
+		})
+	}
+
+	return token, nil
+}
+
 func ignoredChar(str string) string {
 	for _, c := range str {
 		switch c {
