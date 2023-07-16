@@ -65,8 +65,7 @@ func (r *Recall) Search(query string) (Recalls, error) {
 
 func (r *Recall) splitQuery2Tokens(query string) error {
 	fmt.Println("query", query)
-	fmt.Println("r", r)
-	err := r.Text2PostingsLists(query, r.N)
+	err := r.Text2PostingsLists(query, 0)
 	if err != nil {
 		return fmt.Errorf("text2postingslists err: %v", err)
 	}
@@ -103,7 +102,9 @@ func (r *Recall) searchDoc() (Recalls, error) {
 	tokens = r.sortToken(tokens)
 
 	tokenCount := len(tokens)
-
+	if tokenCount == 0 {
+		return nil, nil
+	}
 	cursors := make([]searchCursor, tokenCount)
 	for i, t := range tokens {
 		cursors[i].doc = t.fetchPostings

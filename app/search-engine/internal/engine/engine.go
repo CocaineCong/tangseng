@@ -10,7 +10,7 @@ import (
 )
 
 // ErrCountKeyNotFound 计数key不存在
-var ErrCountKeyNotFound = "get token:forwardCount err:key not found"
+var ErrCountKeyNotFound = "key not found"
 
 // Engine 写入引擎
 type Engine struct {
@@ -63,7 +63,6 @@ func (e *Engine) AddDoc(doc *storage.Document) error {
 
 // Text2PostingsLists --
 func (e *Engine) Text2PostingsLists(text string, docId int64) error {
-	// tokens, err := query.Ngram(text, e.N)
 	tokens, err := query.GseCut(text)
 	if err != nil {
 		return fmt.Errorf("text2PostingsLists Ngram err:%v", err)

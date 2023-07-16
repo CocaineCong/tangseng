@@ -12,6 +12,9 @@ func main() {
 	loading.Loading()
 	query.InitSeg()
 	index.IndexRunning()
+	// query := "孙悟空"
+	// index.SearchRecall(query)
+
 	// // etcd 地址
 	// etcdAddress := []string{viper.GetString("etcd.address")}
 	// // 服务注册

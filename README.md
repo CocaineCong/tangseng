@@ -1,4 +1,4 @@
-# Go-SearchEngine 重构中...
+# Tangseng 重构中...
 
 基于Go语言的搜索引擎
 
@@ -25,8 +25,7 @@
 # 未来规划
 
 ## 1.架构相关
-- [ ] 引入降
-- 级熔断
+- [ ] 引入降级熔断
 - [ ] 引入jaeger进行链路追踪
 - [ ] 引入skywalking进行监控
 
@@ -45,14 +44,13 @@
 
 # 项目结构
 
-## 1.grpc_todolist 项目总体
+## 1.tangseng 项目总体
 ```
-grpc-todolist/
+tangseng/
 ├── app                   // 各个微服务
 │   ├── favorite          // 收藏夹
 │   ├── gateway           // 网关
 │   ├── search-engine     // 新版搜索微服务
-│   ├── search-engine-old // 旧版搜索微服务
 │   └── user              // 用户模块微服务
 ├── bin                   // 编译后的二进制文件模块
 ├── config                // 配置文件

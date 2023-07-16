@@ -16,36 +16,6 @@ type Segment struct {
 	conf *config.Config
 }
 
-// Token2PostingsList --
-func Token2PostingsList(bufInvertHash InvertedIndexHash, token string, position int64, docId int64) error {
-	bufInvert := new(InvertedIndexValue)
-
-	if len(bufInvertHash) > 0 {
-		if item, ok := bufInvertHash[token]; ok {
-			bufInvert = item
-		}
-	}
-
-	pl := new(PostingsList)
-	if bufInvert != nil && bufInvert.PostingsList != nil {
-		pl = bufInvert.PostingsList
-		pl.PositionCount++
-	} else {
-		docCount := int64(1)
-		bufInvert = CreateNewInvertedIndex(token, docCount)
-		bufInvertHash[token] = bufInvert
-		pl = CreateNewPostingsList(docId)
-		bufInvert.PostingsList = pl
-	}
-
-	// 存储位置信息
-	pl.Positions = append(pl.Positions, position)
-	// 统计该token关联的所有doc的position的个数
-	bufInvert.PositionCount++
-
-	return nil
-}
-
 // Token2PostingsLists --
 func Token2PostingsLists(bufInvertHash InvertedIndexHash, token string, position int64, docId int64) error {
 	bufInvert := new(InvertedIndexValue)

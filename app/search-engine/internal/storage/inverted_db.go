@@ -128,6 +128,10 @@ func (t *InvertedDB) Close() {
 
 // Bytes2TermVal 字节转换为TermValues
 func Bytes2TermVal(values []byte) (p *TermValue, err error) {
+	if len(values) == 0 {
+		return
+	}
+	p = new(TermValue)
 	err = binary.Read(bytes.NewBuffer(values), binary.LittleEndian, p)
 	if err != nil {
 		return

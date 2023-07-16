@@ -47,7 +47,7 @@ func CreateNewInvertedIndex(token string, docCount int64) *InvertedIndexValue {
 
 // GetDbName 获取db的路径+名称
 func GetDbName(segId SegId) (string, string, string) {
-	termName = fmt.Sprintf("%s%s", config.Conf.SeConfig.StoragePath, TermDbSuffix)
+	termName = fmt.Sprintf("%s%d%s", config.Conf.SeConfig.StoragePath, segId, TermDbSuffix)
 	invertedName = fmt.Sprintf("%s%d%s", config.Conf.SeConfig.StoragePath, segId, InvertedDbSuffix)
 	forwardName = fmt.Sprintf("%s%d%s", config.Conf.SeConfig.StoragePath, segId, ForwardDbSuffix)
 	return termName, invertedName, forwardName
