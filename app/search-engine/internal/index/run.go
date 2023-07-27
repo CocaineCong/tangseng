@@ -49,7 +49,7 @@ func addDoc(in *Index) {
 	// TODO: 后续配置文件改成多选择的
 	docList := readFiles([]string{config.Conf.SeConfig.SourceWuKoFile})
 	go in.Scheduler.Merge()
-	for _, item := range docList[1:200] {
+	for _, item := range docList[1:40] {
 		doc, err := doc2Struct(item)
 		if err != nil {
 			log.LogrusObj.Errorf("index addDoc doc2Struct: %v", err)

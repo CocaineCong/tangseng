@@ -3,8 +3,8 @@ package storage
 import (
 	"encoding/json"
 
-	"github.com/boltdb/bolt"
 	"github.com/spf13/cast"
+	bolt "go.etcd.io/bbolt"
 
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )

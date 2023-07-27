@@ -70,7 +70,7 @@ func (e *Engine) Text2PostingsLists(text string, docId int64) error {
 
 	bufInvertedHash := make(segment.InvertedIndexHash)
 	for _, token := range tokens {
-		err := segment.Token2PostingsLists(bufInvertedHash, token.Token, token.Position, docId)
+		err = segment.Token2PostingsLists(bufInvertedHash, token.Token, token.Position, docId)
 		if err != nil {
 			return err
 		}

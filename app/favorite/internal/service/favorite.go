@@ -33,7 +33,7 @@ func (s *FavoriteSrv) FavoriteCreate(ctx context.Context, req *pb.FavoriteCreate
 	}
 
 	resp.Msg = e2.GetMsg(int(resp.Code))
-	return resp, nil
+	return
 }
 
 func (s *FavoriteSrv) FavoriteList(ctx context.Context, req *pb.FavoriteListReq) (resp *pb.FavoriteListResponse, err error) {

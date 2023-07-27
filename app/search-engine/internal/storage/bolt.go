@@ -3,7 +3,7 @@ package storage
 import (
 	"errors"
 
-	"github.com/boltdb/bolt"
+	bolt "go.etcd.io/bbolt"
 )
 
 // Put 通过bolt写入数据

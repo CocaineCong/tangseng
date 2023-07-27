@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/boltdb/bolt"
+	bolt "go.etcd.io/bbolt"
 
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/CocaineCong/tangseng/pkg/util/se"
