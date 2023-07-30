@@ -8,11 +8,10 @@ import (
 
 	bolt "go.etcd.io/bbolt"
 
+	"github.com/CocaineCong/tangseng/consts"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/CocaineCong/tangseng/pkg/util/se"
 )
-
-const termBucket = "term"
 
 type KvInfo struct {
 	Key   []byte
@@ -72,12 +71,12 @@ func (t *InvertedDB) StoragePostings(token string, values []byte, docCount int64
 
 // PutInverted 插入term
 func (t *InvertedDB) PutInverted(key, value []byte) error {
-	return Put(t.db, termBucket, key, value)
+	return Put(t.db, consts.TermBucket, key, value)
 }
 
 // GetInverted 通过term获取value
 func (t *InvertedDB) GetInverted(key []byte) (value []byte, err error) {
-	return Get(t.db, termBucket, key)
+	return Get(t.db, consts.TermBucket, key)
 }
 
 // GetTermInfo 获取term关联的倒排地址
@@ -102,7 +101,7 @@ func (t *InvertedDB) GetInvertedDoc(offset int64, size int64) ([]byte, error) {
 // GetInvertedTermCursor 获取遍历游标
 func (t *InvertedDB) GetInvertedTermCursor(ternCH chan KvInfo) error {
 	return t.db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte(termBucket))
+		b := tx.Bucket([]byte(consts.TermBucket))
 		c := b.Cursor()
 		for k, v := c.First(); k != nil; k, v = c.Next() {
 			ternCH <- KvInfo{k, v}

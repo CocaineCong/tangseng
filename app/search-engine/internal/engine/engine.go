@@ -6,6 +6,7 @@ import (
 	"github.com/CocaineCong/tangseng/app/search-engine/internal/query"
 	"github.com/CocaineCong/tangseng/app/search-engine/internal/segment"
 	"github.com/CocaineCong/tangseng/app/search-engine/internal/storage"
+	"github.com/CocaineCong/tangseng/consts"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
@@ -22,8 +23,6 @@ type Engine struct {
 	PostingsHashBuf segment.InvertedIndexHash          // 倒排索引缓冲区
 	CurrSegId       segment.SegId                      // 当前engine关联的segId查询
 	Seg             map[segment.SegId]*segment.Segment // 当前engine关联的segment
-
-	N int64 // ngram
 }
 
 // NewEngine 每次初始化的时候调整meta数据
@@ -32,11 +31,10 @@ func NewEngine(meta *Meta, engineMode segment.Mode) *Engine {
 	return &Engine{
 		meta:            meta,
 		Scheduler:       NewScheduler(meta),
-		BufSize:         5,
+		BufSize:         consts.EngineBufSize,
 		PostingsHashBuf: make(segment.InvertedIndexHash),
 		CurrSegId:       segId,
 		Seg:             seg,
-		N:               2,
 	}
 }
 

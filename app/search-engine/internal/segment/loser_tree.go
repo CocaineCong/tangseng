@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/CocaineCong/tangseng/app/search-engine/internal/storage"
+	"github.com/CocaineCong/tangseng/consts"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
@@ -203,7 +204,7 @@ func MergeKForwardSegments(seg *Segment, list []*TermNode, chList []chan storage
 			break
 		}
 		// 正排中的总数，需要单独操作 TODO 正排总数字段考虑下其他存储or实现方式
-		if string(node.Key) == storage.ForwardCountKey {
+		if string(node.Key) == consts.ForwardCountKey {
 			c, err := strconv.Atoi(string(node.Value))
 			if err != nil {
 				return fmt.Errorf("strconv.Atoi err:%s", err)

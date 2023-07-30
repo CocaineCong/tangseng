@@ -6,12 +6,9 @@ import (
 	"github.com/spf13/cast"
 	bolt "go.etcd.io/bbolt"
 
+	"github.com/CocaineCong/tangseng/consts"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
-
-const forwardBucket = "forward"
-
-const ForwardCountKey = "forwardCount"
 
 type ForwardDB struct {
 	db *bolt.DB
@@ -32,17 +29,17 @@ func NewForwardDB(dbName string) (*ForwardDB, error) {
 func (f *ForwardDB) AddForwardByDoc(doc *Document) error {
 	key := cast.ToString(doc.DocId)
 	body, _ := json.Marshal(doc)
-	return Put(f.db, forwardBucket, []byte(key), body)
+	return Put(f.db, consts.ForwardBucket, []byte(key), body)
 }
 
 // PutForwardByKV 通过kv进行存储
 func (f *ForwardDB) PutForwardByKV(key, value []byte) error {
-	return Put(f.db, forwardBucket, key, value)
+	return Put(f.db, consts.ForwardBucket, key, value)
 }
 
 // ForwardCount 获取文档总数
 func (f *ForwardDB) ForwardCount() (r int64, err error) {
-	body, err := Get(f.db, forwardBucket, []byte(ForwardCountKey))
+	body, err := Get(f.db, consts.ForwardBucket, []byte(consts.ForwardCountKey))
 	if err != nil {
 		return
 	}
@@ -53,18 +50,18 @@ func (f *ForwardDB) ForwardCount() (r int64, err error) {
 
 // UpdateForwardCount 获取文档总数
 func (f *ForwardDB) UpdateForwardCount(count int64) error {
-	return Put(f.db, forwardBucket, []byte(ForwardCountKey), []byte(cast.ToString(count)))
+	return Put(f.db, consts.ForwardBucket, []byte(consts.ForwardCountKey), []byte(cast.ToString(count)))
 }
 
 // GetForward 获取forward数据
 func (f *ForwardDB) GetForward(docId int64) (r []byte, err error) {
-	return Get(f.db, forwardBucket, []byte(cast.ToString(docId)))
+	return Get(f.db, consts.ForwardBucket, []byte(cast.ToString(docId)))
 }
 
 // GetForwardCursor 获取遍历游标
 func (f *ForwardDB) GetForwardCursor(termCh chan KvInfo) error {
 	return f.db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte(forwardBucket))
+		b := tx.Bucket([]byte(consts.ForwardBucket))
 		c := b.Cursor()
 		for k, v := c.First(); k != nil; k, v = c.Next() {
 			termCh <- KvInfo{k, v}
