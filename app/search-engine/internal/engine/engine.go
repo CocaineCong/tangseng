@@ -1,7 +1,8 @@
 package engine
 
 import (
-	"fmt"
+	"sync"
+	"sync/atomic"
 
 	"github.com/CocaineCong/tangseng/app/search-engine/internal/query"
 	"github.com/CocaineCong/tangseng/app/search-engine/internal/segment"
@@ -10,32 +11,36 @@ import (
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
-// ErrCountKeyNotFound 计数key不存在
-var ErrCountKeyNotFound = "key not found"
-
 // Engine 写入引擎
 type Engine struct {
-	meta      *Meta // 元数据
-	Scheduler *MergeScheduler
-
+	meta            *Meta                              // 元数据
+	Scheduler       *MergeScheduler                    // 合并调度器
 	BufCount        int64                              // 倒排索引 缓冲区的文档数
 	BufSize         int64                              // 设定的缓冲区大小
 	PostingsHashBuf segment.InvertedIndexHash          // 倒排索引缓冲区
 	CurrSegId       segment.SegId                      // 当前engine关联的segId查询
 	Seg             map[segment.SegId]*segment.Segment // 当前engine关联的segment
+	// TODO 更换并发安全的map，需要写入性能好的
 }
+
+var EngineIns *Engine
+var EngineOnce sync.Once
 
 // NewEngine 每次初始化的时候调整meta数据
 func NewEngine(meta *Meta, engineMode segment.Mode) *Engine {
-	segId, seg := segment.NewSegments(meta.SegMeta, engineMode)
-	return &Engine{
-		meta:            meta,
-		Scheduler:       NewScheduler(meta),
-		BufSize:         consts.EngineBufSize,
-		PostingsHashBuf: make(segment.InvertedIndexHash),
-		CurrSegId:       segId,
-		Seg:             seg,
-	}
+	EngineOnce.Do(func() {
+		segId, seg := segment.NewSegments(meta.SegMeta, engineMode)
+		EngineIns = &Engine{
+			meta:            meta,
+			Scheduler:       NewScheduler(meta),
+			BufSize:         consts.EngineBufSize,
+			PostingsHashBuf: make(segment.InvertedIndexHash),
+			CurrSegId:       segId,
+			Seg:             seg,
+		}
+	})
+
+	return EngineIns
 }
 
 // Close --
@@ -49,9 +54,7 @@ func (e *Engine) Close() {
 
 // indexCount index 计数
 func (e *Engine) indexCount() {
-	e.meta.Lock()
-	e.meta.IndexCount++
-	e.meta.Unlock()
+	atomic.AddInt64(&e.meta.IndexCount, 1)
 }
 
 // AddDoc 添加正排
@@ -102,26 +105,36 @@ func (e *Engine) Text2PostingsLists(text string, docId int64) (err error) {
 	return nil
 }
 
-func (e *Engine) UpdateCount(num int64) error {
+func (e *Engine) UpdateCount(num int64) (err error) {
 	seg := e.Seg[e.CurrSegId]
 	count, err := seg.ForwardCount()
 	if err != nil {
-		return fmt.Errorf("updateCount err:%v", err)
+		log.LogrusObj.Errorf("updateCount err:%v", err)
+		return
 	}
 	count += num
 	return seg.UpdateForwardCount(count)
 }
 
-func (e *Engine) Flush(isEnd ...bool) error {
-	e.Seg[e.CurrSegId].Flush(e.PostingsHashBuf)
-
-	// 更新 meta info
-	err := e.meta.UpdateSegMeta(e.CurrSegId, e.BufCount)
+func (e *Engine) Flush(isEnd ...bool) (err error) {
+	err = e.Seg[e.CurrSegId].Flush(e.PostingsHashBuf)
 	if err != nil {
-		return err
+		log.LogrusObj.Errorln("Flush", err)
+		return
 	}
 
-	e.UpdateCount(e.meta.IndexCount)
+	// 更新 meta info
+	err = e.meta.UpdateSegMeta(e.CurrSegId, e.BufCount)
+	if err != nil {
+		log.LogrusObj.Errorln("UpdateSegMeta", err)
+		return
+	}
+
+	err = e.UpdateCount(e.meta.IndexCount)
+	if err != nil {
+		log.LogrusObj.Errorln("UpdateCount", err)
+		return
+	}
 	e.Seg[e.CurrSegId].Close()
 	delete(e.Seg, e.CurrSegId)
 

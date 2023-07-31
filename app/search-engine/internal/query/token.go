@@ -41,7 +41,7 @@ func Ngram(content string, n int64) ([]Tokenization, error) {
 	return token, nil
 }
 
-// GseCut 分词
+// GseCut 分词 IK
 func GseCut(content string) ([]Tokenization, error) {
 	content = ignoredChar(content)
 	c := GobalSeg.Segment([]byte(content))
