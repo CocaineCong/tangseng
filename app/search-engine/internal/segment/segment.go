@@ -4,20 +4,21 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/CocaineCong/tangseng/app/search-engine/internal/query"
 	"github.com/CocaineCong/tangseng/app/search-engine/internal/storage"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
 type Segment struct {
-	*storage.ForwardDB
-	*storage.InvertedDB
+	*storage.ForwardDB  // 正排索引库
+	*storage.InvertedDB // 倒排索引库
 }
 
 // Token2PostingsLists 词条 转化成 倒排索引表
-func Token2PostingsLists(bufInvertHash InvertedIndexHash, token string, position int64, docId int64) (err error) {
+func Token2PostingsLists(bufInvertHash InvertedIndexHash, token query.Tokenization, docId int64) (err error) {
 	bufInvert := new(InvertedIndexValue)
 	if len(bufInvertHash) > 0 {
-		if item, ok := bufInvertHash[token]; ok {
+		if item, ok := bufInvertHash[token.Token]; ok {
 			bufInvert = item
 		}
 	}
@@ -28,14 +29,14 @@ func Token2PostingsLists(bufInvertHash InvertedIndexHash, token string, position
 		pl.PositionCount++
 	} else {
 		var docCount int64 = 1
-		bufInvert = CreateNewInvertedIndex(token, docCount)
-		bufInvertHash[token] = bufInvert
+		bufInvert = CreateNewInvertedIndex(token.Token, docCount)
+		bufInvertHash[token.Token] = bufInvert
 		pl = CreateNewPostingsList(docId)
 		bufInvert.PostingsList = pl
 	}
 
-	pl.Positions = append(pl.Positions, position) // 存储位置信息
-	bufInvert.PositionCount++                     // 统计该token关联的所有的doc的position的个数
+	pl.Positions = append(pl.Positions, token.Position) // 存储位置信息
+	bufInvert.PositionCount++                           // 统计该token关联的所有的doc的position的个数
 
 	return
 }

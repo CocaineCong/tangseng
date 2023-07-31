@@ -7,8 +7,9 @@ import (
 
 // Tokenization 分词返回结构
 type Tokenization struct {
-	Token    string
-	Position int64
+	Token    string // 词条
+	Position int64  // 词条在文本的位置
+	Offset   int64  // 偏移量
 }
 
 // Ngram 分词
@@ -19,7 +20,7 @@ func Ngram(content string, n int64) ([]Tokenization, error) {
 	content = ignoredChar(content)
 	var token []Tokenization
 	if n >= int64(len([]rune(content))) {
-		token = append(token, Tokenization{content, 0})
+		token = append(token, Tokenization{content, 0, 0})
 		return token, nil
 	}
 
@@ -50,6 +51,7 @@ func GseCut(content string) ([]Tokenization, error) {
 		token = append(token, Tokenization{
 			Token:    v.Token().Text(),
 			Position: int64(v.Start()),
+			Offset:   int64(v.End()),
 		})
 	}
 

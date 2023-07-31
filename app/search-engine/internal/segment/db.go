@@ -3,6 +3,7 @@ package segment
 import (
 	"fmt"
 
+	"github.com/CocaineCong/tangseng/app/search-engine/internal/query"
 	"github.com/CocaineCong/tangseng/app/search-engine/internal/storage"
 	"github.com/CocaineCong/tangseng/config"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
@@ -36,13 +37,18 @@ func InitSegmentDb(segId SegId) (*storage.InvertedDB, *storage.ForwardDB) {
 }
 
 // CreateNewInvertedIndex 创建倒排索引
-func CreateNewInvertedIndex(token string, docCount int64) *InvertedIndexValue {
-	p := new(InvertedIndexValue)
-	p.DocCount = docCount
-	p.Token = token
-	p.PositionCount = 0
-	p.PostingsList = new(PostingsList)
-	return p
+func CreateNewInvertedIndex(token query.Tokenization, docCount int64) *InvertedIndexValue {
+	return &InvertedIndexValue{ // TODO：优化一下结构
+		Token:         token.Token,
+		PostingsList:  new(PostingsList),
+		DocCount:      docCount,
+		PositionCount: 0,
+		TermValues: &storage.TermValue{
+			DocCount: docCount,
+			Offset:   token.Offset,
+			Size:     token.Offset - token.Position,
+		},
+	}
 }
 
 // GetDbName 获取db的路径+名称

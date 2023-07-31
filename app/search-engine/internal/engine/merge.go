@@ -56,7 +56,7 @@ func (m *MergeScheduler) Close() {
 	m.Wait()
 }
 
-// MayMerge 判断是否需要merge 通过meta数据中的seg info 来计算
+// MayMerge 判断是否需要merge 通过 meta 数据中的seg info 来计算
 func (m *MergeScheduler) MayMerge() {
 	// 已存在超过2个segment，则需要判断seg是否需要merge
 	if len(m.Meta.SegMeta.SegInfo) <= 1 {
@@ -93,18 +93,20 @@ func (m *MergeScheduler) calculateSegs() (*MergeMessage, bool) {
 }
 
 // term表需要合并k个升序，以及处理对应的倒排索引，正排表直接merge即可
-func (m *MergeScheduler) mergeSegments(segs *MergeMessage) error {
+func (m *MergeScheduler) mergeSegments(segs *MergeMessage) (err error) {
 	segmentDBs := make([]*segment.Segment, 0)
-	docSize := int64(0)
+	var docSize int64 = 0
 	for _, segInfo := range []*segment.SegInfo(*segs) {
 		docSize += segInfo.SegSize
 		s := segment.NewSegment(segInfo.SegId)
 		segmentDBs = append(segmentDBs, s)
 	}
+
 	if len(segmentDBs) == 0 {
 		log.LogrusObj.Infof("no segment to merge")
-		return nil
+		return
 	}
+
 	termNodes := make([]*segment.TermNode, 0)
 	termChs := make([]chan storage.KvInfo, 0)
 
@@ -117,10 +119,22 @@ func (m *MergeScheduler) mergeSegments(segs *MergeMessage) error {
 
 		// 开启协程遍历读取
 		termCh := make(chan storage.KvInfo)
-		go seg.GetInvertedTermCursor(termCh)
+		go func() { // TODO：协程发生panic怎么办
+			err = seg.GetInvertedTermCursor(termCh)
+			if err != nil {
+				log.LogrusObj.Errorln("GetInvertedTermCursor", err)
+				return
+			}
+		}()
 
 		forCh := make(chan storage.KvInfo)
-		go seg.GetForwardCursor(forCh)
+		go func() {
+			err = seg.GetForwardCursor(forCh)
+			if err != nil {
+				log.LogrusObj.Errorln("GetForwardCursor", err)
+				return
+			}
+		}()
 
 		termNodes = append(termNodes, termNode)
 		termChs = append(termChs, termCh)
@@ -132,24 +146,28 @@ func (m *MergeScheduler) mergeSegments(segs *MergeMessage) error {
 	// 合并term和倒排数据，返回合并后的数据
 	res, err := segment.MergeKTermSegments(termNodes, termChs)
 	if err != nil {
-		log.LogrusObj.Errorf("merge error:%v", err)
-		return err
+		log.LogrusObj.Errorf("MergeKTermSegments:%v", err)
+		return
 	}
 
-	en := NewEngine(m.Meta, segment.MergeMode)
-	// 罗盘
-	en.Seg[en.CurrSegId].Flush(res)
+	engineTmp := NewEngine(m.Meta, segment.MergeMode)
+	// 落盘
+	err = engineTmp.Seg[engineTmp.CurrSegId].Flush(res)
+	if err != nil {
+		log.LogrusObj.Errorf("NewEngine-Flush:%v", err)
+		return
+	}
 	log.LogrusObj.Infof("start forward:%s", strings.Repeat("-", 20))
 
 	// 合并正排数据
-	err = segment.MergeKForwardSegments(en.Seg[en.CurrSegId], forNodes, forChs)
+	err = segment.MergeKForwardSegments(engineTmp.Seg[engineTmp.CurrSegId], forNodes, forChs)
 	if err != nil {
 		log.LogrusObj.Infof("forward merge error:%v", err)
 		return err
 	}
 
 	// 更新 meta info
-	err = m.Meta.UpdateSegMeta(en.CurrSegId, docSize)
+	err = m.Meta.UpdateSegMeta(engineTmp.CurrSegId, docSize)
 	if err != nil {
 		log.LogrusObj.Infof("update seg meta err:%v", err)
 		return err

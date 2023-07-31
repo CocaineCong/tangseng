@@ -72,7 +72,7 @@ func (e *Engine) Text2PostingsLists(text string, docId int64) (err error) {
 
 	bufInvertedHash := make(segment.InvertedIndexHash)
 	for _, token := range tokens {
-		err = segment.Token2PostingsLists(bufInvertedHash, token.Token, token.Position, docId)
+		err = segment.Token2PostingsLists(bufInvertedHash, token, docId)
 		if err != nil {
 			log.LogrusObj.Errorf("Token2PostingsLists err:%v", err)
 			return
@@ -116,6 +116,7 @@ func (e *Engine) UpdateCount(num int64) (err error) {
 	return seg.UpdateForwardCount(count)
 }
 
+// Flush 落盘操作
 func (e *Engine) Flush(isEnd ...bool) (err error) {
 	err = e.Seg[e.CurrSegId].Flush(e.PostingsHashBuf)
 	if err != nil {
@@ -142,7 +143,6 @@ func (e *Engine) Flush(isEnd ...bool) (err error) {
 		e.Scheduler.MayMerge()
 	}
 
-	// new
 	if len(isEnd) > 0 && isEnd[0] {
 		return nil
 	}
