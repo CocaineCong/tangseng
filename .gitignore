@@ -27,3 +27,4 @@ app/search-engine/internal/data
 logs
 data
 source
+.DS_Store
