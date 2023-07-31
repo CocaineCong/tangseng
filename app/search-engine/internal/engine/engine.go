@@ -60,17 +60,19 @@ func (e *Engine) AddDoc(doc *storage.Document) error {
 }
 
 // Text2PostingsLists --
-func (e *Engine) Text2PostingsLists(text string, docId int64) error {
+func (e *Engine) Text2PostingsLists(text string, docId int64) (err error) {
 	tokens, err := query.GseCut(text)
 	if err != nil {
-		return fmt.Errorf("text2PostingsLists Ngram err:%v", err)
+		log.LogrusObj.Errorf("text2PostingsLists err:%v", err)
+		return
 	}
 
 	bufInvertedHash := make(segment.InvertedIndexHash)
 	for _, token := range tokens {
 		err = segment.Token2PostingsLists(bufInvertedHash, token.Token, token.Position, docId)
 		if err != nil {
-			return err
+			log.LogrusObj.Errorf("Token2PostingsLists err:%v", err)
+			return
 		}
 	}
 
@@ -86,10 +88,14 @@ func (e *Engine) Text2PostingsLists(text string, docId int64) error {
 
 	e.BufCount++
 
-	// 达到阈值
+	// 达到阈值，刷新存储
 	if len(e.PostingsHashBuf) > 0 && (e.BufCount >= e.BufSize) {
 		log.LogrusObj.Infof("text2PostingsLists need flush")
-		e.Flush()
+		err = e.Flush()
+		if err != nil {
+			log.LogrusObj.Errorf("Flush err:%v", err)
+			return
+		}
 	}
 
 	e.indexCount()

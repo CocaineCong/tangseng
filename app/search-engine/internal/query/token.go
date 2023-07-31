@@ -11,7 +11,7 @@ type Tokenization struct {
 	Position int64
 }
 
-// Ngram 分词 后续看情况换成ik吧..
+// Ngram 分词
 func Ngram(content string, n int64) ([]Tokenization, error) {
 	if n < 1 {
 		return nil, fmt.Errorf("ngram n must >= 1")
@@ -44,12 +44,12 @@ func Ngram(content string, n int64) ([]Tokenization, error) {
 // GseCut 分词
 func GseCut(content string) ([]Tokenization, error) {
 	content = ignoredChar(content)
-	c := GobalSeg.Pos(content)
+	c := GobalSeg.Segment([]byte(content))
 	token := make([]Tokenization, 0)
 	for _, v := range c {
 		token = append(token, Tokenization{
-			Token:    v.Text,
-			Position: int64(strings.Index(content, v.Text)),
+			Token:    v.Token().Text(),
+			Position: int64(v.Start()),
 		})
 	}
 

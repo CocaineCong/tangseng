@@ -13,8 +13,8 @@ type Segment struct {
 	*storage.InvertedDB
 }
 
-// Token2PostingsLists --
-func Token2PostingsLists(bufInvertHash InvertedIndexHash, token string, position int64, docId int64) error {
+// Token2PostingsLists 词条 转化成 倒排索引表
+func Token2PostingsLists(bufInvertHash InvertedIndexHash, token string, position int64, docId int64) (err error) {
 	bufInvert := new(InvertedIndexValue)
 	if len(bufInvertHash) > 0 {
 		if item, ok := bufInvertHash[token]; ok {
@@ -27,28 +27,28 @@ func Token2PostingsLists(bufInvertHash InvertedIndexHash, token string, position
 		pl = bufInvert.PostingsList
 		pl.PositionCount++
 	} else {
-		docCount := int64(1)
+		var docCount int64 = 1
 		bufInvert = CreateNewInvertedIndex(token, docCount)
 		bufInvertHash[token] = bufInvert
 		pl = CreateNewPostingsList(docId)
 		bufInvert.PostingsList = pl
 	}
-	// 存储位置信息
-	pl.Positions = append(pl.Positions, position)
-	// 统计该token关联的所有的doc的position的个数
-	bufInvert.PositionCount++
 
-	return nil
+	pl.Positions = append(pl.Positions, position) // 存储位置信息
+	bufInvert.PositionCount++                     // 统计该token关联的所有的doc的position的个数
+
+	return
 }
 
 // getTokenCount 通过token获取doc数量 insert 标识是写入还是查询 写入时不为空
-func (e *Segment) getTokenCount(token string) (*storage.TermValue, error) {
-	termInfo, err := e.InvertedDB.GetTermInfo(token)
+func (e *Segment) getTokenCount(token string) (termInfo *storage.TermValue, err error) {
+	termInfo, err = e.InvertedDB.GetTermInfo(token)
 	if err != nil || termInfo == nil {
-		return nil, fmt.Errorf("getTokenCount GetTermInfo err:%v", err)
+		log.LogrusObj.Errorf("getTokenCount GetTermInfo err:%v", err)
+		return
 	}
 
-	return termInfo, nil
+	return
 }
 
 // FetchPostings 通过 token 读取倒排表数据，返回倒排表，长度 和 err

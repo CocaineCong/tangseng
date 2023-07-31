@@ -35,10 +35,7 @@ func IndexRunning() {
 }
 
 func Run(meta *engine.Meta) {
-	index, err := NewIndexEngine(meta)
-	if err != nil {
-		panic(err)
-	}
+	index := NewIndexEngine(meta)
 	defer index.Close()
 
 	addDoc(index)
@@ -76,9 +73,9 @@ func doc2Struct(docStr string) (*storage.Document, error) {
 	doc := &storage.Document{
 		DocId: cast.ToInt64(d[0]),
 		Title: d[1],
-		Body:  d[16],
+		Body:  d[1],
 	}
-	fmt.Println("doc", doc.DocId, doc.Title, doc.Body)
+	fmt.Println("doc", doc.DocId, doc.Body)
 
 	return doc, nil
 }

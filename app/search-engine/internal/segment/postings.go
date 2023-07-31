@@ -61,41 +61,44 @@ func MergeInvertedIndex(base, toBeAdd InvertedIndexHash) {
 }
 
 // decodePostings 解码 return *PostingsList postingslen err
-func decodePostings(buf *bytes.Buffer) (*PostingsList, int64, error) {
+func decodePostings(buf *bytes.Buffer) (p *PostingsList, postingsLen int64, err error) {
 	if buf == nil || buf.Len() == 0 {
-		return nil, 0, nil
+		log.LogrusObj.Infoln("decodePostings-buf 为空")
+		return
 	}
-	var postingsLen int64
-	err := binary.Read(buf, binary.LittleEndian, &postingsLen)
+	err = binary.Read(buf, binary.LittleEndian, &postingsLen)
 	if err != nil {
-		log.LogrusObj.Infoln("binary.Read", err)
-		return nil, 0, err
+		log.LogrusObj.Errorln("binary.Read", err)
+		return
 	}
 	cp := new(PostingsList)
-	p := cp
+	p = cp
 	for buf.Len() > 0 {
 		tmp := new(PostingsList)
 		err = binary.Read(buf, binary.LittleEndian, &tmp.DocId)
 		if err != nil {
-			log.LogrusObj.Infoln("binary.Read", err)
-			return nil, 0, err
+			log.LogrusObj.Errorln("binary.Read", err)
+			return
 		}
 
 		err = binary.Read(buf, binary.LittleEndian, &tmp.PositionCount)
 		if err != nil {
-			return nil, 0, err
+			log.LogrusObj.Errorln("binary.Read", err)
+			return
 		}
 
 		tmp.Positions = make([]int64, tmp.PositionCount)
 		err = binary.Read(buf, binary.LittleEndian, &tmp.Positions)
 		if err != nil {
-			return nil, 0, err
+			log.LogrusObj.Errorln("binary.Read", err)
+			return
 		}
 		log.LogrusObj.Infoln("postings", tmp)
 		cp.Next = tmp
 		cp = tmp
 
 	}
+
 	return p.Next, postingsLen, nil
 }
 
