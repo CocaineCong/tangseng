@@ -100,11 +100,7 @@ func (e *Engine) UpdateCount(num int64) error {
 	seg := e.Seg[e.CurrSegId]
 	count, err := seg.ForwardCount()
 	if err != nil {
-		if err.Error() == ErrCountKeyNotFound {
-			count = 0
-		} else {
-			return fmt.Errorf("updateCount err:%v", err)
-		}
+		return fmt.Errorf("updateCount err:%v", err)
 	}
 	count += num
 	return seg.UpdateForwardCount(count)
