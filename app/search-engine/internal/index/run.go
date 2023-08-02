@@ -70,7 +70,7 @@ func addDoc(in *Index) {
 func doc2Struct(docStr string) (*storage.Document, error) {
 	docStr = strings.Replace(docStr, "\"", "", -1)
 	d := strings.Split(docStr, ",")
-	// if len(d) < 3 {
+	// if len(d) < 3 { // TODO: 后续记得开放
 	// 	return nil, fmt.Errorf("doc2Struct err: %v", "docStr is not right")
 	// }
 
