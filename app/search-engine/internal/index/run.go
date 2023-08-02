@@ -13,7 +13,7 @@ import (
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
-func IndexRunning() {
+func RunningIndex() {
 	meta, err := engine.ParseMeta()
 	if err != nil {
 		fmt.Println("ParseMeta err", err)
@@ -27,7 +27,11 @@ func IndexRunning() {
 	func() {
 		// 最后同步元数据至文件
 		fmt.Println("close")
-		meta.SyncMeta()
+		err = meta.SyncMeta()
+		if err != nil {
+			log.LogrusObj.Errorln("SyncMeta", err)
+			return
+		}
 		fmt.Println("close")
 		ticker.Stop()
 		fmt.Println("close")
@@ -66,16 +70,16 @@ func addDoc(in *Index) {
 func doc2Struct(docStr string) (*storage.Document, error) {
 	docStr = strings.Replace(docStr, "\"", "", -1)
 	d := strings.Split(docStr, ",")
-	if len(d) < 3 {
-		return nil, fmt.Errorf("doc2Struct err: %v", "docStr is not right")
-	}
+	// if len(d) < 3 {
+	// 	return nil, fmt.Errorf("doc2Struct err: %v", "docStr is not right")
+	// }
 
 	doc := &storage.Document{
 		DocId: cast.ToInt64(d[0]),
 		Title: d[1],
 		Body:  d[1],
 	}
-	fmt.Println("doc", doc.DocId, doc.Body)
+	fmt.Println("doc", doc.DocId, doc.Title, doc.Body)
 
 	return doc, nil
 }

@@ -102,7 +102,7 @@ func (e *Engine) Text2PostingsLists(text string, docId int64) (err error) {
 	}
 
 	e.indexCount()
-	return nil
+	return
 }
 
 func (e *Engine) UpdateCount(num int64) (err error) {

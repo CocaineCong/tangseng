@@ -29,7 +29,7 @@ func Token2PostingsLists(bufInvertHash InvertedIndexHash, token query.Tokenizati
 		pl.PositionCount++
 	} else {
 		var docCount int64 = 1
-		bufInvert = CreateNewInvertedIndex(token.Token, docCount)
+		bufInvert = CreateNewInvertedIndex(token, docCount)
 		bufInvertHash[token.Token] = bufInvert
 		pl = CreateNewPostingsList(docId)
 		bufInvert.PostingsList = pl

@@ -11,7 +11,7 @@ func main() {
 	config.InitConfig()
 	loading.Loading()
 	query.InitSeg()
-	index.IndexRunning()
+	index.RunningIndex()
 	// query := "孙悟空"
 	// index.SearchRecall(query)
 

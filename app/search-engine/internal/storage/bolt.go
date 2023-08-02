@@ -2,8 +2,6 @@ package storage
 
 import (
 	bolt "go.etcd.io/bbolt"
-
-	"github.com/CocaineCong/tangseng/consts"
 )
 
 // Put 通过bolt写入数据
@@ -21,17 +19,19 @@ func Put(db *bolt.DB, bucket string, key []byte, value []byte) error {
 func Get(db *bolt.DB, bucket string, key []byte) (r []byte, err error) {
 	err = db.View(func(tx *bolt.Tx) (err error) {
 		b := tx.Bucket([]byte(bucket))
+		if b == nil {
+			b, _ = tx.CreateBucketIfNotExists([]byte(bucket))
+		}
+		b.Tx().WriteFlag = 1
 		r = b.Get(key)
 		if r == nil { // 如果是空的话，直接创建这个key，然后返回这个key的初始值，也就是0
-			_, err = b.CreateBucketIfNotExists(key)
-			if err != nil {
-				return
-			}
-			err = b.Put(key, []byte(consts.ForwardCountInitValue))
-			if err != nil {
-				return
-			}
-			r = b.Get(key)
+			// TODO: 怎么put不进去啊？
+			// err = b.Put(key, []byte(consts.ForwardCountInitValue))
+			// if err != nil {
+			// 	return
+			// }
+			// r = b.Get(key)
+			r = []byte("0")
 			return
 		}
 		return
