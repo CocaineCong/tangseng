@@ -173,9 +173,9 @@ func MergeKTermSegments(list []*TermNode, chList []chan storage.KvInfo) (Inverte
 		if err != nil {
 			return nil, fmt.Errorf("FetchPostings getDocInfo err: %v", err)
 		}
-		pos, count, err := decodePostings(bytes.NewBuffer(c))
+		pos, count, err := DecodePostings(bytes.NewBuffer(c))
 		if err != nil {
-			return nil, fmt.Errorf("FetchPostings decodePostings err: %v", err)
+			return nil, fmt.Errorf("FetchPostings DecodePostings err: %v", err)
 		}
 		log.LogrusObj.Infof("pop node key:%+v,value:%v,count:%d", string(node.Key), val, count)
 		if p, ok := res[string(node.Key)]; ok {

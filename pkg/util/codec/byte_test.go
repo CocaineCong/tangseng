@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"encoding/gob"
 	"fmt"
+	"os"
 	"testing"
 )
 
@@ -80,11 +81,52 @@ func TestGobEncoding(t *testing.T) {
 		fmt.Println(err)
 	}
 	fmt.Printf("%v\n", buf.Bytes())
-
 	dec := gob.NewDecoder(buf)
 	var s2 *Person
 	if err := dec.Decode(&s2); err != nil {
 		fmt.Println(err)
 	}
 	fmt.Println(s2)
+}
+
+func TestGobDecoding(t *testing.T) {
+	buf := new(bytes.Buffer)
+	dec := gob.NewDecoder(buf)
+	var s2 *Person
+	if err := dec.Decode(&s2); err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(s2)
+}
+
+type TermValue struct {
+	DocCount int64
+	Offset   int64
+	Size     int64
+}
+
+func TestGobByte(t *testing.T) {
+	a := []byte{12, 255, 129, 2, 1, 2, 255, 130, 0, 1, 4, 0, 0, 8, 255, 130, 0, 2, 254, 27, 86, 46}
+	buffer := bytes.NewBuffer(a)
+	fmt.Println(buffer)
+	p := new(TermValue)
+	err := gob.NewDecoder(buffer).Decode(&p)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(p)
+}
+
+func TestGobFile(t *testing.T) {
+	filePath := "../../../app/search-engine/data/db/0.term"
+	f, err := os.OpenFile(filePath, os.O_CREATE|os.O_RDWR, 0644)
+	if err != nil {
+		fmt.Println(err)
+	}
+	buffer := []byte{}
+	_, err = f.Read(buffer)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(string(buffer))
 }

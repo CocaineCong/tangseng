@@ -60,10 +60,10 @@ func MergeInvertedIndex(base, toBeAdd InvertedIndexHash) {
 
 }
 
-// decodePostings 解码 return *PostingsList postingslen err
-func decodePostings(buf *bytes.Buffer) (p *PostingsList, postingsLen int64, err error) {
+// DecodePostings 解码 return *PostingsList postingslen err
+func DecodePostings(buf *bytes.Buffer) (p *PostingsList, postingsLen int64, err error) {
 	if buf == nil || buf.Len() == 0 {
-		log.LogrusObj.Infoln("decodePostings-buf 为空")
+		log.LogrusObj.Infoln("DecodePostings-buf 为空")
 		return
 	}
 

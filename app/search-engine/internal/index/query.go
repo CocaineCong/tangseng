@@ -1,11 +1,11 @@
 package index
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/CocaineCong/tangseng/app/search-engine/internal/engine"
 	"github.com/CocaineCong/tangseng/app/search-engine/internal/recall"
+	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
 // Recall 召回
@@ -19,7 +19,7 @@ func NewRecallServ(meta *engine.Meta) *Recall {
 	return &Recall{r}
 }
 
-func SearchRecall(query string) {
+func SearchRecall(query string) (res recall.Recalls, err error) {
 	meta, err := engine.ParseMeta()
 	if err != nil {
 		panic(err)
@@ -28,14 +28,20 @@ func SearchRecall(query string) {
 	// 定时同步meta数据
 	ticker := time.NewTicker(time.Second * 10)
 	go meta.SyncByTicker(ticker)
-	NewRecallServ(meta).Search(query)
+	res, err = NewRecallServ(meta).Search(query)
+	if err != nil {
+		log.LogrusObj.Errorf("SearchRecall-NewRecallServ:%+v", err)
+		return
+	}
 	// close
-	func() {
-		// 最后同步元数据至文件
-		fmt.Println("close")
-		meta.SyncMeta()
-		fmt.Println("close")
-		ticker.Stop()
-		fmt.Println("close")
-	}()
+	// func() {
+	// 	// 最后同步元数据至文件
+	// 	fmt.Println("close")
+	// 	meta.SyncMeta()
+	// 	fmt.Println("close")
+	// 	ticker.Stop()
+	// 	fmt.Println("close")
+	// }()
+
+	return
 }

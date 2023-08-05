@@ -55,19 +55,19 @@ func (e *Segment) getTokenCount(token string) (termInfo *storage.TermValue, err 
 func (e *Segment) FetchPostings(token string) (p *PostingsList, postingsList int64, err error) {
 	term, err := e.InvertedDB.GetTermInfo(token)
 	if err != nil {
-		log.LogrusObj.Errorf("FetchPostings getForwardAddr err: %v", err)
+		log.LogrusObj.Errorf("FetchPostings GetTermInfo err: %v", err)
 		return
 	}
 
 	c, err := e.InvertedDB.GetInvertedDoc(term.Offset, term.Size)
 	if err != nil {
-		log.LogrusObj.Errorf("FetchPostings getForwardAddr err: %v", err)
+		log.LogrusObj.Errorf("FetchPostings GetInvertedDoc err: %v", err)
 		return
 	}
 
-	p, postingsList, err = decodePostings(bytes.NewBuffer(c))
+	p, postingsList, err = DecodePostings(bytes.NewBuffer(c))
 	if err != nil {
-		log.LogrusObj.Errorf("FetchPostings getForwardAddr err: %v", err)
+		log.LogrusObj.Errorf("FetchPostings DecodePostings err: %v", err)
 		return
 	}
 

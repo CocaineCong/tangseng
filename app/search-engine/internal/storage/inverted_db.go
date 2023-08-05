@@ -48,7 +48,7 @@ func NewInvertedDB(termName, postingsName string) *InvertedDB {
 	return &InvertedDB{f, db, stat.Size()}
 }
 
-// StoragePostings TODO:b+tree有问题
+// StoragePostings 存储 倒排索引表
 func (t *InvertedDB) StoragePostings(token string, values []byte, docCount int64) (err error) {
 	// 写入file，获取写入的size
 	size, err := t.storagePostings(values)
@@ -85,6 +85,8 @@ func (t *InvertedDB) GetInverted(key []byte) (value []byte, err error) {
 // GetTermInfo 获取term关联的倒排地址
 func (t *InvertedDB) GetTermInfo(token string) (p *TermValue, err error) {
 	c, err := t.GetInverted([]byte(token))
+	fmt.Println("c", string(c))
+	fmt.Println("c byte", c)
 	if err != nil {
 		return
 	}
