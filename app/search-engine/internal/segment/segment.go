@@ -2,7 +2,6 @@ package segment
 
 import (
 	"bytes"
-	"fmt"
 
 	"github.com/CocaineCong/tangseng/app/search-engine/internal/query"
 	"github.com/CocaineCong/tangseng/app/search-engine/internal/storage"
@@ -56,44 +55,48 @@ func (e *Segment) getTokenCount(token string) (termInfo *storage.TermValue, err 
 func (e *Segment) FetchPostings(token string) (*PostingsList, int64, error) {
 	term, err := e.InvertedDB.GetTermInfo(token)
 	if err != nil {
-		return nil, 0, fmt.Errorf("FetchPostings getForwardAddr err: %v", err)
+		log.LogrusObj.Errorf("FetchPostings getForwardAddr err: %v", err)
+		return
 	}
 
 	c, err := e.InvertedDB.GetInvertedDoc(term.Offset, term.Size)
 	if err != nil {
-		return nil, 0, fmt.Errorf("FetchPostings getForwardAddr err: %v", err)
+		log.LogrusObj.Errorf("FetchPostings getForwardAddr err: %v", err)
+		return
 	}
 
 	return decodePostings(bytes.NewBuffer(c))
 }
 
 // Flush 落盘操作
-func (e *Segment) Flush(PostingsHashBuf InvertedIndexHash) error {
+func (e *Segment) Flush(PostingsHashBuf InvertedIndexHash) (err error) {
 	if len(PostingsHashBuf) == 0 {
 		log.LogrusObj.Infof("Flush err: %v", "in.PostingsHashBuf is empty")
-		return nil
+		return
 	}
 	for token, invertedIndex := range PostingsHashBuf {
-		log.LogrusObj.Infof("token:%s,invertedIndex:%v\n", token, invertedIndex)
-		err := e.storagePostings(invertedIndex)
+		log.LogrusObj.Infof("token:%s,invertedIndex:%v \n", token, invertedIndex)
+		err = e.storagePostings(invertedIndex)
 		if err != nil {
-			log.LogrusObj.Infof("updatePostings err: %v", err)
-			return fmt.Errorf("updatePostings err: %v", err)
+			log.LogrusObj.Errorf("Flush-storagePostings err: %v", err)
+			return
 		}
 	}
-	return nil
+	return
 }
 
 // storagePostings 落盘
-func (e *Segment) storagePostings(p *InvertedIndexValue) error {
+func (e *Segment) storagePostings(p *InvertedIndexValue) (err error) {
 	if p == nil {
-		return fmt.Errorf("updatePostings p is nil")
+		log.LogrusObj.Errorf("updatePostings p is nil")
+		return
 	}
 
 	// 编码
 	buf, err := EncodePostings(p.PostingsList, p.DocCount)
 	if err != nil {
-		return fmt.Errorf("updatePostings encodePostings err: %v", err)
+		log.LogrusObj.Errorf("updatePostings encodePostings err: %v", err)
+		return
 	}
 
 	// 开始写入数据库

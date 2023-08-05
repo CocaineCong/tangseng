@@ -10,7 +10,7 @@ import (
 
 	"github.com/CocaineCong/tangseng/consts"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
-	"github.com/CocaineCong/tangseng/pkg/util/se"
+	"github.com/CocaineCong/tangseng/pkg/util/codec"
 )
 
 type KvInfo struct {
@@ -48,19 +48,22 @@ func NewInvertedDB(termName, postingsName string) *InvertedDB {
 	return &InvertedDB{f, db, stat.Size()}
 }
 
+// StoragePostings TODO:b+tree有问题
 func (t *InvertedDB) StoragePostings(token string, values []byte, docCount int64) (err error) {
 	// 写入file，获取写入的size
 	size, err := t.storagePostings(values)
 	if err != nil {
 		return
 	}
-	// 写入b+ tree
-	buf := bytes.NewBuffer(nil)
-	err = se.BinaryWrite(buf, docCount)
+	log.LogrusObj.Infof("StoragePostings-storagePostings,写入:%s,大小:%d \n", string(values), size)
+
+	buf := bytes.NewBuffer([]byte{})
+	buf, err = codec.GobWrite(docCount)
 	if err != nil {
 		return
 	}
-	err = se.BinaryWrite(buf, []int64{t.offset, size})
+
+	buf, err = codec.GobWrite([]int64{t.offset, size})
 	if err != nil {
 		return
 	}
@@ -114,7 +117,7 @@ func (t *InvertedDB) GetInvertedTermCursor(ternCH chan KvInfo) error {
 func (t *InvertedDB) storagePostings(postings []byte) (size int64, err error) {
 	s, err := t.file.WriteAt(postings, t.offset)
 	if err != nil {
-		return 0, err
+		return
 	}
 
 	return int64(s), nil

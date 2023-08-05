@@ -1,7 +1,7 @@
 package recall
 
 import (
-	"fmt"
+	"errors"
 	"sort"
 
 	"github.com/CocaineCong/tangseng/app/search-engine/internal/engine"
@@ -54,25 +54,19 @@ func (r *Recall) Search(query string) (Recalls, error) {
 		return nil, err
 	}
 
-	recall, err := r.searchDoc()
-	if err != nil {
-		log.LogrusObj.Errorf("searchDoc err:%v", err)
-		return nil, err
-	}
-
-	return recall, nil
+	return r.searchDoc()
 }
 
-func (r *Recall) splitQuery2Tokens(query string) error {
-	fmt.Println("query", query)
-	err := r.Text2PostingsLists(query, 0)
+func (r *Recall) splitQuery2Tokens(query string) (err error) {
+	err = r.Text2PostingsLists(query, 0)
 	if err != nil {
-		return fmt.Errorf("text2postingslists err: %v", err)
+		log.LogrusObj.Errorf("text2postingslists err: %v", err)
+		return
 	}
-	return nil
+	return
 }
 
-func (r *Recall) searchDoc() (Recalls, error) {
+func (r *Recall) searchDoc() (recall Recalls, err error) {
 	recalls := make(Recalls, 0)
 	tokens := make([]*queryTokenHash, 0)
 
@@ -80,14 +74,15 @@ func (r *Recall) searchDoc() (Recalls, error) {
 	for token, post := range r.PostingsHashBuf {
 		// 正常不会出现
 		if token == "" {
-			return nil, fmt.Errorf("token is nil1")
+			err = errors.New("token is nil1")
+			return
 		}
 		postings, count, err := r.fetchPostingsBySegs(token)
 		if err != nil {
-			return nil, err
+			return
 		}
 		if postings == nil {
-			return nil, err
+			return
 		}
 		log.LogrusObj.Infof("token:%s,incvertedIndex:%d", token, postings.DocId)
 		post.DocCount = count
@@ -103,8 +98,10 @@ func (r *Recall) searchDoc() (Recalls, error) {
 
 	tokenCount := len(tokens)
 	if tokenCount == 0 {
-		return nil, nil
+		log.LogrusObj.Infof("searchDoc-tokenCount is 0")
+		return
 	}
+
 	cursors := make([]searchCursor, tokenCount)
 	for i, t := range tokens {
 		cursors[i].doc = t.fetchPostings
@@ -245,8 +242,9 @@ func (r *Recall) searchPhrase(queryToken []*queryTokenHash, tokenCursors []searc
 	return phraseCount
 }
 
-// token 根据 doc count 升序排序
+// token 根据 doc count 升序排序，回去之后还要再进行一次按照score的排序
 func (r *Recall) sortToken(tokens []*queryTokenHash) []*queryTokenHash {
+	// 检验是否排序成功
 	for _, t := range tokens {
 		log.LogrusObj.Infof("token:%v,docCount:%v", t.token, t.invertedIndex.DocCount)
 	}
@@ -259,15 +257,13 @@ func (r *Recall) sortToken(tokens []*queryTokenHash) []*queryTokenHash {
 }
 
 // 获取 token 所有seg的倒排表数据
-func (r *Recall) fetchPostingsBySegs(token string) (*segment.PostingsList, int64, error) {
-	postings := &segment.PostingsList{}
-	postings = nil
-	docCount := int64(0)
+func (r *Recall) fetchPostingsBySegs(token string) (postings *segment.PostingsList, docCount int64, err error) {
+	postings = new(segment.PostingsList)
 	for i, seg := range r.Engine.Seg {
 		p, c, err := seg.FetchPostings(token)
 		if err != nil {
 			log.LogrusObj.Errorf("seg.FetchPostings index:%v", i)
-			return nil, 0, err
+			return
 		}
 		log.LogrusObj.Infof("post:%v", p)
 		postings = segment.MergePostings(postings, p)
@@ -276,7 +272,7 @@ func (r *Recall) fetchPostingsBySegs(token string) (*segment.PostingsList, int64
 	}
 	log.LogrusObj.Infof("token:%v,pos:%v,doc:%v", token, postings, docCount)
 
-	return postings, docCount, nil
+	return
 }
 
 // NewRecall --

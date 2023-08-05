@@ -28,4 +28,11 @@ func TestInvertedDBRead(t *testing.T) {
 		fmt.Println(err)
 	}
 	fmt.Println("v2", string(v2))
+
+	inverted.PutInverted([]byte(query), []byte("11111"))
+	v3, err := inverted.GetInverted([]byte(query))
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(string(v3))
 }

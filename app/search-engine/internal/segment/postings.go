@@ -5,7 +5,7 @@ import (
 	"encoding/binary"
 
 	log "github.com/CocaineCong/tangseng/pkg/logger"
-	"github.com/CocaineCong/tangseng/pkg/util/se"
+	"github.com/CocaineCong/tangseng/pkg/util/codec"
 )
 
 // PostingsList 倒排列表
@@ -66,7 +66,8 @@ func decodePostings(buf *bytes.Buffer) (p *PostingsList, postingsLen int64, err 
 		log.LogrusObj.Infoln("decodePostings-buf 为空")
 		return
 	}
-	err = binary.Read(buf, binary.LittleEndian, &postingsLen)
+	buf.Write(postingsLen)
+	err = io.Read(buf,  &)
 	if err != nil {
 		log.LogrusObj.Errorln("binary.Read", err)
 		return
@@ -103,31 +104,30 @@ func decodePostings(buf *bytes.Buffer) (p *PostingsList, postingsLen int64, err 
 }
 
 // EncodePostings 编码
-func EncodePostings(postings *PostingsList, postingsLen int64) (*bytes.Buffer, error) {
-	buf := bytes.NewBuffer([]byte{})
-	err := se.BinaryWrite(buf, postingsLen)
+func EncodePostings(postings *PostingsList, postingsLen int64) (buf *bytes.Buffer, err error) {
+	buf, err = codec.GobWrite(postingsLen)
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	for postings != nil {
 		log.LogrusObj.Infof("docid:%d,count:%d,positions:%v \n", postings.DocId, postings.PositionCount, postings.Positions)
-		err := se.BinaryWrite(buf, postings.DocId)
+		buf, err = codec.GobWrite(postings.DocId)
 		if err != nil {
-			return nil, err
+			return
 		}
-		err = se.BinaryWrite(buf, postings.PositionCount)
+		buf, err = codec.GobWrite(postings.PositionCount)
 		if err != nil {
-			return nil, err
+			return
 		}
-		err = se.BinaryWrite(buf, postings.Positions)
+		buf, err = codec.GobWrite(postings.Positions)
 		if err != nil {
-			return nil, err
+			return
 		}
 		postings = postings.Next
 	}
 
-	return buf, nil
+	return
 }
 
 // CreateNewPostingsList 创建倒排索引

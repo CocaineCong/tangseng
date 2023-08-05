@@ -154,5 +154,5 @@ func (e *Engine) Flush(isEnd ...bool) (err error) {
 	e.CurrSegId = segId
 	e.Seg = seg
 
-	return nil
+	return
 }
