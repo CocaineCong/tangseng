@@ -19,6 +19,6 @@ func TestMain(m *testing.M) {
 }
 
 func TestRecall(t *testing.T) {
-	query := "机器"
+	query := "电影"
 	index.SearchRecall(query)
 }

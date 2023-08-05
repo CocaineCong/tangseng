@@ -52,7 +52,7 @@ func (e *Segment) getTokenCount(token string) (termInfo *storage.TermValue, err 
 }
 
 // FetchPostings 通过 token 读取倒排表数据，返回倒排表，长度 和 err
-func (e *Segment) FetchPostings(token string) (*PostingsList, int64, error) {
+func (e *Segment) FetchPostings(token string) (p *PostingsList, postingsList int64, err error) {
 	term, err := e.InvertedDB.GetTermInfo(token)
 	if err != nil {
 		log.LogrusObj.Errorf("FetchPostings getForwardAddr err: %v", err)
@@ -65,7 +65,13 @@ func (e *Segment) FetchPostings(token string) (*PostingsList, int64, error) {
 		return
 	}
 
-	return decodePostings(bytes.NewBuffer(c))
+	p, postingsList, err = decodePostings(bytes.NewBuffer(c))
+	if err != nil {
+		log.LogrusObj.Errorf("FetchPostings getForwardAddr err: %v", err)
+		return
+	}
+
+	return
 }
 
 // Flush 落盘操作

@@ -54,16 +54,19 @@ func addDoc(in *Index) {
 		doc, err := doc2Struct(item)
 		if err != nil {
 			log.LogrusObj.Errorf("index addDoc doc2Struct: %v", err)
+			continue
 		}
 		err = in.AddDocument(doc)
 		if err != nil {
 			log.LogrusObj.Errorf("index addDoc AddDocument: %v", err)
+			continue
 		}
 	}
 	// 读取结束 写入磁盘
 	err := in.Flush(true)
 	if err != nil {
 		log.LogrusObj.Errorf("index addDoc AddDocument: %v", err)
+		return
 	}
 }
 

@@ -8,7 +8,7 @@ import (
 )
 
 func TestInvertedDBRead(t *testing.T) {
-	query := "导演"
+	query := "电影"
 	termName := config.Conf.SeConfig.StoragePath + "0.term"
 	postingsName := config.Conf.SeConfig.StoragePath + "0.inverted"
 	inverted := NewInvertedDB(termName, postingsName)
@@ -21,7 +21,7 @@ func TestInvertedDBRead(t *testing.T) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println("v", v) // TODO:存储有问题
+	fmt.Println("v", string(v))
 	err = inverted.StoragePostings(query, []byte("100"), 1)
 	v2, err := inverted.GetInverted([]byte(query))
 	if err != nil {

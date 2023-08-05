@@ -2,7 +2,7 @@ package segment
 
 import (
 	"bytes"
-	"encoding/binary"
+	"encoding/gob"
 
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/CocaineCong/tangseng/pkg/util/codec"
@@ -66,30 +66,32 @@ func decodePostings(buf *bytes.Buffer) (p *PostingsList, postingsLen int64, err 
 		log.LogrusObj.Infoln("decodePostings-buf 为空")
 		return
 	}
-	buf.Write(postingsLen)
-	err = io.Read(buf,  &)
+
+	dec := gob.NewDecoder(buf)
+	err = dec.Decode(&postingsLen)
 	if err != nil {
 		log.LogrusObj.Errorln("binary.Read", err)
 		return
 	}
+
 	cp := new(PostingsList)
 	p = cp
 	for buf.Len() > 0 {
 		tmp := new(PostingsList)
-		err = binary.Read(buf, binary.LittleEndian, &tmp.DocId)
+		err = dec.Decode(&tmp.DocId)
 		if err != nil {
 			log.LogrusObj.Errorln("binary.Read", err)
 			return
 		}
 
-		err = binary.Read(buf, binary.LittleEndian, &tmp.PositionCount)
+		err = dec.Decode(&tmp.PositionCount)
 		if err != nil {
 			log.LogrusObj.Errorln("binary.Read", err)
 			return
 		}
 
 		tmp.Positions = make([]int64, tmp.PositionCount)
-		err = binary.Read(buf, binary.LittleEndian, &tmp.Positions)
+		err = dec.Decode(&tmp.Positions)
 		if err != nil {
 			log.LogrusObj.Errorln("binary.Read", err)
 			return

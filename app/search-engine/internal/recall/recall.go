@@ -77,8 +77,9 @@ func (r *Recall) searchDoc() (recall Recalls, err error) {
 			err = errors.New("token is nil1")
 			return
 		}
-		postings, count, err := r.fetchPostingsBySegs(token)
-		if err != nil {
+		postings, count, errx := r.fetchPostingsBySegs(token)
+		if errx != nil {
+			err = errx
 			return
 		}
 		if postings == nil {
@@ -260,8 +261,9 @@ func (r *Recall) sortToken(tokens []*queryTokenHash) []*queryTokenHash {
 func (r *Recall) fetchPostingsBySegs(token string) (postings *segment.PostingsList, docCount int64, err error) {
 	postings = new(segment.PostingsList)
 	for i, seg := range r.Engine.Seg {
-		p, c, err := seg.FetchPostings(token)
-		if err != nil {
+		p, c, errx := seg.FetchPostings(token)
+		if errx != nil {
+			err = errx
 			log.LogrusObj.Errorf("seg.FetchPostings index:%v", i)
 			return
 		}

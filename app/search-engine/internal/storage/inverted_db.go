@@ -2,7 +2,7 @@ package storage
 
 import (
 	"bytes"
-	"encoding/binary"
+	"encoding/gob"
 	"fmt"
 	"os"
 
@@ -83,12 +83,18 @@ func (t *InvertedDB) GetInverted(key []byte) (value []byte, err error) {
 }
 
 // GetTermInfo 获取term关联的倒排地址
-func (t *InvertedDB) GetTermInfo(token string) (*TermValue, error) {
+func (t *InvertedDB) GetTermInfo(token string) (p *TermValue, err error) {
 	c, err := t.GetInverted([]byte(token))
 	if err != nil {
-		return nil, err
+		return
 	}
-	return Bytes2TermVal(c)
+
+	p, err = Bytes2TermVal(c)
+	if err != nil {
+		return
+	}
+
+	return
 }
 
 // GetInvertedDoc 根据地址获取读取文件
@@ -134,7 +140,7 @@ func Bytes2TermVal(values []byte) (p *TermValue, err error) {
 		return
 	}
 	p = new(TermValue)
-	err = binary.Read(bytes.NewBuffer(values), binary.LittleEndian, p)
+	err = gob.NewDecoder(bytes.NewBuffer(values)).Decode(&p)
 	if err != nil {
 		return
 	}
