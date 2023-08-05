@@ -9,6 +9,7 @@ import (
 	"github.com/CocaineCong/tangseng/app/search-engine/logic/types"
 	"github.com/CocaineCong/tangseng/config"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/CocaineCong/tangseng/pkg/util/codec"
 )
 
 func TestStorageInverted(t *testing.T) {
@@ -24,7 +25,7 @@ func TestStorageInverted(t *testing.T) {
 		TermValues:    nil,
 	}
 	// 编码
-	buf, err := segment.EncodePostings(p)
+	buf, err := codec.EncodePostings(p)
 	if err != nil {
 		log.LogrusObj.Errorf("updatePostings encodePostings err: %v", err)
 		return
@@ -47,10 +48,14 @@ func TestStoreInverted(t *testing.T) {
 		PostingsList:  segment.CreateNewPostingsList(1),
 		DocCount:      10,
 		PositionCount: 20,
-		TermValues:    nil,
+		TermValues: &types.TermValue{
+			DocCount: 10,
+			Offset:   1,
+			Size:     2,
+		},
 	}
 	// 编码
-	buf, err := segment.EncodePostings(p)
+	buf, err := codec.EncodePostings(p)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -68,14 +73,10 @@ func TestGetInverted(t *testing.T) {
 	postingsName := config.Conf.SeConfig.StoragePath + "0.inverted"
 	token := "测试文本"
 	inverted := storage.NewInvertedDB(termName, postingsName)
-	invertedValue, err := inverted.GetInverted([]byte(token))
+	invertedValue, err := inverted.GetInvertedInfo(token)
 	if err != nil {
 		fmt.Println(err)
 	}
 	// 编码
-	p, err := segment.DecodePostings(invertedValue)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(p)
+	fmt.Println(invertedValue)
 }

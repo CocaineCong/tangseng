@@ -41,7 +41,7 @@ func Token2PostingsLists(bufInvertHash InvertedIndexHash, token query.Tokenizati
 }
 
 // getTokenCount 通过token获取doc数量 insert 标识是写入还是查询 写入时不为空
-func (e *Segment) getTokenCount(token string) (termInfo *storage.TermValue, err error) {
+func (e *Segment) getTokenCount(token string) (termInfo *types.TermValue, err error) {
 	termInfo, err = e.InvertedDB.GetTermInfo(token)
 	if err != nil || termInfo == nil {
 		log.LogrusObj.Errorf("getTokenCount GetTermInfo err:%v", err)
@@ -53,23 +53,27 @@ func (e *Segment) getTokenCount(token string) (termInfo *storage.TermValue, err 
 
 // FetchPostings 通过 token 读取倒排表数据，返回倒排索引
 func (e *Segment) FetchPostings(token string) (p *types.InvertedIndexValue, err error) {
-	term, err := e.InvertedDB.GetTermInfo(token)
-	if err != nil {
-		log.LogrusObj.Errorf("FetchPostings GetTermInfo err: %v", err)
-		return
-	}
-
-	c, err := e.InvertedDB.GetInvertedDoc(term.Offset, term.Size)
+	// term, err := e.InvertedDB.GetTermInfo(token)
+	// if err != nil {
+	// 	log.LogrusObj.Errorf("FetchPostings GetTermInfo err: %v", err)
+	// 	return
+	// }
+	//
+	// c, err := e.InvertedDB.GetInvertedDoc(term.Offset, term.Size)
+	// if err != nil {
+	// 	log.LogrusObj.Errorf("FetchPostings GetInvertedDoc err: %v", err)
+	// 	return
+	// }
+	p, err = e.InvertedDB.GetInvertedInfo(token)
 	if err != nil {
 		log.LogrusObj.Errorf("FetchPostings GetInvertedDoc err: %v", err)
 		return
 	}
-
-	p, err = codec.DecodePostings(c)
-	if err != nil {
-		log.LogrusObj.Errorf("FetchPostings DecodePostings err: %v", err)
-		return
-	}
+	// p, err = codec.DecodePostings(c)
+	// if err != nil {
+	// 	log.LogrusObj.Errorf("FetchPostings DecodePostings err: %v", err)
+	// 	return
+	// }
 
 	return
 }

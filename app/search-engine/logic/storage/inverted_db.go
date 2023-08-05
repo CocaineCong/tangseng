@@ -8,9 +8,10 @@ import (
 
 	bolt "go.etcd.io/bbolt"
 
-	"github.com/CocaineCong/tangseng/app/search-engine/logic/segment"
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/types"
 	"github.com/CocaineCong/tangseng/consts"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/CocaineCong/tangseng/pkg/util/codec"
 )
 
 type KvInfo struct {
@@ -22,12 +23,6 @@ type InvertedDB struct {
 	file   *os.File
 	db     *bolt.DB
 	offset int64
-}
-
-type TermValue struct {
-	DocCount int64
-	Offset   int64
-	Size     int64
 }
 
 // NewInvertedDB 新建一个inverted
@@ -83,13 +78,31 @@ func (t *InvertedDB) GetInverted(key []byte) (value []byte, err error) {
 }
 
 // GetTermInfo 获取term关联的倒排地址
-func (t *InvertedDB) GetTermInfo(token string) (p *TermValue, err error) {
+func (t *InvertedDB) GetTermInfo(token string) (p *types.TermValue, err error) {
 	c, err := t.GetInverted([]byte(token))
 	if err != nil {
 		return
 	}
 
-	segment.DecodePostings(c)
+	s, err := codec.DecodePostings(c)
+	if err != nil {
+		return
+	}
+	p = s.TermValues
+	return
+}
+
+// GetInvertedInfo 获取倒排地址
+func (t *InvertedDB) GetInvertedInfo(token string) (p *types.InvertedIndexValue, err error) {
+	c, err := t.GetInverted([]byte(token))
+	if err != nil {
+		return
+	}
+
+	p, err = codec.DecodePostings(c)
+	if err != nil {
+		return
+	}
 
 	return
 }
@@ -132,11 +145,11 @@ func (t *InvertedDB) Close() {
 }
 
 // Bytes2TermVal 字节转换为TermValues
-func Bytes2TermVal(values []byte) (p *TermValue, err error) {
+func Bytes2TermVal(values []byte) (p *types.TermValue, err error) {
 	if len(values) == 0 {
 		return
 	}
-	p = new(TermValue)
+	p = new(types.TermValue)
 	err = gob.NewDecoder(bytes.NewBuffer(values)).Decode(&p)
 	if err != nil {
 		return

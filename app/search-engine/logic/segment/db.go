@@ -35,7 +35,7 @@ func CreateNewInvertedIndex(token query.Tokenization, docCount int64) *types.Inv
 		PostingsList:  new(types.PostingsList),
 		DocCount:      docCount,
 		PositionCount: 0,
-		TermValues: &storage.TermValue{
+		TermValues: &types.TermValue{
 			DocCount: docCount,
 			Offset:   token.Offset,
 			Size:     token.Offset - token.Position,

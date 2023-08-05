@@ -9,6 +9,7 @@ import (
 	"github.com/CocaineCong/tangseng/app/search-engine/logic/types"
 	"github.com/CocaineCong/tangseng/consts"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/CocaineCong/tangseng/pkg/util/codec"
 )
 
 // https://www.cnblogs.com/qianye/archive/2012/11/25/2787923.html 胜者树和败者树
@@ -164,18 +165,20 @@ func MergeKTermSegments(list []*TermNode, chList []chan storage.KvInfo) (res Inv
 			break
 		}
 		log.LogrusObj.Infof("pop node key:%+v,value:%v", string(node.Key), node.Value)
-		val, err := storage.Bytes2TermVal(node.Value)
-		if err != nil {
+		val, errx := storage.Bytes2TermVal(node.Value)
+		if errx != nil {
 			return
 		}
 		log.LogrusObj.Infof("val:%+v", val)
-		c, err := node.Seg.GetInvertedDoc(val.Offset, val.Size)
-		if err != nil {
+		c, errx := node.Seg.GetInvertedDoc(val.Offset, val.Size)
+		if errx != nil {
+			err = errx
 			log.LogrusObj.Errorf("FetchPostings getDocInfo err: %v", err)
 			return
 		}
-		pos, err := DecodePostings(c)
-		if err != nil {
+		pos, errx := codec.DecodePostings(c)
+		if errx != nil {
+			err = errx
 			log.LogrusObj.Errorf("FetchPostings DecodePostings err: %v", err)
 			return
 		}
