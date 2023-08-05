@@ -3,6 +3,8 @@ package segment
 import (
 	"fmt"
 	"testing"
+
+	"github.com/CocaineCong/tangseng/app/search-engine/internal/query"
 )
 
 func TestMergePostings(t *testing.T) {
@@ -33,4 +35,32 @@ func TestMergePostings(t *testing.T) {
 		fmt.Println(res)
 		res = res.Next
 	}
+}
+
+func TestMergeInvertedIndex(t *testing.T) {
+	base := make(InvertedIndexHash)
+	token := query.Tokenization{
+		Token:    "测试文本",
+		Position: 10,
+		Offset:   100,
+	}
+	err := Token2PostingsLists(base, token, 2)
+	if err != nil {
+		fmt.Println("Token2PostingsLists", err)
+	}
+	fmt.Println("base", base)
+
+	addDoc := make(InvertedIndexHash)
+	token2 := query.Tokenization{
+		Token:    "测试文本2",
+		Position: 101,
+		Offset:   1002,
+	}
+	err = Token2PostingsLists(addDoc, token2, 3)
+	if err != nil {
+		fmt.Println("Token2PostingsLists2", err)
+	}
+	fmt.Println("docDoc", addDoc)
+	MergeInvertedIndex(base, addDoc)
+	fmt.Println(base)
 }

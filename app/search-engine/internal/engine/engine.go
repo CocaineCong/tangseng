@@ -62,7 +62,7 @@ func (e *Engine) AddDoc(doc *storage.Document) error {
 	return e.Seg[e.CurrSegId].AddForwardByDoc(doc)
 }
 
-// Text2PostingsLists --
+// Text2PostingsLists 文本 转成 倒排索引记录表
 func (e *Engine) Text2PostingsLists(text string, docId int64) (err error) {
 	tokens, err := query.GseCut(text)
 	if err != nil {
