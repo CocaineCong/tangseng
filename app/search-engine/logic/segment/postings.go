@@ -1,10 +1,7 @@
 package segment
 
 import (
-	"bytes"
-	"encoding/gob"
-
-	"github.com/CocaineCong/tangseng/app/search-engine/internal/types"
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/types"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
@@ -53,56 +50,51 @@ func MergeInvertedIndex(base, toBeAdd InvertedIndexHash) {
 }
 
 // DecodePostings 解码 return *PostingsList postingslen err
-func DecodePostings(buf *bytes.Buffer) (p *types.PostingsList, postingsLen int64, err error) {
-	if buf == nil || buf.Len() == 0 {
-		log.LogrusObj.Infoln("DecodePostings-buf 为空")
-		return
-	}
-
-	dec := gob.NewDecoder(buf)
-	err = dec.Decode(&postingsLen)
-	if err != nil {
-		log.LogrusObj.Errorln("binary.Read", err)
-		return
-	}
-
-	cp := new(types.PostingsList)
-	p = cp
-	for buf.Len() > 0 {
-		tmp := new(types.PostingsList)
-		err = dec.Decode(&tmp.DocId)
-		if err != nil {
-			log.LogrusObj.Errorln("binary.Read", err)
-			return
-		}
-
-		err = dec.Decode(&tmp.PositionCount)
-		if err != nil {
-			log.LogrusObj.Errorln("binary.Read", err)
-			return
-		}
-
-		tmp.Positions = make([]int64, tmp.PositionCount)
-		err = dec.Decode(&tmp.Positions)
-		if err != nil {
-			log.LogrusObj.Errorln("binary.Read", err)
-			return
-		}
-		log.LogrusObj.Infoln("postings", tmp)
-		cp.Next = tmp
-		cp = tmp
-
-	}
-
-	return p.Next, postingsLen, nil
-}
+// func DecodePostings(buf *bytes.Buffer) (p *types.PostingsList, postingsLen int64, err error) {
+// 	if buf == nil || buf.Len() == 0 {
+// 		log.LogrusObj.Infoln("DecodePostings-buf 为空")
+// 		return
+// 	}
+//
+// 	dec := gob.NewDecoder(buf)
+// 	err = dec.Decode(&postingsLen)
+// 	if err != nil {
+// 		log.LogrusObj.Errorln("binary.Read", err)
+// 		return
+// 	}
+//
+// 	cp := new(types.PostingsList)
+// 	p = cp
+// 	for buf.Len() > 0 {
+// 		tmp := new(types.PostingsList)
+// 		err = dec.Decode(&tmp.DocId)
+// 		if err != nil {
+// 			log.LogrusObj.Errorln("binary.Read", err)
+// 			return
+// 		}
+//
+// 		err = dec.Decode(&tmp.PositionCount)
+// 		if err != nil {
+// 			log.LogrusObj.Errorln("binary.Read", err)
+// 			return
+// 		}
+//
+// 		tmp.Positions = make([]int64, tmp.PositionCount)
+// 		err = dec.Decode(&tmp.Positions)
+// 		if err != nil {
+// 			log.LogrusObj.Errorln("binary.Read", err)
+// 			return
+// 		}
+// 		log.LogrusObj.Infoln("postings", tmp)
+// 		cp.Next = tmp
+// 		cp = tmp
+//
+// 	}
+//
+// 	return p.Next, postingsLen, nil
+// }
 
 // EncodePostings 编码
-func EncodePostings(postings *types.InvertedIndexValue) (buf *bytes.Buffer, err error) {
-
-	return
-}
-
 // func EncodePostings(postings *PostingsList, postingsLen int64) (buf *bytes.Buffer, err error) {
 // 	buf, err = codec.GobWrite(postingsLen)
 // 	if err != nil {

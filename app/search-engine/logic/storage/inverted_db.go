@@ -8,9 +8,9 @@ import (
 
 	bolt "go.etcd.io/bbolt"
 
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/segment"
 	"github.com/CocaineCong/tangseng/consts"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
-	"github.com/CocaineCong/tangseng/pkg/util/codec"
 )
 
 type KvInfo struct {
@@ -49,7 +49,7 @@ func NewInvertedDB(termName, postingsName string) *InvertedDB {
 }
 
 // StoragePostings 存储 倒排索引表
-func (t *InvertedDB) StoragePostings(token string, values []byte, docCount int64) (err error) {
+func (t *InvertedDB) StoragePostings(token string, values []byte) (err error) {
 	// 写入file，获取写入的size
 	size, err := t.storagePostings(values)
 	if err != nil {
@@ -57,19 +57,19 @@ func (t *InvertedDB) StoragePostings(token string, values []byte, docCount int64
 	}
 	log.LogrusObj.Infof("StoragePostings-storagePostings,写入:%s,大小:%d \n", string(values), size)
 
-	buf := bytes.NewBuffer([]byte{})
-	buf, err = codec.GobWrite(docCount)
-	if err != nil {
-		return
-	}
-
-	buf, err = codec.GobWrite([]int64{t.offset, size})
-	if err != nil {
-		return
-	}
+	// buf := bytes.NewBuffer([]byte{})
+	// buf, err = codec.GobWrite(docCount)
+	// if err != nil {
+	// 	return
+	// }
+	//
+	// buf, err = codec.GobWrite([]int64{t.offset, size})
+	// if err != nil {
+	// 	return
+	// }
 
 	t.offset += size
-	return t.PutInverted([]byte(token), buf.Bytes())
+	return t.PutInverted([]byte(token), values)
 }
 
 // PutInverted 插入term
@@ -85,16 +85,11 @@ func (t *InvertedDB) GetInverted(key []byte) (value []byte, err error) {
 // GetTermInfo 获取term关联的倒排地址
 func (t *InvertedDB) GetTermInfo(token string) (p *TermValue, err error) {
 	c, err := t.GetInverted([]byte(token))
-	fmt.Println("c", string(c))
-	fmt.Println("c byte", c)
 	if err != nil {
 		return
 	}
 
-	p, err = Bytes2TermVal(c)
-	if err != nil {
-		return
-	}
+	segment.DecodePostings(c)
 
 	return
 }

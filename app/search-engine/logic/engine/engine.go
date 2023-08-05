@@ -4,9 +4,9 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/CocaineCong/tangseng/app/search-engine/internal/query"
-	"github.com/CocaineCong/tangseng/app/search-engine/internal/segment"
-	"github.com/CocaineCong/tangseng/app/search-engine/internal/storage"
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/query"
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/segment"
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/storage"
 	"github.com/CocaineCong/tangseng/consts"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )

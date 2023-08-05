@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/CocaineCong/tangseng/app/search-engine/internal/segment"
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/segment"
 	"github.com/CocaineCong/tangseng/config"
 	"github.com/CocaineCong/tangseng/consts"
 	log "github.com/CocaineCong/tangseng/pkg/logger"

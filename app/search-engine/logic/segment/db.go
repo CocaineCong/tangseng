@@ -3,9 +3,9 @@ package segment
 import (
 	"fmt"
 
-	"github.com/CocaineCong/tangseng/app/search-engine/internal/query"
-	"github.com/CocaineCong/tangseng/app/search-engine/internal/storage"
-	"github.com/CocaineCong/tangseng/app/search-engine/internal/types"
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/query"
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/storage"
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/types"
 	"github.com/CocaineCong/tangseng/config"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )

@@ -1,12 +1,11 @@
 package segment
 
 import (
-	"bytes"
-
-	"github.com/CocaineCong/tangseng/app/search-engine/internal/query"
-	"github.com/CocaineCong/tangseng/app/search-engine/internal/storage"
-	"github.com/CocaineCong/tangseng/app/search-engine/internal/types"
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/query"
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/storage"
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/types"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/CocaineCong/tangseng/pkg/util/codec"
 )
 
 type Segment struct {
@@ -52,8 +51,8 @@ func (e *Segment) getTokenCount(token string) (termInfo *storage.TermValue, err 
 	return
 }
 
-// FetchPostings 通过 token 读取倒排表数据，返回倒排表，长度 和 err
-func (e *Segment) FetchPostings(token string) (p *types.PostingsList, postingsList int64, err error) {
+// FetchPostings 通过 token 读取倒排表数据，返回倒排索引
+func (e *Segment) FetchPostings(token string) (p *types.InvertedIndexValue, err error) {
 	term, err := e.InvertedDB.GetTermInfo(token)
 	if err != nil {
 		log.LogrusObj.Errorf("FetchPostings GetTermInfo err: %v", err)
@@ -66,7 +65,7 @@ func (e *Segment) FetchPostings(token string) (p *types.PostingsList, postingsLi
 		return
 	}
 
-	p, postingsList, err = DecodePostings(bytes.NewBuffer(c))
+	p, err = codec.DecodePostings(c)
 	if err != nil {
 		log.LogrusObj.Errorf("FetchPostings DecodePostings err: %v", err)
 		return
@@ -100,14 +99,14 @@ func (e *Segment) storagePostings(p *types.InvertedIndexValue) (err error) {
 	}
 
 	// 编码
-	buf, err := EncodePostings(p)
+	buf, err := codec.EncodePostings(p)
 	if err != nil {
 		log.LogrusObj.Errorf("updatePostings encodePostings err: %v", err)
 		return
 	}
 
 	// 开始写入数据库
-	return e.InvertedDB.StoragePostings(p.Token, buf.Bytes(), p.DocCount)
+	return e.InvertedDB.StoragePostings(p.Token, buf)
 }
 
 // Close --

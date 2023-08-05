@@ -4,9 +4,9 @@ import (
 	"errors"
 	"sort"
 
-	"github.com/CocaineCong/tangseng/app/search-engine/internal/engine"
-	"github.com/CocaineCong/tangseng/app/search-engine/internal/segment"
-	"github.com/CocaineCong/tangseng/app/search-engine/internal/types"
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/engine"
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/segment"
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/types"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
@@ -262,16 +262,16 @@ func (r *Recall) sortToken(tokens []*queryTokenHash) []*queryTokenHash {
 func (r *Recall) fetchPostingsBySegs(token string) (postings *types.PostingsList, docCount int64, err error) {
 	postings = new(types.PostingsList)
 	for i, seg := range r.Engine.Seg {
-		p, c, errx := seg.FetchPostings(token)
+		p, errx := seg.FetchPostings(token)
 		if errx != nil {
 			err = errx
 			log.LogrusObj.Errorf("seg.FetchPostings index:%v", i)
 			return
 		}
 		log.LogrusObj.Infof("post:%v", p)
-		postings = segment.MergePostings(postings, p)
+		postings = segment.MergePostings(postings, p.PostingsList)
 		log.LogrusObj.Infof("pos next:%v", postings.Next)
-		docCount += c
+		docCount += p.DocCount
 	}
 	log.LogrusObj.Infof("token:%v,pos:%v,doc:%v", token, postings, docCount)
 
@@ -281,7 +281,7 @@ func (r *Recall) fetchPostingsBySegs(token string) (postings *types.PostingsList
 // NewRecall --
 func NewRecall(meta *engine.Meta) *Recall {
 	e := engine.NewEngine(meta, segment.SearchMode)
-	docCount := int64(0)
+	var docCount int64 = 0
 	for _, seg := range e.Seg {
 		num, err := seg.ForwardCount()
 		if err != nil {

@@ -3,8 +3,8 @@ package index
 import (
 	"time"
 
-	"github.com/CocaineCong/tangseng/app/search-engine/internal/engine"
-	"github.com/CocaineCong/tangseng/app/search-engine/internal/recall"
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/engine"
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/recall"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 

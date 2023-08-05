@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/CocaineCong/tangseng/app/search-engine/internal/index"
-	"github.com/CocaineCong/tangseng/app/search-engine/internal/query"
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/index"
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/query"
 	"github.com/CocaineCong/tangseng/config"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )

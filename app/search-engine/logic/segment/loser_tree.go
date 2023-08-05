@@ -1,13 +1,12 @@
 package segment
 
 import (
-	"bytes"
 	"fmt"
 	"strconv"
 	"time"
 
-	"github.com/CocaineCong/tangseng/app/search-engine/internal/storage"
-	"github.com/CocaineCong/tangseng/app/search-engine/internal/types"
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/storage"
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/types"
 	"github.com/CocaineCong/tangseng/consts"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
@@ -154,10 +153,10 @@ func (lt *LoserTree) Pop() (res *TermNode) {
 }
 
 // MergeKTermSegments 多路归并，合并term数据，合并后需要一起处理合并倒排表数据
-func MergeKTermSegments(list []*TermNode, chList []chan storage.KvInfo) (InvertedIndexHash, error) {
+func MergeKTermSegments(list []*TermNode, chList []chan storage.KvInfo) (res InvertedIndexHash, err error) {
 	// 初始化
 	lt := NewSegLoserTree(list, chList)
-	res := make(InvertedIndexHash)
+	res = make(InvertedIndexHash)
 
 	for {
 		node := lt.Pop()
@@ -167,31 +166,33 @@ func MergeKTermSegments(list []*TermNode, chList []chan storage.KvInfo) (Inverte
 		log.LogrusObj.Infof("pop node key:%+v,value:%v", string(node.Key), node.Value)
 		val, err := storage.Bytes2TermVal(node.Value)
 		if err != nil {
-			return nil, err
+			return
 		}
 		log.LogrusObj.Infof("val:%+v", val)
 		c, err := node.Seg.GetInvertedDoc(val.Offset, val.Size)
 		if err != nil {
-			return nil, fmt.Errorf("FetchPostings getDocInfo err: %v", err)
+			log.LogrusObj.Errorf("FetchPostings getDocInfo err: %v", err)
+			return
 		}
-		pos, count, err := DecodePostings(bytes.NewBuffer(c))
+		pos, err := DecodePostings(c)
 		if err != nil {
-			return nil, fmt.Errorf("FetchPostings DecodePostings err: %v", err)
+			log.LogrusObj.Errorf("FetchPostings DecodePostings err: %v", err)
+			return
 		}
-		log.LogrusObj.Infof("pop node key:%+v,value:%v,count:%d", string(node.Key), val, count)
+		log.LogrusObj.Infof("pop node key:%+v,value:%v,count:%d", string(node.Key), val, pos.DocCount)
 		if p, ok := res[string(node.Key)]; ok {
-			p.DocCount += count
-			p.PostingsList = MergePostings(p.PostingsList, pos)
+			p.DocCount += pos.DocCount
+			p.PostingsList = MergePostings(p.PostingsList, pos.PostingsList)
 			continue
 		}
 		res[string(node.Key)] = &types.InvertedIndexValue{
 			Token:        string(node.Key),
-			DocCount:     count,
-			PostingsList: pos,
+			DocCount:     pos.DocCount,
+			PostingsList: pos.PostingsList,
 		}
 	}
 
-	return res, nil
+	return
 }
 
 // MergeKForwardSegments 合并正排

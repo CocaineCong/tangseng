@@ -1,13 +1,12 @@
 package test
 
 import (
-	"bytes"
 	"fmt"
 	"testing"
 
-	"github.com/CocaineCong/tangseng/app/search-engine/internal/segment"
-	"github.com/CocaineCong/tangseng/app/search-engine/internal/storage"
-	"github.com/CocaineCong/tangseng/app/search-engine/internal/types"
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/segment"
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/storage"
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/types"
 	"github.com/CocaineCong/tangseng/config"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
@@ -32,7 +31,7 @@ func TestStorageInverted(t *testing.T) {
 	}
 	// 倒排索引表
 	inverted := storage.NewInvertedDB(termName, postingsName)
-	err = inverted.StoragePostings(p.Token, buf.Bytes(), p.DocCount)
+	err = inverted.StoragePostings(p.Token, buf)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -57,7 +56,7 @@ func TestStoreInverted(t *testing.T) {
 	}
 	// 倒排索引表
 	inverted := storage.NewInvertedDB(termName, postingsName)
-	err = inverted.StoragePostings(p.Token, buf.Bytes(), p.DocCount)
+	err = inverted.StoragePostings(p.Token, buf)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -74,9 +73,9 @@ func TestGetInverted(t *testing.T) {
 		fmt.Println(err)
 	}
 	// 编码
-	p, c, err := segment.DecodePostings(bytes.NewBuffer(invertedValue))
+	p, err := segment.DecodePostings(invertedValue)
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(p, c)
+	fmt.Println(p)
 }

@@ -8,8 +8,8 @@ import (
 
 	"github.com/spf13/cast"
 
-	"github.com/CocaineCong/tangseng/app/search-engine/internal/engine"
-	"github.com/CocaineCong/tangseng/app/search-engine/internal/storage"
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/engine"
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/storage"
 	"github.com/CocaineCong/tangseng/config"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )

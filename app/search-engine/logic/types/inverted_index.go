@@ -1,7 +1,7 @@
 package types
 
 import (
-	"github.com/CocaineCong/tangseng/app/search-engine/internal/storage"
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/storage"
 )
 
 // InvertedIndexValue 倒排索引
