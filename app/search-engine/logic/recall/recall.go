@@ -26,8 +26,9 @@ type queryTokenHash struct {
 
 // SearchItem 查询结果
 type SearchItem struct {
-	DocId int64
-	Score float64
+	DocId   int64   `json:"doc_id"`
+	Content string  `json:"content"`
+	Score   float64 `json:"score"`
 }
 
 // Recalls 召回结果
@@ -69,7 +70,7 @@ func (r *Recall) splitQuery2Tokens(query string) (err error) {
 
 func (r *Recall) searchDoc() (recall Recalls, err error) {
 	recalls := make(Recalls, 0)
-	tokens := make([]*queryTokenHash, 0)
+	// tokens := make([]*queryTokenHash, 0)
 
 	// 为每个token初始化游标
 	for token, post := range r.PostingsHashBuf {
@@ -88,75 +89,84 @@ func (r *Recall) searchDoc() (recall Recalls, err error) {
 		}
 		log.LogrusObj.Infof("token:%s,incvertedIndex:%d", token, postings.DocId)
 		post.DocCount = count
-		t := &queryTokenHash{
-			token:         token,
-			invertedIndex: post,
-			fetchPostings: postings,
+		for postings != nil {
+			docId := postings.DocId
+			recalls = append(recalls, &SearchItem{
+				DocId: docId,
+				Score: 1.0,
+			})
+			postings = postings.Next
 		}
-		tokens = append(tokens, t)
+		// t := &queryTokenHash{
+		// 	token:         token,
+		// 	invertedIndex: post,
+		// 	fetchPostings: postings,
+		// }
+		// tokens = append(tokens, t)
 	}
 
-	tokens = r.sortToken(tokens)
+	// tokens = r.sortToken(tokens)
 
-	tokenCount := len(tokens)
-	if tokenCount == 0 {
-		log.LogrusObj.Infof("searchDoc-tokenCount is 0")
-		return
-	}
+	// tokenCount := len(tokens)
+	// if tokenCount == 0 {
+	// 	log.LogrusObj.Infof("searchDoc-tokenCount is 0")
+	// 	return
+	// }
 
-	cursors := make([]searchCursor, tokenCount)
-	for i, t := range tokens {
-		cursors[i].doc = t.fetchPostings
-		cursors[i].current = t.fetchPostings
-	}
-
-	// 整个遍历token来匹配doc
-	for cursors[0].current != nil {
-		var docId, nextDocId int64
-		// 拥有文档最少的token作为标尺
-		docId = cursors[0].current.DocId
-
-		// 匹配其他token的doc
-		for i := 1; i < tokenCount; i++ {
-			cur := &cursors[i]
-			for cur.current != nil && cur.current.DocId < docId {
-				cur.current = cur.current.Next
-			}
-
-			// 存在token关联的docid都小雨cursors[0]的docid,则跳出
-			if cur.current == nil {
-				log.LogrusObj.Infof("cur.current is nil\n")
-				break
-			}
-
-			// 对于除词元A以外的词元，如果其他document_id不等于词元A的document_id,那么就将这个document_id设定为next_doc_id
-			if cur.current.DocId != docId {
-				nextDocId = cur.current.DocId
-				break
-			}
-		}
-
-		log.LogrusObj.Infof("当前doc id：%v，next doc id:%v", docId, nextDocId)
-		if nextDocId > 0 {
-			// 不断获取A的下一个document_id，直到其当前的document_id不小于next_doc_id为止
-			for cursors[0].current != nil && cursors[0].current.DocId < nextDocId {
-				cursors[0].current = cursors[0].current.Next
-			}
-		} else {
-			// 有匹配的docid
-			phraseCount := int64(-1)
-			if r.enablePhrase {
-				phraseCount = r.searchPhrase(tokens, cursors)
-			}
-			score := 0.0
-			if phraseCount > 0 {
-				r.calculateScore(cursors, int64(tokenCount)) // TODO:计算相关性
-			}
-			cursors[0].current = cursors[0].current.Next
-			log.LogrusObj.Infof("匹配召回docID:%v,nextDocID:%v,phrase:%d", docId, nextDocId, phraseCount)
-			recalls = append(recalls, &SearchItem{DocId: docId, Score: score})
-		}
-	}
+	// cursors := make([]searchCursor, tokenCount)
+	// for i, t := range tokens {
+	// cursors[i].doc = t.fetchPostings
+	// cursors[i].current = t.fetchPostings
+	// fmt.Println(i, t.token, t.fetchPostings.DocId)
+	// }
+	//
+	// // 整个遍历token来匹配doc
+	// for cursors[0].current != nil {
+	// 	var docId, nextDocId int64
+	// 	// 拥有文档最少的token作为标尺
+	// 	docId = cursors[0].current.DocId
+	//
+	// 	// 匹配其他token的doc
+	// 	for i := 1; i < tokenCount; i++ {
+	// 		cur := &cursors[i]
+	// 		for cur.current != nil && cur.current.DocId < docId {
+	// 			cur.current = cur.current.Next
+	// 		}
+	//
+	// 		// 存在token关联的docid都小雨cursors[0]的docid,则跳出
+	// 		if cur.current == nil {
+	// 			log.LogrusObj.Infof("cur.current is nil\n")
+	// 			break
+	// 		}
+	//
+	// 		// 对于除词元A以外的词元，如果其他document_id不等于词元A的document_id,那么就将这个document_id设定为next_doc_id
+	// 		if cur.current.DocId != docId {
+	// 			nextDocId = cur.current.DocId
+	// 			break
+	// 		}
+	// 	}
+	//
+	// 	log.LogrusObj.Infof("当前doc id：%v，next doc id:%v", docId, nextDocId)
+	// 	if nextDocId > 0 {
+	// 		// 不断获取A的下一个document_id，直到其当前的document_id不小于next_doc_id为止
+	// 		for cursors[0].current != nil && cursors[0].current.DocId < nextDocId {
+	// 			cursors[0].current = cursors[0].current.Next
+	// 		}
+	// 	} else {
+	// 		// 有匹配的docid
+	// 		phraseCount := int64(-1)
+	// 		if r.enablePhrase {
+	// 			phraseCount = r.searchPhrase(tokens, cursors)
+	// 		}
+	// 		score := 0.0
+	// 		if phraseCount > 0 {
+	// 			r.calculateScore(cursors, int64(tokenCount)) // TODO:计算相关性
+	// 		}
+	// 		cursors[0].current = cursors[0].current.Next
+	// 		log.LogrusObj.Infof("匹配召回docID:%v,nextDocID:%v,phrase:%d", docId, nextDocId, phraseCount)
+	// 		recalls = append(recalls, &SearchItem{DocId: docId, Score: score})
+	// 	}
+	// }
 	log.LogrusObj.Infof("recalls size:%v", len(recalls))
 
 	return recalls, nil
@@ -170,12 +180,12 @@ func (r *Recall) calculateScore(cursor []searchCursor, tokenCount int64) float64
 // searchPhrase 返回检索出的短语数 查询query的倒排索引 tokenCursors是fetched文档的倒排索引
 func (r *Recall) searchPhrase(queryToken []*queryTokenHash, tokenCursors []searchCursor) int64 {
 	// 获取遍历查询query分词之后的词元总数
-	positionsSum := int64(0)
+	var positionsSum int64 = 0
 	for _, t := range queryToken {
 		positionsSum += t.invertedIndex.PositionCount
 	}
 	cursors := make([]phraseCursor, positionsSum)
-	phraseCount := int64(0)
+	var phraseCount int64 = 0
 	// 初始化游标 获取token关联的第一篇doc的pos相关数据
 	n := 0
 	for i, t := range queryToken {
@@ -246,10 +256,6 @@ func (r *Recall) searchPhrase(queryToken []*queryTokenHash, tokenCursors []searc
 
 // token 根据 doc count 升序排序，回去之后还要再进行一次按照score的排序
 func (r *Recall) sortToken(tokens []*queryTokenHash) []*queryTokenHash {
-	// 检验是否排序成功
-	for _, t := range tokens {
-		log.LogrusObj.Infof("token:%v,docCount:%v", t.token, t.invertedIndex.DocCount)
-	}
 	sort.Sort(docCountSort(tokens))
 	for _, t := range tokens {
 		log.LogrusObj.Infof("token:%v,docCount:%v", t.token, t.invertedIndex.DocCount)

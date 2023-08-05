@@ -22,7 +22,7 @@ func TestInvertedDBRead(t *testing.T) {
 		fmt.Println(err)
 	}
 	fmt.Println("v", string(v))
-	err = inverted.StoragePostings(query, []byte("100"), 1)
+	err = inverted.StoragePostings(query, []byte("100"))
 	v2, err := inverted.GetInverted([]byte(query))
 	if err != nil {
 		fmt.Println(err)

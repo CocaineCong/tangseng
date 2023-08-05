@@ -21,7 +21,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestRecall(t *testing.T) {
-	q := "电影"
+	q := "导演"
 	res, err := index.SearchRecall(q)
 	if err != nil {
 		fmt.Println(err)

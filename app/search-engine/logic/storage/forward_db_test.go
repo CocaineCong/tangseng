@@ -30,7 +30,7 @@ func TestForwardDBRead(t *testing.T) {
 		fmt.Println("Err", err)
 	}
 	fmt.Println(count)
-	r, err := forward.GetForward(20)
+	r, err := forward.GetForward(1)
 	if err != nil {
 		fmt.Println(err)
 	}
