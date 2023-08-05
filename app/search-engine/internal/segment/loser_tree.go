@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/CocaineCong/tangseng/app/search-engine/internal/storage"
+	"github.com/CocaineCong/tangseng/app/search-engine/internal/types"
 	"github.com/CocaineCong/tangseng/consts"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
@@ -183,7 +184,7 @@ func MergeKTermSegments(list []*TermNode, chList []chan storage.KvInfo) (Inverte
 			p.PostingsList = MergePostings(p.PostingsList, pos)
 			continue
 		}
-		res[string(node.Key)] = &InvertedIndexValue{
+		res[string(node.Key)] = &types.InvertedIndexValue{
 			Token:        string(node.Key),
 			DocCount:     count,
 			PostingsList: pos,

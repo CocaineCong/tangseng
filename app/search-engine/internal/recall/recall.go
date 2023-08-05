@@ -6,6 +6,7 @@ import (
 
 	"github.com/CocaineCong/tangseng/app/search-engine/internal/engine"
 	"github.com/CocaineCong/tangseng/app/search-engine/internal/segment"
+	"github.com/CocaineCong/tangseng/app/search-engine/internal/types"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
@@ -19,8 +20,8 @@ type Recall struct {
 // 用于实现排序的map
 type queryTokenHash struct {
 	token         string
-	invertedIndex *segment.InvertedIndexValue
-	fetchPostings *segment.PostingsList
+	invertedIndex *types.InvertedIndexValue
+	fetchPostings *types.PostingsList
 }
 
 // SearchItem 查询结果
@@ -34,8 +35,8 @@ type Recalls []*SearchItem
 
 // token游标 标识当前位置
 type searchCursor struct {
-	doc     *segment.PostingsList // 文档编号的序列
-	current *segment.PostingsList // 当前文档编号
+	doc     *types.PostingsList // 文档编号的序列
+	current *types.PostingsList // 当前文档编号
 }
 
 // 短语游标
@@ -258,8 +259,8 @@ func (r *Recall) sortToken(tokens []*queryTokenHash) []*queryTokenHash {
 }
 
 // 获取 token 所有seg的倒排表数据
-func (r *Recall) fetchPostingsBySegs(token string) (postings *segment.PostingsList, docCount int64, err error) {
-	postings = new(segment.PostingsList)
+func (r *Recall) fetchPostingsBySegs(token string) (postings *types.PostingsList, docCount int64, err error) {
+	postings = new(types.PostingsList)
 	for i, seg := range r.Engine.Seg {
 		p, c, errx := seg.FetchPostings(token)
 		if errx != nil {
@@ -295,7 +296,7 @@ func NewRecall(meta *engine.Meta) *Recall {
 type docCountSort []*queryTokenHash
 
 func (q docCountSort) Less(i, j int) bool {
-	return q[i].invertedIndex.DocCount < q[i].invertedIndex.DocCount
+	return q[i].invertedIndex.DocCount < q[j].invertedIndex.DocCount
 }
 
 func (q docCountSort) Swap(i, j int) {

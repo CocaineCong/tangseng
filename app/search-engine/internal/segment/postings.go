@@ -4,25 +4,17 @@ import (
 	"bytes"
 	"encoding/gob"
 
+	"github.com/CocaineCong/tangseng/app/search-engine/internal/types"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
-	"github.com/CocaineCong/tangseng/pkg/util/codec"
 )
 
-// PostingsList 倒排列表
-type PostingsList struct {
-	DocId         int64
-	Positions     []int64
-	PositionCount int64
-	Next          *PostingsList
-}
-
 // MergePostings 合并两个posting
-func MergePostings(pa, pb *PostingsList) *PostingsList {
-	ret := new(PostingsList)
-	p := new(PostingsList)
+func MergePostings(pa, pb *types.PostingsList) *types.PostingsList {
+	ret := new(types.PostingsList)
+	p := new(types.PostingsList)
 	p = nil
 	for pa != nil || pb != nil {
-		tmp := new(PostingsList)
+		tmp := new(types.PostingsList)
 		if pb == nil || (pa != nil && pa.DocId <= pb.DocId) {
 			tmp, pa = pa, pa.Next
 		} else if pa == nil || (pa != nil && pa.DocId > pb.DocId) {
@@ -61,7 +53,7 @@ func MergeInvertedIndex(base, toBeAdd InvertedIndexHash) {
 }
 
 // DecodePostings 解码 return *PostingsList postingslen err
-func DecodePostings(buf *bytes.Buffer) (p *PostingsList, postingsLen int64, err error) {
+func DecodePostings(buf *bytes.Buffer) (p *types.PostingsList, postingsLen int64, err error) {
 	if buf == nil || buf.Len() == 0 {
 		log.LogrusObj.Infoln("DecodePostings-buf 为空")
 		return
@@ -74,10 +66,10 @@ func DecodePostings(buf *bytes.Buffer) (p *PostingsList, postingsLen int64, err 
 		return
 	}
 
-	cp := new(PostingsList)
+	cp := new(types.PostingsList)
 	p = cp
 	for buf.Len() > 0 {
-		tmp := new(PostingsList)
+		tmp := new(types.PostingsList)
 		err = dec.Decode(&tmp.DocId)
 		if err != nil {
 			log.LogrusObj.Errorln("binary.Read", err)
@@ -106,35 +98,40 @@ func DecodePostings(buf *bytes.Buffer) (p *PostingsList, postingsLen int64, err 
 }
 
 // EncodePostings 编码
-func EncodePostings(postings *PostingsList, postingsLen int64) (buf *bytes.Buffer, err error) {
-	buf, err = codec.GobWrite(postingsLen)
-	if err != nil {
-		return
-	}
-
-	for postings != nil {
-		log.LogrusObj.Infof("docid:%d,count:%d,positions:%v \n", postings.DocId, postings.PositionCount, postings.Positions)
-		buf, err = codec.GobWrite(postings.DocId)
-		if err != nil {
-			return
-		}
-		buf, err = codec.GobWrite(postings.PositionCount)
-		if err != nil {
-			return
-		}
-		buf, err = codec.GobWrite(postings.Positions)
-		if err != nil {
-			return
-		}
-		postings = postings.Next
-	}
+func EncodePostings(postings *types.InvertedIndexValue) (buf *bytes.Buffer, err error) {
 
 	return
 }
 
+// func EncodePostings(postings *PostingsList, postingsLen int64) (buf *bytes.Buffer, err error) {
+// 	buf, err = codec.GobWrite(postingsLen)
+// 	if err != nil {
+// 		return
+// 	}
+//
+// 	for postings != nil {
+// 		log.LogrusObj.Infof("docid:%d,count:%d,positions:%v \n", postings.DocId, postings.PositionCount, postings.Positions)
+// 		buf, err = codec.GobWrite(postings.DocId)
+// 		if err != nil {
+// 			return
+// 		}
+// 		buf, err = codec.GobWrite(postings.PositionCount)
+// 		if err != nil {
+// 			return
+// 		}
+// 		buf, err = codec.GobWrite(postings.Positions)
+// 		if err != nil {
+// 			return
+// 		}
+// 		postings = postings.Next
+// 	}
+//
+// 	return
+// }
+
 // CreateNewPostingsList 创建倒排索引
-func CreateNewPostingsList(docId int64) *PostingsList {
-	p := new(PostingsList)
+func CreateNewPostingsList(docId int64) *types.PostingsList {
+	p := new(types.PostingsList)
 	p.DocId = docId
 	p.PositionCount = 1
 	p.Positions = make([]int64, 0)

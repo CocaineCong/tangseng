@@ -5,6 +5,7 @@ import (
 
 	"github.com/CocaineCong/tangseng/app/search-engine/internal/query"
 	"github.com/CocaineCong/tangseng/app/search-engine/internal/storage"
+	"github.com/CocaineCong/tangseng/app/search-engine/internal/types"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
@@ -15,14 +16,14 @@ type Segment struct {
 
 // Token2PostingsLists 词条 转化成 倒排索引表
 func Token2PostingsLists(bufInvertHash InvertedIndexHash, token query.Tokenization, docId int64) (err error) {
-	bufInvert := new(InvertedIndexValue)
+	bufInvert := new(types.InvertedIndexValue)
 	if len(bufInvertHash) > 0 {
 		if item, ok := bufInvertHash[token.Token]; ok {
 			bufInvert = item
 		}
 	}
 
-	pl := new(PostingsList)
+	pl := new(types.PostingsList)
 	if bufInvert != nil && bufInvert.PostingsList != nil {
 		pl = bufInvert.PostingsList
 		pl.PositionCount++
@@ -52,7 +53,7 @@ func (e *Segment) getTokenCount(token string) (termInfo *storage.TermValue, err 
 }
 
 // FetchPostings 通过 token 读取倒排表数据，返回倒排表，长度 和 err
-func (e *Segment) FetchPostings(token string) (p *PostingsList, postingsList int64, err error) {
+func (e *Segment) FetchPostings(token string) (p *types.PostingsList, postingsList int64, err error) {
 	term, err := e.InvertedDB.GetTermInfo(token)
 	if err != nil {
 		log.LogrusObj.Errorf("FetchPostings GetTermInfo err: %v", err)
@@ -92,14 +93,14 @@ func (e *Segment) Flush(PostingsHashBuf InvertedIndexHash) (err error) {
 }
 
 // storagePostings 落盘
-func (e *Segment) storagePostings(p *InvertedIndexValue) (err error) {
+func (e *Segment) storagePostings(p *types.InvertedIndexValue) (err error) {
 	if p == nil {
 		log.LogrusObj.Errorf("updatePostings p is nil")
 		return
 	}
 
 	// 编码
-	buf, err := EncodePostings(p.PostingsList, p.DocCount)
+	buf, err := EncodePostings(p)
 	if err != nil {
 		log.LogrusObj.Errorf("updatePostings encodePostings err: %v", err)
 		return

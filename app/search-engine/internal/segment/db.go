@@ -5,21 +5,13 @@ import (
 
 	"github.com/CocaineCong/tangseng/app/search-engine/internal/query"
 	"github.com/CocaineCong/tangseng/app/search-engine/internal/storage"
+	"github.com/CocaineCong/tangseng/app/search-engine/internal/types"
 	"github.com/CocaineCong/tangseng/config"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
-// InvertedIndexValue 倒排索引
-type InvertedIndexValue struct {
-	Token         string
-	PostingsList  *PostingsList
-	DocCount      int64
-	PositionCount int64 // 查询使用，写入的时候暂时不用
-	TermValues    *storage.TermValue
-}
-
 // InvertedIndexHash 倒排hash
-type InvertedIndexHash map[string]*InvertedIndexValue
+type InvertedIndexHash map[string]*types.InvertedIndexValue
 
 // InitSegmentDb 读取对应segment文件下的db
 func InitSegmentDb(segId SegId) (*storage.InvertedDB, *storage.ForwardDB) {
@@ -37,10 +29,10 @@ func InitSegmentDb(segId SegId) (*storage.InvertedDB, *storage.ForwardDB) {
 }
 
 // CreateNewInvertedIndex 创建倒排索引
-func CreateNewInvertedIndex(token query.Tokenization, docCount int64) *InvertedIndexValue {
-	return &InvertedIndexValue{ // TODO：优化一下结构
+func CreateNewInvertedIndex(token query.Tokenization, docCount int64) *types.InvertedIndexValue {
+	return &types.InvertedIndexValue{ // TODO：优化一下结构
 		Token:         token.Token,
-		PostingsList:  new(PostingsList),
+		PostingsList:  new(types.PostingsList),
 		DocCount:      docCount,
 		PositionCount: 0,
 		TermValues: &storage.TermValue{

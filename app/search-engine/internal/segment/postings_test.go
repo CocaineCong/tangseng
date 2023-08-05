@@ -5,25 +5,26 @@ import (
 	"testing"
 
 	"github.com/CocaineCong/tangseng/app/search-engine/internal/query"
+	"github.com/CocaineCong/tangseng/app/search-engine/internal/types"
 )
 
 func TestMergePostings(t *testing.T) {
-	p1 := &PostingsList{
+	p1 := &types.PostingsList{
 		DocId:         1,
 		Positions:     []int64{1, 2, 3, 4},
 		PositionCount: 4,
-		Next: &PostingsList{
+		Next: &types.PostingsList{
 			DocId:         4,
 			Positions:     []int64{2, 4, 5},
 			PositionCount: 5,
 			Next:          nil,
 		},
 	}
-	p2 := &PostingsList{
+	p2 := &types.PostingsList{
 		DocId:         2,
 		Positions:     []int64{12, 22, 32, 42},
 		PositionCount: 42,
-		Next: &PostingsList{
+		Next: &types.PostingsList{
 			DocId:         3,
 			Positions:     []int64{22, 42, 52},
 			PositionCount: 52,

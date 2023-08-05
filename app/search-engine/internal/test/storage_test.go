@@ -7,6 +7,7 @@ import (
 
 	"github.com/CocaineCong/tangseng/app/search-engine/internal/segment"
 	"github.com/CocaineCong/tangseng/app/search-engine/internal/storage"
+	"github.com/CocaineCong/tangseng/app/search-engine/internal/types"
 	"github.com/CocaineCong/tangseng/config"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
@@ -16,7 +17,7 @@ func TestStorageInverted(t *testing.T) {
 	termName := config.Conf.SeConfig.StoragePath + "0.term"
 	postingsName := config.Conf.SeConfig.StoragePath + "0.inverted"
 	// 建立倒排索引
-	p := &segment.InvertedIndexValue{
+	p := &types.InvertedIndexValue{
 		Token:         "测试文本",
 		PostingsList:  segment.CreateNewPostingsList(1),
 		DocCount:      10,
@@ -24,7 +25,7 @@ func TestStorageInverted(t *testing.T) {
 		TermValues:    nil,
 	}
 	// 编码
-	buf, err := segment.EncodePostings(p.PostingsList, p.DocCount)
+	buf, err := segment.EncodePostings(p)
 	if err != nil {
 		log.LogrusObj.Errorf("updatePostings encodePostings err: %v", err)
 		return
@@ -42,7 +43,7 @@ func TestStoreInverted(t *testing.T) {
 	termName := config.Conf.SeConfig.StoragePath + "0.term"
 	postingsName := config.Conf.SeConfig.StoragePath + "0.inverted"
 	// 建立倒排索引
-	p := &segment.InvertedIndexValue{
+	p := &types.InvertedIndexValue{
 		Token:         "测试文本",
 		PostingsList:  segment.CreateNewPostingsList(1),
 		DocCount:      10,
@@ -50,7 +51,7 @@ func TestStoreInverted(t *testing.T) {
 		TermValues:    nil,
 	}
 	// 编码
-	buf, err := segment.EncodePostings(p.PostingsList, p.DocCount)
+	buf, err := segment.EncodePostings(p)
 	if err != nil {
 		fmt.Println(err)
 	}
