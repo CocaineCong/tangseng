@@ -22,11 +22,11 @@ func TestMain(m *testing.M) {
 
 func TestRecall(t *testing.T) {
 	q := "导演"
-	res, err := index.SearchRecall(q)
+	searchItem, err := index.SearchRecall(q)
 	if err != nil {
 		fmt.Println(err)
 	}
-	for i := range res {
-		fmt.Println(res[i])
+	for i := range searchItem {
+		fmt.Println(searchItem[i].Score, searchItem[i].DocId, searchItem[i].Content)
 	}
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/CocaineCong/tangseng/app/search-engine/logic/engine"
 	"github.com/CocaineCong/tangseng/app/search-engine/logic/recall"
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/types"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
@@ -19,16 +20,18 @@ func NewRecallServ(meta *engine.Meta) *Recall {
 	return &Recall{r}
 }
 
-func SearchRecall(query string) (res recall.Recalls, err error) {
+func SearchRecall(query string) (res []*types.SearchItem, err error) {
 	meta, err := engine.ParseMeta()
 	if err != nil {
-		panic(err)
+		log.LogrusObj.Errorf("SearchRecall-ParseMeta:%+v", err)
+		return
 	}
 
 	// 定时同步meta数据
 	ticker := time.NewTicker(time.Second * 10)
 	go meta.SyncByTicker(ticker)
-	res, err = NewRecallServ(meta).Search(query)
+	recallService := NewRecallServ(meta)
+	res, err = recallService.Search(query)
 	if err != nil {
 		log.LogrusObj.Errorf("SearchRecall-NewRecallServ:%+v", err)
 		return

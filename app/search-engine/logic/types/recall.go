@@ -8,6 +8,14 @@ type SearchItem struct {
 	DocCount int64   `json:"doc_count"`
 }
 
+type SearchItemList []*SearchItem
+
+func (ds SearchItemList) Len() int           { return len(ds) }
+func (ds SearchItemList) Less(i, j int) bool { return ds[i].Score < ds[j].Score }
+func (ds SearchItemList) Swap(i, j int) {
+	ds[i], ds[j] = ds[j], ds[i]
+}
+
 // 用于实现排序的map
 type queryTokenHash struct {
 	token         string

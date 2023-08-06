@@ -4,7 +4,7 @@ import (
 	"math"
 	"sync"
 
-	"github.com/samber/lo"
+	"github.com/xtgo/set"
 )
 
 // ScoreFn is any function that returns a score of the document.
@@ -45,7 +45,7 @@ func (tf *TFIDF) Add(doc Document) {
 	}
 
 	tf.Docs++
-	tf.Len += int(len(ints)) // yes we are adding only unique words
+	tf.Len += len(ints) // yes we are adding only unique words
 
 	tf.Unlock()
 }
@@ -76,16 +76,18 @@ func TF(doc Document) []float64 {
 	return retVal
 }
 
-// BOW turns a document int a bag of words. The words of the document will have been deduplicated. A unique list of word IDs is then returned.
+// BOW turns a document into a bag of words. The words of the document will have been deduplicated. A unique list of word IDs is then returned.
 func BOW(doc Document) []int {
 	ids := doc.IDs()
 	retVal := make([]int, len(ids))
 	copy(retVal, ids)
-	retVal = lo.Uniq(retVal)
+	retVal = set.Ints(retVal)
 	return retVal
 }
 
 // Score calculates the TFIDF score (TF * IDF) for the document without adding the document to the tracked document count.
+//
+// This function is only useful for a handful of cases. It's recommended you write your own scoring functions.
 func (tf *TFIDF) Score(doc Document) []float64 {
 	ids := doc.IDs()
 	retVal := TF(doc)

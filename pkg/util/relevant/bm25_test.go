@@ -3,90 +3,47 @@ package relevant
 import (
 	"fmt"
 	"sort"
-	"strings"
 	"testing"
+
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/query"
+	"github.com/CocaineCong/tangseng/config"
+	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
-var mobydick = []string{
-	"Call me Ishmael .",
-	"Some years ago -- never mind how long precisely -- having little or no money in my purse , and nothing particular to interest me on shore , I thought I would sail about a little and see the watery part of the world .",
-	"It is a way I have of driving off the spleen and regulating the circulation .",
-	"Whenever I find myself growing grim about the mouth ; ",
-	"whenever it is a damp , drizzly November in my soul ; ",
-	"whenever I find myself involuntarily pausing before coffin warehouses , and bringing up the rear of every funeral I meet ; ",
-	"and especially whenever my hypos get such an upper hand of me , that it requires a strong moral principle to prevent me from deliberately stepping into the street , and methodically knocking people's hats off -- then , I account it high time to get to sea as soon as I can .",
-	"This is my substitute for pistol and ball . ",
-	"With a philosophical flourish Cato throws himself upon his sword ; ",
-	"I quietly take to the ship . There is nothing surprising in this .",
-	"If they but knew it , almost all men in their degree , some time or other , cherish very nearly the same feelings towards the ocean with me .",
+var bodyRecallReason = []string{
+	"呀哈哈，怎么说啊太可恶了王国之泪我还没玩够就要写搜索引擎！！写完这个项目马上去海拉鲁大陆拯救塞尔达！！",
+	"我们当然可以使用有序数组，二叉搜索树，哈希表等等来存储所有的用户id。但是无论是有序数组还是二叉搜索树，这两种数据结构都是基于二分查找的思想从中间元素开始查起的。",
+	"如果我们使用bit类型来存储，就是原来的32倍了，非常亏贼！而这种以bit为单位构建数组的方案就叫做bitmap，也就是位图。",
+	"虽然位图相对于原始数组来说，在元素存储上已经有了很大的优化，但如果我们还想进一步优化存储空间，要怎么做呢？",
+	"数组的每个成员是一个链表。该数据结构所容纳的所有元素均包含一个指针，用于元素间的链接。我们根据元素的自身特征把元素分配到不同的链表中去，也是根据这些特征，找到正确的链表，再从链表中找出这个元素",
+	"当发生哈希冲突时，重新找到空闲的位置，然后插入元素。寻址方式有多种，常用的有线性寻址、二次方寻址、双重哈希寻址等等",
+	"而布隆过滤器和位图最大的区别就是我们不再使用一位来表示一个对象，而是使用N位来表示一个对象。这样两个对象的N位都相同的概率就会大大降低了，就能大大缓解哈希冲突了。",
 }
 
-type doc []int
-
-func (d doc) IDs() []int { return d }
-
-func makeCorpus(a []string) (map[string]int, []string) {
-	retVal := make(map[string]int)
-	invRetVal := make([]string, 0)
-	var id int
-	for _, s := range a {
-		for _, f := range strings.Fields(s) {
-			f = strings.ToLower(f)
-			if _, ok := retVal[f]; !ok {
-				retVal[f] = id
-				invRetVal = append(invRetVal, f)
-				id++
-			}
-		}
-	}
-	return retVal, invRetVal
-}
-
-func makeDocuments(a []string, c map[string]int) []Document {
-	retVal := make([]Document, 0, len(a))
-	for _, s := range a {
-		var ts []int
-		for _, f := range strings.Fields(s) {
-			f = strings.ToLower(f)
-			id := c[f]
-			ts = append(ts, id)
-		}
-		retVal = append(retVal, doc(ts))
-	}
-	return retVal
+func TestMain(m *testing.M) {
+	// 这个文件相对于config.yaml的位置
+	re := config.ConfigReader{FileName: "../../../config/config.yaml"}
+	config.InitConfigForTest(&re)
+	query.InitSeg()
+	log.InitLog()
+	fmt.Println("Write tests on values: ", config.Conf)
+	m.Run()
 }
 
 func TestBM25(t *testing.T) {
-	corpus, _ := makeCorpus(mobydick)
-	docs := makeDocuments(mobydick, corpus)
+	corpus, _ := MakeCorpus(bodyRecallReason)
+	docs := MakeDocuments(bodyRecallReason, corpus)
 	tf := New()
 
 	for _, doc := range docs {
 		tf.Add(doc)
 	}
 	tf.CalculateIDF()
-
-	// now we search
-
-	// "ishmael" is a query
-	ishmael := doc{corpus["ishmael"]}
-
-	// "whenever i find" is another query
-	whenever := doc{corpus["whenever"]}
-
-	ishmaelScores := BM25(tf, ishmael, docs, 1.5, 0.75)
-	wheneverScores := BM25(tf, whenever, docs, 1.5, 0.75)
-
-	sort.Sort(ishmaelScores)
-	sort.Sort(wheneverScores)
-
-	fmt.Printf("Top 3 Relevant Docs to \"Ishmael\":\n")
-	for _, d := range ishmaelScores[:3] {
-		fmt.Printf("\tID   : %d\n\tScore: %1.3f\n\tDoc  : %q\n", d.DocId, d.Score, mobydick[d.DocId])
-	}
-	fmt.Println("")
+	token := Doc{corpus["王国"]}
+	tokenScores := BM25(tf, token, docs, 1.5, 0.75)
+	sort.Sort(sort.Reverse(tokenScores))
 	fmt.Printf("Top 3 Relevant Docs to \"whenever i find\":\n")
-	for _, d := range wheneverScores[:3] {
-		fmt.Printf("\tID   : %d\n\tScore: %1.3f\n\tDoc  : %q\n", d.DocId, d.Score, mobydick[d.DocId])
+	for _, d := range tokenScores[:3] {
+		fmt.Printf("\tID   : %d\n\tScore: %1.3f\n\tDoc  : %q\n", d.ID, d.Score, bodyRecallReason[d.ID])
 	}
 }

@@ -4,11 +4,13 @@ import (
 	"sort"
 
 	"github.com/xtgo/set"
+
+	"github.com/CocaineCong/tangseng/app/search-engine/logic/query"
 )
 
 // DocScore is a tuple of the document ID and a score
 type DocScore struct {
-	DocId int
+	ID    int
 	Score float64
 }
 
@@ -19,7 +21,7 @@ func (ds DocScores) Len() int           { return len(ds) }
 func (ds DocScores) Less(i, j int) bool { return ds[i].Score < ds[j].Score }
 func (ds DocScores) Swap(i, j int) {
 	ds[i].Score, ds[j].Score = ds[j].Score, ds[i].Score
-	ds[i].DocId, ds[j].DocId = ds[j].DocId, ds[i].DocId
+	ds[i].ID, ds[j].ID = ds[j].ID, ds[i].ID
 }
 
 // BM25 is the scoring function.
@@ -34,6 +36,7 @@ func BM25(tf *TFIDF, query Document, docs []Document, k1, b float64) DocScores {
 
 	scores := make([]float64, 0, len(docs))
 	for _, doc := range docs {
+		// TF := tfidf.TF(doc)
 		d := BOW(doc)
 		w = append(w, d...)
 		size := set.Inter(sort.IntSlice(w), len(q))
@@ -64,6 +67,41 @@ func sum(a []float64) float64 {
 	var retVal float64
 	for _, f := range a {
 		retVal += f
+	}
+	return retVal
+}
+
+type Doc []int
+
+func (d Doc) IDs() []int { return d }
+
+func MakeCorpus(a []string) (map[string]int, []string) {
+	retVal := make(map[string]int)
+	invRetVal := make([]string, 0)
+	var id int
+	for _, s := range a {
+		tokens, _ := query.GseCut(s)
+		for _, f := range tokens {
+			if _, ok := retVal[f.Token]; !ok {
+				retVal[f.Token] = id
+				invRetVal = append(invRetVal, f.Token)
+				id++
+			}
+		}
+	}
+	return retVal, invRetVal
+}
+
+func MakeDocuments(a []string, c map[string]int) []Document {
+	retVal := make([]Document, 0, len(a))
+	for _, s := range a {
+		var ts []int
+		tokens, _ := query.GseCut(s)
+		for _, f := range tokens {
+			id := c[f.Token]
+			ts = append(ts, id)
+		}
+		retVal = append(retVal, Doc(ts))
 	}
 	return retVal
 }
