@@ -3,15 +3,15 @@ package index
 import (
 	"fmt"
 
-	"github.com/CocaineCong/tangseng/app/search-engine/logic/engine"
-	"github.com/CocaineCong/tangseng/app/search-engine/logic/segment"
-	"github.com/CocaineCong/tangseng/app/search-engine/logic/storage"
+	engine2 "github.com/CocaineCong/tangseng/app/search-engine/engine"
+	"github.com/CocaineCong/tangseng/app/search-engine/segment"
+	"github.com/CocaineCong/tangseng/app/search-engine/storage"
 	logs "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
 type Index struct {
-	*engine.Engine
-	*engine.Meta
+	*engine2.Engine
+	*engine2.Meta
 }
 
 // AddDocument 添加文档
@@ -39,9 +39,9 @@ func (in *Index) Close() {
 }
 
 // NewIndexEngine init
-func NewIndexEngine(meta *engine.Meta) *Index {
+func NewIndexEngine(meta *engine2.Meta) *Index {
 	return &Index{
-		Engine: engine.NewEngine(meta, segment.IndexMode),
+		Engine: engine2.NewEngine(meta, segment.IndexMode),
 		Meta:   meta,
 	}
 }

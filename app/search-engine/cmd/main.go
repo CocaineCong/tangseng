@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/CocaineCong/tangseng/app/search-engine/logic/index"
-	"github.com/CocaineCong/tangseng/app/search-engine/logic/query"
+	"github.com/CocaineCong/tangseng/app/search-engine/index"
+	"github.com/CocaineCong/tangseng/app/search-engine/query"
 	"github.com/CocaineCong/tangseng/config"
 	"github.com/CocaineCong/tangseng/loading"
 )

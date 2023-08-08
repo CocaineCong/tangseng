@@ -4,22 +4,22 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/CocaineCong/tangseng/app/search-engine/logic/query"
-	"github.com/CocaineCong/tangseng/app/search-engine/logic/segment"
-	"github.com/CocaineCong/tangseng/app/search-engine/logic/storage"
+	"github.com/CocaineCong/tangseng/app/search-engine/query"
+	segment2 "github.com/CocaineCong/tangseng/app/search-engine/segment"
+	"github.com/CocaineCong/tangseng/app/search-engine/storage"
 	"github.com/CocaineCong/tangseng/consts"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
 // Engine 写入引擎
 type Engine struct {
-	meta            *Meta                              // 元数据
-	Scheduler       *MergeScheduler                    // 合并调度器
-	BufCount        int64                              // 倒排索引 缓冲区的文档数
-	BufSize         int64                              // 设定的缓冲区大小
-	PostingsHashBuf segment.InvertedIndexHash          // 倒排索引缓冲区
-	CurrSegId       segment.SegId                      // 当前engine关联的segId查询
-	Seg             map[segment.SegId]*segment.Segment // 当前engine关联的segment
+	meta            *Meta                                // 元数据
+	Scheduler       *MergeScheduler                      // 合并调度器
+	BufCount        int64                                // 倒排索引 缓冲区的文档数
+	BufSize         int64                                // 设定的缓冲区大小
+	PostingsHashBuf segment2.InvertedIndexHash           // 倒排索引缓冲区
+	CurrSegId       segment2.SegId                       // 当前engine关联的segId查询
+	Seg             map[segment2.SegId]*segment2.Segment // 当前engine关联的segment
 	// TODO 更换并发安全的map，需要写入性能好的
 }
 
@@ -27,14 +27,14 @@ var EngineIns *Engine
 var EngineOnce sync.Once
 
 // NewEngine 每次初始化的时候调整meta数据
-func NewEngine(meta *Meta, engineMode segment.Mode) *Engine {
+func NewEngine(meta *Meta, engineMode segment2.Mode) *Engine {
 	EngineOnce.Do(func() {
-		segId, seg := segment.NewSegments(meta.SegMeta, engineMode)
+		segId, seg := segment2.NewSegments(meta.SegMeta, engineMode)
 		EngineIns = &Engine{
 			meta:            meta,
 			Scheduler:       NewScheduler(meta),
 			BufSize:         consts.EngineBufSize,
-			PostingsHashBuf: make(segment.InvertedIndexHash),
+			PostingsHashBuf: make(segment2.InvertedIndexHash),
 			CurrSegId:       segId,
 			Seg:             seg,
 		}
@@ -70,9 +70,9 @@ func (e *Engine) Text2PostingsLists(text string, docId int64) (err error) {
 		return
 	}
 
-	bufInvertedHash := make(segment.InvertedIndexHash)
+	bufInvertedHash := make(segment2.InvertedIndexHash)
 	for _, token := range tokens {
-		err = segment.Token2PostingsLists(bufInvertedHash, token, docId)
+		err = segment2.Token2PostingsLists(bufInvertedHash, token, docId)
 		if err != nil {
 			log.LogrusObj.Errorf("Token2PostingsLists err:%v", err)
 			return
@@ -83,7 +83,7 @@ func (e *Engine) Text2PostingsLists(text string, docId int64) (err error) {
 
 	if e.PostingsHashBuf != nil && len(e.PostingsHashBuf) > 0 {
 		// 合并命中相同的token的不同doc
-		segment.MergeInvertedIndex(e.PostingsHashBuf, bufInvertedHash)
+		segment2.MergeInvertedIndex(e.PostingsHashBuf, bufInvertedHash)
 	} else {
 		// 已经初始化过了
 		e.PostingsHashBuf = bufInvertedHash
@@ -147,10 +147,10 @@ func (e *Engine) Flush(isEnd ...bool) (err error) {
 		return nil
 	}
 
-	segId, seg := segment.NewSegments(e.meta.SegMeta, segment.IndexMode)
+	segId, seg := segment2.NewSegments(e.meta.SegMeta, segment2.IndexMode)
 
 	e.BufCount = 0
-	e.PostingsHashBuf = make(segment.InvertedIndexHash)
+	e.PostingsHashBuf = make(segment2.InvertedIndexHash)
 	e.CurrSegId = segId
 	e.Seg = seg
 

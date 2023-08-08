@@ -8,7 +8,7 @@ import (
 
 	bolt "go.etcd.io/bbolt"
 
-	"github.com/CocaineCong/tangseng/app/search-engine/logic/types"
+	"github.com/CocaineCong/tangseng/app/search-engine/types"
 	"github.com/CocaineCong/tangseng/consts"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/CocaineCong/tangseng/pkg/util/codec"

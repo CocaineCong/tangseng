@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/CocaineCong/tangseng/app/search-engine/logic/segment"
-	"github.com/CocaineCong/tangseng/app/search-engine/logic/storage"
+	segment2 "github.com/CocaineCong/tangseng/app/search-engine/segment"
+	"github.com/CocaineCong/tangseng/app/search-engine/storage"
 	"github.com/CocaineCong/tangseng/config"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
@@ -22,7 +22,7 @@ type MergeScheduler struct {
 }
 
 // MergeMessage 合并队列
-type MergeMessage []*segment.SegInfo
+type MergeMessage []*segment2.SegInfo
 
 // NewScheduler 创建调度器
 func NewScheduler(meta *Meta) *MergeScheduler {
@@ -84,7 +84,7 @@ func (m *MergeScheduler) calculateSegs() (*MergeMessage, bool) {
 	}
 	// 判断是否需要合并
 
-	segList := make([]*segment.SegInfo, 0)
+	segList := make([]*segment2.SegInfo, 0)
 	segList = append(segList, segs[0])
 	segList = append(segList, segs[1])
 
@@ -94,11 +94,11 @@ func (m *MergeScheduler) calculateSegs() (*MergeMessage, bool) {
 
 // term表需要合并k个升序，以及处理对应的倒排索引，正排表直接merge即可
 func (m *MergeScheduler) mergeSegments(segs *MergeMessage) (err error) {
-	segmentDBs := make([]*segment.Segment, 0)
+	segmentDBs := make([]*segment2.Segment, 0)
 	var docSize int64 = 0
-	for _, segInfo := range []*segment.SegInfo(*segs) {
+	for _, segInfo := range []*segment2.SegInfo(*segs) {
 		docSize += segInfo.SegSize
-		s := segment.NewSegment(segInfo.SegId)
+		s := segment2.NewSegment(segInfo.SegId)
 		segmentDBs = append(segmentDBs, s)
 	}
 
@@ -107,14 +107,14 @@ func (m *MergeScheduler) mergeSegments(segs *MergeMessage) (err error) {
 		return
 	}
 
-	termNodes := make([]*segment.TermNode, 0)
+	termNodes := make([]*segment2.TermNode, 0)
 	termChs := make([]chan storage.KvInfo, 0)
 
-	forNodes := make([]*segment.TermNode, 0)
+	forNodes := make([]*segment2.TermNode, 0)
 	forChs := make([]chan storage.KvInfo, 0)
 
 	for _, seg := range segmentDBs {
-		termNode := new(segment.TermNode)
+		termNode := new(segment2.TermNode)
 		termNode.Seg = seg
 
 		// 开启协程遍历读取
@@ -139,18 +139,18 @@ func (m *MergeScheduler) mergeSegments(segs *MergeMessage) (err error) {
 		termNodes = append(termNodes, termNode)
 		termChs = append(termChs, termCh)
 
-		forNodes = append(forNodes, new(segment.TermNode))
+		forNodes = append(forNodes, new(segment2.TermNode))
 		forChs = append(forChs, forCh)
 	}
 
 	// 合并term和倒排数据，返回合并后的数据
-	res, err := segment.MergeKTermSegments(termNodes, termChs)
+	res, err := segment2.MergeKTermSegments(termNodes, termChs)
 	if err != nil {
 		log.LogrusObj.Errorf("MergeKTermSegments:%v", err)
 		return
 	}
 
-	engineTmp := NewEngine(m.Meta, segment.MergeMode)
+	engineTmp := NewEngine(m.Meta, segment2.MergeMode)
 	// 落盘
 	err = engineTmp.Seg[engineTmp.CurrSegId].Flush(res)
 	if err != nil {
@@ -160,7 +160,7 @@ func (m *MergeScheduler) mergeSegments(segs *MergeMessage) (err error) {
 	log.LogrusObj.Infof("start forward:%s", strings.Repeat("-", 20))
 
 	// 合并正排数据
-	err = segment.MergeKForwardSegments(engineTmp.Seg[engineTmp.CurrSegId], forNodes, forChs)
+	err = segment2.MergeKForwardSegments(engineTmp.Seg[engineTmp.CurrSegId], forNodes, forChs)
 	if err != nil {
 		log.LogrusObj.Infof("forward merge error:%v", err)
 		return err
@@ -183,7 +183,7 @@ func (m *MergeScheduler) mergeSegments(segs *MergeMessage) (err error) {
 	return nil
 }
 
-func (m *MergeScheduler) deleteOldSeg(segInfos []*segment.SegInfo) error {
+func (m *MergeScheduler) deleteOldSeg(segInfos []*segment2.SegInfo) error {
 	for _, segInfo := range segInfos {
 		if s, ok := m.Meta.SegMeta.SegInfo[segInfo.SegId]; ok {
 			s.IsMerging = false
@@ -201,8 +201,8 @@ func (m *MergeScheduler) deleteOldSeg(segInfos []*segment.SegInfo) error {
 	return nil
 }
 
-func (m *MergeScheduler) deleteSegFile(segId segment.SegId) error {
-	term, inverted, forward := segment.GetDbName(segId)
+func (m *MergeScheduler) deleteSegFile(segId segment2.SegId) error {
+	term, inverted, forward := segment2.GetDbName(segId)
 	log.LogrusObj.Infof("delete seg file forward:%s,invert:%s,term:%s", term, inverted, forward)
 	err := os.Remove(inverted)
 	if err != nil {
@@ -226,7 +226,7 @@ func (m *MergeScheduler) merge(segs *MergeMessage) error {
 	log.LogrusObj.Infof("merge segs:%v", segs)
 	// 恢复 seg is_merging 状态
 	defer func() {
-		for _, seg := range ([]*segment.SegInfo)(*segs) {
+		for _, seg := range ([]*segment2.SegInfo)(*segs) {
 			// 如果merge失败，没有删除旧seg，需要恢复
 			if s, ok := m.Meta.SegMeta.SegInfo[seg.SegId]; ok {
 				s.IsMerging = false

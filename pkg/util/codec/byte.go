@@ -10,7 +10,7 @@ import (
 	"github.com/bytedance/sonic"
 	"github.com/spf13/cast"
 
-	"github.com/CocaineCong/tangseng/app/search-engine/logic/types"
+	"github.com/CocaineCong/tangseng/app/search-engine/types"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
