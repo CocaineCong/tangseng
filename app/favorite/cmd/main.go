@@ -9,13 +9,16 @@ import (
 
 	"github.com/CocaineCong/tangseng/app/favorite/internal/repository/db/dao"
 	"github.com/CocaineCong/tangseng/app/favorite/internal/service"
+	"github.com/CocaineCong/tangseng/app/gateway/rpc"
 	"github.com/CocaineCong/tangseng/config"
 	favoritePb "github.com/CocaineCong/tangseng/idl/pb/favorite"
+	"github.com/CocaineCong/tangseng/loading"
 	"github.com/CocaineCong/tangseng/pkg/discovery"
 )
 
 func main() {
-	config.InitConfig()
+	loading.Loading()
+	rpc.Init()
 	dao.InitDB()
 	// etcd 地址
 	etcdAddress := []string{config.Conf.Etcd.Address}

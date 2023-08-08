@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 
+	"github.com/CocaineCong/tangseng/app/gateway/rpc"
 	"github.com/CocaineCong/tangseng/app/search_engine/query"
 	"github.com/CocaineCong/tangseng/app/search_engine/service"
 	"github.com/CocaineCong/tangseng/config"
@@ -17,8 +18,8 @@ import (
 )
 
 func main() {
-	config.InitConfig()
 	loading.Loading()
+	rpc.Init()
 	query.InitSeg()
 	// index.RunningIndex()
 	// index.SearchRecall(query)

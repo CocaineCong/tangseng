@@ -9,6 +9,6 @@ import (
 func SearchRegisterHandlers(rg *gin.RouterGroup) {
 	favoriteGroup := rg.Group("/search_engine")
 	{
-		favoriteGroup.POST("/search", handler.SearchEngineSearch)
+		favoriteGroup.GET("/search", handler.SearchEngineSearch)
 	}
 }

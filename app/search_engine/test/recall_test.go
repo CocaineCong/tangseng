@@ -12,7 +12,7 @@ import (
 
 func TestMain(m *testing.M) {
 	// 这个文件相对于config.yaml的位置
-	re := config.ConfigReader{FileName: "../../../../config/config.yaml"}
+	re := config.ConfigReader{FileName: "../../../config/config.yaml"}
 	config.InitConfigForTest(&re)
 	query.InitSeg()
 	log.InitLog()

@@ -11,11 +11,12 @@ import (
 	"github.com/CocaineCong/tangseng/app/user/internal/service"
 	"github.com/CocaineCong/tangseng/config"
 	pb "github.com/CocaineCong/tangseng/idl/pb/user"
+	"github.com/CocaineCong/tangseng/loading"
 	"github.com/CocaineCong/tangseng/pkg/discovery"
 )
 
 func main() {
-	config.InitConfig()
+	loading.Loading()
 	dao.InitDB()
 	// etcd 地址
 	etcdAddress := []string{config.Conf.Etcd.Address}
