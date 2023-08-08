@@ -1,18 +1,8 @@
 syntax="proto3";
 option go_package = "/search_engine;";
 
-message SearchEngineModel {
-	int64 user_id=1;
-	string user_name=2;
-	string key_word=3;
-	string info=4;
-}
-
 message SearchEngineRequest{
-	SearchEngineModel search_engine_req=1;
-	string key=2;
-	string table=3;
-	repeated PostData data=4;
+	string query=1;
 }
 
 message PostData{
@@ -27,16 +17,13 @@ message SearchEngineList {
 }
 
 message SearchEngineResponse{
-	int64 code=4;
+	int64 code=1;
 	string msg=2;
-	repeated SearchEngineList search_engine_info_list =1;
-	repeated string data=3;
+	repeated SearchEngineList search_engine_info_list = 3;
+	repeated string data = 4;
 }
 
 
 service SearchEngineService{
-	rpc SearchEngineAdd(SearchEngineRequest) returns(SearchEngineResponse);
 	rpc SearchEngineSearch(SearchEngineRequest) returns(SearchEngineResponse);
-	rpc SearchEngineAllIndex(SearchEngineRequest) returns(SearchEngineResponse);
-	rpc SearchEngineAllIndexCount(SearchEngineRequest) returns(SearchEngineResponse);
 }

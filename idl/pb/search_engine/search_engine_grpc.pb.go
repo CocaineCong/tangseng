@@ -22,10 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SearchEngineServiceClient interface {
-	SearchEngineAdd(ctx context.Context, in *SearchEngineRequest, opts ...grpc.CallOption) (*SearchEngineResponse, error)
 	SearchEngineSearch(ctx context.Context, in *SearchEngineRequest, opts ...grpc.CallOption) (*SearchEngineResponse, error)
-	SearchEngineAllIndex(ctx context.Context, in *SearchEngineRequest, opts ...grpc.CallOption) (*SearchEngineResponse, error)
-	SearchEngineAllIndexCount(ctx context.Context, in *SearchEngineRequest, opts ...grpc.CallOption) (*SearchEngineResponse, error)
 }
 
 type searchEngineServiceClient struct {
@@ -34,15 +31,6 @@ type searchEngineServiceClient struct {
 
 func NewSearchEngineServiceClient(cc grpc.ClientConnInterface) SearchEngineServiceClient {
 	return &searchEngineServiceClient{cc}
-}
-
-func (c *searchEngineServiceClient) SearchEngineAdd(ctx context.Context, in *SearchEngineRequest, opts ...grpc.CallOption) (*SearchEngineResponse, error) {
-	out := new(SearchEngineResponse)
-	err := c.cc.Invoke(ctx, "/SearchEngineService/SearchEngineAdd", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *searchEngineServiceClient) SearchEngineSearch(ctx context.Context, in *SearchEngineRequest, opts ...grpc.CallOption) (*SearchEngineResponse, error) {
@@ -54,32 +42,11 @@ func (c *searchEngineServiceClient) SearchEngineSearch(ctx context.Context, in *
 	return out, nil
 }
 
-func (c *searchEngineServiceClient) SearchEngineAllIndex(ctx context.Context, in *SearchEngineRequest, opts ...grpc.CallOption) (*SearchEngineResponse, error) {
-	out := new(SearchEngineResponse)
-	err := c.cc.Invoke(ctx, "/SearchEngineService/SearchEngineAllIndex", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *searchEngineServiceClient) SearchEngineAllIndexCount(ctx context.Context, in *SearchEngineRequest, opts ...grpc.CallOption) (*SearchEngineResponse, error) {
-	out := new(SearchEngineResponse)
-	err := c.cc.Invoke(ctx, "/SearchEngineService/SearchEngineAllIndexCount", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // SearchEngineServiceServer is the server API for SearchEngineService service.
 // All implementations must embed UnimplementedSearchEngineServiceServer
 // for forward compatibility
 type SearchEngineServiceServer interface {
-	SearchEngineAdd(context.Context, *SearchEngineRequest) (*SearchEngineResponse, error)
 	SearchEngineSearch(context.Context, *SearchEngineRequest) (*SearchEngineResponse, error)
-	SearchEngineAllIndex(context.Context, *SearchEngineRequest) (*SearchEngineResponse, error)
-	SearchEngineAllIndexCount(context.Context, *SearchEngineRequest) (*SearchEngineResponse, error)
 	mustEmbedUnimplementedSearchEngineServiceServer()
 }
 
@@ -87,17 +54,8 @@ type SearchEngineServiceServer interface {
 type UnimplementedSearchEngineServiceServer struct {
 }
 
-func (UnimplementedSearchEngineServiceServer) SearchEngineAdd(context.Context, *SearchEngineRequest) (*SearchEngineResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SearchEngineAdd not implemented")
-}
 func (UnimplementedSearchEngineServiceServer) SearchEngineSearch(context.Context, *SearchEngineRequest) (*SearchEngineResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SearchEngineSearch not implemented")
-}
-func (UnimplementedSearchEngineServiceServer) SearchEngineAllIndex(context.Context, *SearchEngineRequest) (*SearchEngineResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SearchEngineAllIndex not implemented")
-}
-func (UnimplementedSearchEngineServiceServer) SearchEngineAllIndexCount(context.Context, *SearchEngineRequest) (*SearchEngineResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SearchEngineAllIndexCount not implemented")
 }
 func (UnimplementedSearchEngineServiceServer) mustEmbedUnimplementedSearchEngineServiceServer() {}
 
@@ -110,24 +68,6 @@ type UnsafeSearchEngineServiceServer interface {
 
 func RegisterSearchEngineServiceServer(s grpc.ServiceRegistrar, srv SearchEngineServiceServer) {
 	s.RegisterService(&SearchEngineService_ServiceDesc, srv)
-}
-
-func _SearchEngineService_SearchEngineAdd_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SearchEngineRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SearchEngineServiceServer).SearchEngineAdd(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/SearchEngineService/SearchEngineAdd",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SearchEngineServiceServer).SearchEngineAdd(ctx, req.(*SearchEngineRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _SearchEngineService_SearchEngineSearch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -148,42 +88,6 @@ func _SearchEngineService_SearchEngineSearch_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SearchEngineService_SearchEngineAllIndex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SearchEngineRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SearchEngineServiceServer).SearchEngineAllIndex(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/SearchEngineService/SearchEngineAllIndex",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SearchEngineServiceServer).SearchEngineAllIndex(ctx, req.(*SearchEngineRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _SearchEngineService_SearchEngineAllIndexCount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SearchEngineRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SearchEngineServiceServer).SearchEngineAllIndexCount(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/SearchEngineService/SearchEngineAllIndexCount",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SearchEngineServiceServer).SearchEngineAllIndexCount(ctx, req.(*SearchEngineRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // SearchEngineService_ServiceDesc is the grpc.ServiceDesc for SearchEngineService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -192,20 +96,8 @@ var SearchEngineService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*SearchEngineServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "SearchEngineAdd",
-			Handler:    _SearchEngineService_SearchEngineAdd_Handler,
-		},
-		{
 			MethodName: "SearchEngineSearch",
 			Handler:    _SearchEngineService_SearchEngineSearch_Handler,
-		},
-		{
-			MethodName: "SearchEngineAllIndex",
-			Handler:    _SearchEngineService_SearchEngineAllIndex_Handler,
-		},
-		{
-			MethodName: "SearchEngineAllIndexCount",
-			Handler:    _SearchEngineService_SearchEngineAllIndexCount_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
