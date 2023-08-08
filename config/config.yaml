@@ -45,8 +45,8 @@ services:
     addr:
       - 127.0.0.1:10003
 
-  searchEngine:
-    name: searchEngine
+  search_engine:
+    name: search_engine
     loadBalance: false
     addr:
       - 127.0.0.1:10004
@@ -66,5 +66,5 @@ domain:
     name: user
   favorite:
     name: favorite
-  searchEngine:
-    name: searchEngine
+  search_engine:
+    name: search_engine

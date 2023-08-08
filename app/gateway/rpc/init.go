@@ -13,6 +13,7 @@ import (
 
 	"github.com/CocaineCong/tangseng/config"
 	"github.com/CocaineCong/tangseng/idl/pb/favorite"
+	"github.com/CocaineCong/tangseng/idl/pb/search_engine"
 	"github.com/CocaineCong/tangseng/idl/pb/user"
 	"github.com/CocaineCong/tangseng/pkg/discovery"
 )
@@ -22,8 +23,9 @@ var (
 	ctx        context.Context
 	CancelFunc context.CancelFunc
 
-	UserClient     user.UserServiceClient
-	FavoriteClient favorite.FavoritesServiceClient
+	UserClient         user.UserServiceClient
+	FavoriteClient     favorite.FavoritesServiceClient
+	SearchEngineClient search_engine.SearchEngineServiceClient
 )
 
 func Init() {
@@ -34,6 +36,7 @@ func Init() {
 	defer Register.Close()
 	initClient(config.Conf.Domain["user"].Name, &UserClient)
 	initClient(config.Conf.Domain["favorite"].Name, &FavoriteClient)
+	initClient(config.Conf.Domain["search_engine"].Name, &FavoriteClient)
 }
 
 func initClient(serviceName string, client interface{}) {
@@ -48,6 +51,8 @@ func initClient(serviceName string, client interface{}) {
 		*c = user.NewUserServiceClient(conn)
 	case *favorite.FavoritesServiceClient:
 		*c = favorite.NewFavoritesServiceClient(conn)
+	case *search_engine.SearchEngineServiceClient:
+		*c = search_engine.NewSearchEngineServiceClient(conn)
 	default:
 		panic("unsupported client type")
 	}

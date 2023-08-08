@@ -23,13 +23,7 @@ func NewRouter() *gin.Engine {
 		// 用户服务
 		v1.POST("/user/register", handler.UserRegister)
 		v1.POST("/user/login", handler.UserLogin)
-
-		// v1.POST("/add", service.Add)
-		// // 搜索引擎
-		// v1.GET("/search", service.Search)
-		// v1.GET("/allindex", service.AllIndex)
-		// v1.GET("/allindexcount", service.AllIndexCount)
-		// v1.GET("/search-word", service.SearchWord)
+		SearchRegisterHandlers(v1)
 
 		// 需要登录保护
 		authed := v1.Group("/")

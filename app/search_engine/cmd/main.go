@@ -27,10 +27,10 @@ func main() {
 	etcdAddress := []string{viper.GetString("etcd.address")}
 	// 服务注册
 	etcdRegister := discovery.NewRegister(etcdAddress, logrus.New())
-	grpcAddress := config.Conf.Services["searchEngine"].Addr[0]
+	grpcAddress := config.Conf.Services["search_engine"].Addr[0]
 	defer etcdRegister.Stop()
 	userNode := discovery.Server{
-		Name: config.Conf.Domain["searchEngine"].Name,
+		Name: config.Conf.Domain["search_engine"].Name,
 		Addr: grpcAddress,
 	}
 	server := grpc.NewServer()
