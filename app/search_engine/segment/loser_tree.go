@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/CocaineCong/tangseng/app/search-engine/storage"
-	"github.com/CocaineCong/tangseng/app/search-engine/types"
+	"github.com/CocaineCong/tangseng/app/search_engine/storage"
+	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	"github.com/CocaineCong/tangseng/consts"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/CocaineCong/tangseng/pkg/util/codec"

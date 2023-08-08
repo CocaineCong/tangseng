@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/CocaineCong/tangseng/app/search-engine/query"
-	"github.com/CocaineCong/tangseng/app/search-engine/types"
+	"github.com/CocaineCong/tangseng/app/search_engine/query"
+	"github.com/CocaineCong/tangseng/app/search_engine/types"
 )
 
 func TestMergePostings(t *testing.T) {

@@ -1,7 +1,7 @@
 package segment
 
 import (
-	"github.com/CocaineCong/tangseng/app/search-engine/types"
+	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/CocaineCong/tangseng/app/search-engine/index"
-	"github.com/CocaineCong/tangseng/app/search-engine/query"
+	"github.com/CocaineCong/tangseng/app/search_engine/index"
+	"github.com/CocaineCong/tangseng/app/search_engine/query"
 	"github.com/CocaineCong/tangseng/config"
 	"github.com/CocaineCong/tangseng/loading"
 )
@@ -12,7 +12,6 @@ func main() {
 	loading.Loading()
 	query.InitSeg()
 	index.RunningIndex()
-	// query := "孙悟空"
 	// index.SearchRecall(query)
 
 	// // etcd 地址

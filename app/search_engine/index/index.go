@@ -3,9 +3,9 @@ package index
 import (
 	"fmt"
 
-	engine2 "github.com/CocaineCong/tangseng/app/search-engine/engine"
-	"github.com/CocaineCong/tangseng/app/search-engine/segment"
-	"github.com/CocaineCong/tangseng/app/search-engine/storage"
+	engine2 "github.com/CocaineCong/tangseng/app/search_engine/engine"
+	"github.com/CocaineCong/tangseng/app/search_engine/segment"
+	"github.com/CocaineCong/tangseng/app/search_engine/storage"
 	logs "github.com/CocaineCong/tangseng/pkg/logger"
 )
 

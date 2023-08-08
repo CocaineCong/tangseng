@@ -4,9 +4,9 @@ import (
 	"errors"
 	"sort"
 
-	engine2 "github.com/CocaineCong/tangseng/app/search-engine/engine"
-	segment2 "github.com/CocaineCong/tangseng/app/search-engine/segment"
-	types2 "github.com/CocaineCong/tangseng/app/search-engine/types"
+	engine2 "github.com/CocaineCong/tangseng/app/search_engine/engine"
+	segment2 "github.com/CocaineCong/tangseng/app/search_engine/segment"
+	types2 "github.com/CocaineCong/tangseng/app/search_engine/types"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/CocaineCong/tangseng/pkg/util/relevant"
 )

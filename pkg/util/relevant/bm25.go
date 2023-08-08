@@ -5,7 +5,7 @@ import (
 
 	"github.com/xtgo/set"
 
-	"github.com/CocaineCong/tangseng/app/search-engine/query"
+	"github.com/CocaineCong/tangseng/app/search_engine/query"
 )
 
 // DocScore is a tuple of the document ID and a score
