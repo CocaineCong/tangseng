@@ -6,7 +6,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 
-	"github.com/CocaineCong/tangseng/app/gateway/http/handler"
+	"github.com/CocaineCong/tangseng/app/gateway/http"
 	"github.com/CocaineCong/tangseng/app/gateway/middleware"
 )
 
@@ -21,8 +21,8 @@ func NewRouter() *gin.Engine {
 			context.JSON(200, "success")
 		})
 		// 用户服务
-		v1.POST("/user/register", handler.UserRegister)
-		v1.POST("/user/login", handler.UserLogin)
+		v1.POST("/user/register", http.UserRegister)
+		v1.POST("/user/login", http.UserLogin)
 		SearchRegisterHandlers(v1)
 
 		// 需要登录保护

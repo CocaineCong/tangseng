@@ -3,12 +3,12 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 
-	"github.com/CocaineCong/tangseng/app/gateway/http/handler"
+	"github.com/CocaineCong/tangseng/app/gateway/http"
 )
 
 func SearchRegisterHandlers(rg *gin.RouterGroup) {
 	favoriteGroup := rg.Group("/search_engine")
 	{
-		favoriteGroup.GET("/search", handler.SearchEngineSearch)
+		favoriteGroup.GET("/search", http.SearchEngineSearch)
 	}
 }
