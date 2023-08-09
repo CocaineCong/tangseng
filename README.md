@@ -31,7 +31,7 @@
 - [ ] 索引中合并多个segment
 - [ ] bolt产生的三个文件过多，太大了，因为目前存的是postingsList，也就是倒排索引表，后续改成存offset
 - [x] 相关性的计算要考虑一下，TFIDF，bm25
-- [ ]词向量，pagerank
+- [ ] 词向量，pagerank
 - [x] 分词加入ik分词器
 - [ ] 多个segment召回结合合并，并且差运输
 - [ ] 分页，排序
