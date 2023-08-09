@@ -18,12 +18,15 @@ func GracefullyShutdown(server *http.Server) {
 	syscall.SIGINT|SIGTERM -> kill 进程时传递给进程的信号
 	*/
 	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
-	<-done
-
-	log.LogrusObj.Println("closing http server gracefully ...")
-
-	if err := server.Shutdown(context.Background()); err != nil {
-		log.LogrusObj.Fatalln("closing http server gracefully failed: ", err)
+	select {
+	case sig := <-done:
+		{
+			log.LogrusObj.Infoln("stopping service, because received signal:", sig)
+			if err := server.Shutdown(context.Background()); err != nil {
+				log.LogrusObj.Infof("closing http server gracefully failed: :%v", err)
+			}
+			log.LogrusObj.Infoln("service has stopped")
+			os.Exit(0)
+		}
 	}
-
 }
