@@ -54,7 +54,7 @@ func UserLogin(ctx *gin.Context) {
 		return
 	}
 	uResp := &types.UserTokenData{
-		User:         userResp,
+		User:         userResp.UserDetail,
 		AccessToken:  aToken,
 		RefreshToken: rToken,
 	}
