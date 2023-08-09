@@ -36,7 +36,7 @@ func Init() {
 	defer Register.Close()
 	initClient(config.Conf.Domain["user"].Name, &UserClient)
 	initClient(config.Conf.Domain["favorite"].Name, &FavoriteClient)
-	initClient(config.Conf.Domain["search_engine"].Name, &FavoriteClient)
+	initClient(config.Conf.Domain["search_engine"].Name, &SearchEngineClient)
 }
 
 func initClient(serviceName string, client interface{}) {

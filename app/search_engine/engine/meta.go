@@ -14,8 +14,6 @@ import (
 	"github.com/CocaineCong/tangseng/pkg/util/se"
 )
 
-var metaFile = "segments.json" // 存储的元数据文件，包括各种属性信息
-
 // Meta 元数据
 type Meta struct {
 	sync.RWMutex
@@ -27,7 +25,8 @@ type Meta struct {
 
 func ParseMeta() (*Meta, error) {
 	// 文件不存在表示没有相关数据，第一次创建
-	metaFile = config.Conf.SeConfig.StoragePath + metaFile
+	// metaFile = config.Conf.SeConfig.StoragePath + metaFile
+	metaFile := config.Conf.SeConfig.MetaPath
 	if !se.ExistFile(metaFile) {
 		log.LogrusObj.Infof("segMetaFile:%s not exist", metaFile)
 		_, err := os.Create(metaFile)

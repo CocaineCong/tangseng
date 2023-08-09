@@ -24,12 +24,6 @@ func Get(db *bolt.DB, bucket string, key []byte) (r []byte, err error) {
 		}
 		r = b.Get(key)
 		if r == nil { // 如果是空的话，直接创建这个key，然后返回这个key的初始值，也就是0
-			// TODO: 怎么put不进去啊？
-			// err = b.Put(key, []byte(consts.ForwardCountInitValue))
-			// if err != nil {
-			// 	return
-			// }
-			// r = b.Get(key)
 			r = []byte("0")
 			return
 		}

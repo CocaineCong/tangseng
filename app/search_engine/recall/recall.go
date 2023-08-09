@@ -120,7 +120,7 @@ func (r *Recall) calculateScore(token string, searchItem []*types2.SearchItem) (
 	for i := range bm25Scores {
 		searchItem[bm25Scores[i].ID].Score = bm25Scores[i].Score
 	}
-	sort.Slice(searchItem, func(i, j int) bool { // desc
+	sort.Slice(searchItem, func(i, j int) bool {
 		return searchItem[i].Score > searchItem[j].Score
 	})
 	resp = make([]*types2.SearchItem, 0)

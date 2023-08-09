@@ -25,6 +25,7 @@ type SeConfig struct {
 	MergeChannelSize int64    `yaml:"MergeChannelSize"`
 	Version          string   `yaml:"Version"`
 	SourceWuKoFile   string   `yaml:"SourceWuKoFile"`
+	MetaPath         string   `yaml:"MetaPath"`
 }
 
 type Server struct {

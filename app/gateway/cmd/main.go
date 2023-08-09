@@ -20,7 +20,7 @@ import (
 )
 
 func main() {
-	config.InitConfig()
+	loading.Loading()
 	rpc.Init()
 	loading.Loading()
 	// etcd注册

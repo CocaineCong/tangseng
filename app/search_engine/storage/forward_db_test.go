@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"testing"
 
+	bolt "go.etcd.io/bbolt"
+
 	"github.com/CocaineCong/tangseng/app/search_engine/query"
 	"github.com/CocaineCong/tangseng/config"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
@@ -20,7 +22,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestForwardDBRead(t *testing.T) {
-	a := config.Conf.SeConfig.StoragePath + "0.forward"
+	a := config.Conf.SeConfig.StoragePath + "1.forward"
 	forward, err := NewForwardDB(a)
 	if err != nil {
 		fmt.Println("err", err)
@@ -35,4 +37,14 @@ func TestForwardDBRead(t *testing.T) {
 		fmt.Println(err)
 	}
 	fmt.Println(string(r))
+}
+
+func TestBoltDB(t *testing.T) {
+	dbName := config.Conf.SeConfig.StoragePath + "0.forward"
+	fmt.Println(dbName)
+	db, err := bolt.Open(dbName, 0600, nil)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(db)
 }

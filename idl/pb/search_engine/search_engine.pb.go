@@ -25,7 +25,8 @@ type SearchEngineRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Query string `protobuf:"bytes,1,opt,name=query,proto3" json:"query,omitempty"`
+	// @inject_tag:form:"query" uri:"query"
+	Query string `protobuf:"bytes,1,opt,name=query,proto3" json:"query,omitempty" form:"query" uri:"query"`
 }
 
 func (x *SearchEngineRequest) Reset() {
