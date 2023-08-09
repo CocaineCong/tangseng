@@ -6,7 +6,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 
-	"github.com/CocaineCong/tangseng/app/gateway/internal/handler"
+	"github.com/CocaineCong/tangseng/app/gateway/http/handler"
 	"github.com/CocaineCong/tangseng/app/gateway/middleware"
 )
 
