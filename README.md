@@ -21,6 +21,35 @@
 
 重构中...
 
+现状:
+
+* x.term存储term文件
+* x.forward存储正排文件
+* x.inverted存储倒排索引文件
+* segments.json 存储segment元数据信息，包括上述文件属性
+
+#### 正排库
+* 正排文件，通过 bolt 进行kv存储 docid 主键
+#### 倒排库
+* term文件 bolt存储，key为token，value 为对应token的postingslist，但由于文件太大了，后续改成倒排索引文件的offset和size，压缩存储容量
+
+**后续看实现难度，能不能用mmap来读取倒排索引** 
+
+#### segment merge
+
+* channel 实现消息队列，flush后发送消息
+* term merge通过b+tree前序遍历，重组b+tree
+* 倒排表merge的话，可以通过merge b+树的时候，读取倒排表数据，进行读取后重写，效率可能会慢，待定。
+* 需要添加segment的引用计数，为0才可以删除
+* 正排也是b+tree操作
+
+#### engine 对象
+> engine是recall召回和index索引的控制模块
+* 通过engine mode区分是查询还是写入，主要需要标识出要处理的segment，recall使用cur_seg_id，index使用next_seg_id
+* 召回和索引是不同的engine
+* 召回上层有多个engine
+* recall 召回时会在engine上层进行多segment合并（单个segment没问题，多个有时候有问题，会阻塞，后续优化一下）
+
 ### 未来规划
 #### 1.架构相关
 - [ ] 引入降级熔断
@@ -109,7 +138,23 @@ user/
 
 ## 4.search-engine 搜索引擎模块
 重构中...
-
+```
+seach-engine/
+├── cmd                   // 启动入口
+├── data                  // 放置打印日志模块
+├── engine                // 中间件
+├── index                 // 索引建立
+├── inputdata             // 输入的数据
+├── logic                 // 共有逻辑
+├── query                 // 分词 查询
+├── recall                // 回归
+├── respository           // 存储信息
+├── segment               // meta分块
+├── service               // 服务
+├── storage               // 存储信息
+├── test                  // 测试文件
+└── types                 // 定义的结构体
+```
 
 # 项目文件配置
 
