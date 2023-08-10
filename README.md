@@ -9,6 +9,14 @@
 3、用户模块和收藏夹模块使用共同的数据库。\
 4、搜索引擎单独设立数据库，并且预留了一个redis作为缓存，存储搜索引擎数据采用读写分离模式，主要负责读，次要负责写，允许主从复制的延迟。
 
+# 前端地址
+
+前端用的是react, but still coding
+
+[react-tangseng](https://github.com/CocaineCong/react-tangseng)
+
+
+
 # 项目主要功能
 ## 1. 用户模块
 - 登录注册
