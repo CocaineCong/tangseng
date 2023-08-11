@@ -29,8 +29,6 @@ func InitLog() {
 	logger.SetFormatter(&logrus.JSONFormatter{
 		TimestampFormat: "2006-01-02 15:04:05",
 	})
-	// hook := es.EsHookLog()
-	// logger.AddHook(hook)
 	LogrusObj = logger
 }
 
