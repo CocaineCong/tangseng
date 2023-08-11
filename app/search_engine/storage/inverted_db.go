@@ -3,6 +3,7 @@ package storage
 import (
 	"bytes"
 	"encoding/gob"
+	"errors"
 	"fmt"
 	"os"
 
@@ -99,8 +100,14 @@ func (t *InvertedDB) GetInvertedInfo(token string) (p *types.InvertedIndexValue,
 		return
 	}
 
+	if string(c) == "0" {
+		err = errors.New("暂无此token")
+		return
+	}
+
 	p, err = codec.DecodePostings(c)
 	if err != nil {
+		log.LogrusObj.Error(err)
 		return
 	}
 

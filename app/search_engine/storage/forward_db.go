@@ -1,8 +1,7 @@
 package storage
 
 import (
-	"encoding/json"
-
+	"github.com/bytedance/sonic"
 	"github.com/spf13/cast"
 	bolt "go.etcd.io/bbolt"
 
@@ -28,7 +27,7 @@ func NewForwardDB(dbName string) (*ForwardDB, error) {
 // AddForwardByDoc 通过doc进行存储
 func (f *ForwardDB) AddForwardByDoc(doc *Document) error {
 	key := cast.ToString(doc.DocId)
-	body, _ := json.Marshal(doc)
+	body, _ := sonic.Marshal(doc.Body)
 	return Put(f.db, consts.ForwardBucket, []byte(key), body)
 }
 

@@ -52,7 +52,7 @@ func addDoc(in *Index) {
 	docList := readFiles([]string{config.Conf.SeConfig.SourceWuKoFile})
 	go in.Scheduler.Merge()
 	wg := new(sync.WaitGroup)
-	for _, item := range docList[1:40] {
+	for _, item := range docList[1:] {
 		wg.Add(1)
 		doc, err := doc2Struct(item)
 		if err != nil {
@@ -87,7 +87,6 @@ func doc2Struct(docStr string) (*storage.Document, error) {
 		Title: d[1],
 		Body:  d[1],
 	}
-	fmt.Println("doc", doc.DocId, doc.Title, doc.Body)
 
 	return doc, nil
 }

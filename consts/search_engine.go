@@ -9,6 +9,6 @@ const (
 )
 
 const (
-	EngineBufSize         = 100
+	EngineBufSize         = 10000
 	ForwardCountInitValue = "0"
 )

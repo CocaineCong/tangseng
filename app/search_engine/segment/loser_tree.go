@@ -164,7 +164,7 @@ func MergeKTermSegments(list []*TermNode, chList []chan storage.KvInfo) (res Inv
 		if node == nil {
 			break
 		}
-		log.LogrusObj.Infof("pop node key:%+v,value:%v", string(node.Key), node.Value)
+		log.LogrusObj.Infof("pop node key:%+v,value:%v", string(node.Key), string(node.Value))
 		val, errx := storage.Bytes2TermVal(node.Value)
 		if errx != nil {
 			return
@@ -221,7 +221,7 @@ func MergeKForwardSegments(seg *Segment, list []*TermNode, chList []chan storage
 		if err != nil {
 			return fmt.Errorf("Put Error:%v", err)
 		}
-		log.LogrusObj.Infof("pop node key:%s,value:%s", node.Key, node.Value)
+		log.LogrusObj.Infof("pop node key:%s,value:%s", string(node.Key), string(node.Value))
 
 	}
 	// 更新count

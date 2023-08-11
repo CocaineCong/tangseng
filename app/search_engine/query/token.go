@@ -48,6 +48,9 @@ func GseCut(content string) ([]Tokenization, error) {
 	c := GobalSeg.Segment([]byte(content))
 	token := make([]Tokenization, 0)
 	for _, v := range c {
+		if v.Token().Text() == " " { // 这个空格去掉，英文就断在一起了
+			continue
+		}
 		token = append(token, Tokenization{
 			Token:    v.Token().Text(),
 			Position: int64(v.Start()),
@@ -61,10 +64,10 @@ func GseCut(content string) ([]Tokenization, error) {
 func ignoredChar(str string) string {
 	for _, c := range str {
 		switch c {
-		case ' ', '\f', '\n', '\r', '\t', '\v', '!', '"', '#', '$', '%', '&',
+		case '\f', '\n', '\r', '\t', '\v', '!', '"', '#', '$', '%', '&',
 			'\'', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>',
-			'?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~',
-			0x3000, 0x3001, 0x3002, 0xFF08, 0xFF09, 0xFF01, 0xFF0C, 0xFF1A, 0xFF1B, 0xFF1F:
+			'?', '@', '[', '\\', ']', '“', '^', '·', '_', '`', '{', '|', '}', '~', '《', '》', '：',
+			'（', '）', 0x3000, 0x3001, 0x3002, 0xFF01, 0xFF0C, 0xFF1B, 0xFF1F:
 			str = strings.ReplaceAll(str, string(c), "")
 		}
 	}

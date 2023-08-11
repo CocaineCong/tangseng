@@ -19,7 +19,7 @@ func (in *Index) AddDocument(doc *storage.Document) (err error) {
 	if doc == nil || doc.DocId <= 0 || doc.Title == "" {
 		return fmt.Errorf("doc err: doc || doc_id || title")
 	}
-	err = in.AddDoc(doc)
+	err = in.AddForwardIndex(doc)
 	if err != nil {
 		logs.LogrusObj.Errorf("forward doc add err:%v", err)
 		return

@@ -2,10 +2,20 @@ package query
 
 import (
 	"fmt"
+	"os"
+	"strings"
 	"testing"
 
 	"github.com/go-ego/gse"
+
+	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
+
+func TestMain(m *testing.M) {
+	InitSeg()
+	log.InitLog()
+	m.Run()
+}
 
 func TestQuery(t *testing.T) {
 	newGse, _ := gse.New()
@@ -17,5 +27,25 @@ func TestQuery(t *testing.T) {
 	for i := range segments {
 		// fmt.Println(segments[i].Token().Text(), segments[i].Start(), segments[i].End())
 		fmt.Println(segments[i].Text, segments[i].Pos)
+	}
+}
+
+func TestGseCut(t *testing.T) {
+	fileName := "../data/movies.csv"
+	content, err := os.ReadFile(fileName)
+	if err != nil {
+		fmt.Println(err)
+	}
+	docList := strings.Split(string(content), "\n")
+	if len(docList) == 0 {
+		fmt.Println(err)
+	}
+	for _, v := range docList[1:] {
+		// tokens, _ := GseCut(v)
+		tm := strings.Split(v, ",")
+		if len(tm) >= 2 {
+			tokens, _ := GseCut(tm[1])
+			fmt.Println(tokens)
+		}
 	}
 }

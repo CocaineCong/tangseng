@@ -36,3 +36,15 @@ func TestInvertedDBRead(t *testing.T) {
 	}
 	fmt.Println(string(v3))
 }
+
+func TestGetInvertedInfo(t *testing.T) {
+	query := "蜘蛛侠"
+	termName := config.Conf.SeConfig.StoragePath + "0.term"
+	postingsName := config.Conf.SeConfig.StoragePath + "0.inverted"
+	inverted := NewInvertedDB(termName, postingsName)
+	p, err := inverted.GetInvertedInfo(query)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(p.Token, p.PostingsList)
+}
