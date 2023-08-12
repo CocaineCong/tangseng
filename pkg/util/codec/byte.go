@@ -2,41 +2,52 @@ package codec
 
 import (
 	"bytes"
+	"encoding/binary"
 	"encoding/gob"
-	"encoding/json"
 	"errors"
-	"reflect"
+	"fmt"
 
 	"github.com/bytedance/sonic"
-	"github.com/spf13/cast"
 
 	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
 // BinaryWrite 将所有的类型 转成byte buffer类型，易于存储// TODO change
-func BinaryWrite(v any) (buf *bytes.Buffer, err error) {
-	if v == nil {
-		err = errors.New("BinaryWrite the value is nil")
+// func BinaryWrite(v any) (buf *bytes.Buffer, err error) {
+func BinaryWrite(buf *bytes.Buffer, v any) (err error) {
+	size := binary.Size(v)
+	// log.Debug("docid size:", size)
+	fmt.Println("size", size)
+	if size <= 0 {
+		log.LogrusObj.Errorf("encodePostings binary.Size err,size: %v", size)
 		return
 	}
-	buf = new(bytes.Buffer)
 
-	switch reflect.Indirect(reflect.ValueOf(v)).Kind() { // TODO:反射很影响性能，后续看看怎么优化
-	case reflect.Int64, reflect.Int32, reflect.Int:
-		buf.Write([]byte(cast.ToString(v)))
-	case reflect.String:
-		buf.Write([]byte(v.(string)))
-	case reflect.Slice, reflect.Array, reflect.Struct:
-		value, errx := json.Marshal(v)
-		if errx != nil {
-			err = errx
-			return
-		}
-		buf.Write(value)
-	}
+	binary.Write(buf, binary.LittleEndian, v)
 
 	return
+	// if v == nil {
+	// 	err = errors.New("BinaryWrite the value is nil")
+	// 	return
+	// }
+	// buf = new(bytes.Buffer)
+	//
+	// switch reflect.Indirect(reflect.ValueOf(v)).Kind() { // TODO:反射很影响性能，后续看看怎么优化
+	// case reflect.Int64, reflect.Int32, reflect.Int:
+	// 	buf.Write([]byte(cast.ToString(v)))
+	// case reflect.String:
+	// 	buf.Write([]byte(v.(string)))
+	// case reflect.Slice, reflect.Array, reflect.Struct:
+	// 	value, errx := json.Marshal(v)
+	// 	if errx != nil {
+	// 		err = errx
+	// 		return
+	// 	}
+	// 	buf.Write(value)
+	// }
+
+	// return
 }
 
 // GobWrite 将所有的类型 转成 bytes.Buffer 类型，易于存储// TODO change

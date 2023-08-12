@@ -7,15 +7,35 @@ import (
 	"fmt"
 	"os"
 	"testing"
+
+	"github.com/CocaineCong/tangseng/app/search_engine/types"
+	"github.com/CocaineCong/tangseng/config"
+	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
+func TestMain(m *testing.M) {
+	re := config.ConfigReader{FileName: "../../../config/config.yaml"}
+	config.InitConfigForTest(&re)
+	log.InitLog()
+	fmt.Println("Write tests on values: ", config.Conf)
+	m.Run()
+}
+
 func TestIntToBytes(t *testing.T) {
-	docCount := 5
-	buf, err := BinaryWrite(docCount)
+	p := new(types.PostingsList)
+	buf := bytes.NewBuffer([]byte{})
+	p.DocId = 100
+	err := BinaryWrite(buf, p.DocId)
 	if err != nil {
 		fmt.Println(err)
 	}
 	fmt.Println(buf)
+	var c int64
+	err = binary.Read(buf, binary.LittleEndian, &c)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(c)
 }
 
 func TestBinarySize(t *testing.T) {
