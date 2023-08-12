@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cast"
 
 	"github.com/CocaineCong/tangseng/app/search_engine/engine"
-	"github.com/CocaineCong/tangseng/app/search_engine/storage"
+	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	"github.com/CocaineCong/tangseng/config"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
@@ -75,14 +75,14 @@ func addDoc(in *Index) {
 	}
 }
 
-func doc2Struct(docStr string) (*storage.Document, error) {
+func doc2Struct(docStr string) (*types.Document, error) {
 	docStr = strings.Replace(docStr, "\"", "", -1)
 	d := strings.Split(docStr, ",")
 	// if len(d) < 3 { // TODO: 后续记得开放
 	// 	return nil, fmt.Errorf("doc2Struct err: %v", "docStr is not right")
 	// }
 
-	doc := &storage.Document{
+	doc := &types.Document{
 		DocId: cast.ToInt64(d[0]),
 		Title: d[1],
 		Body:  d[1],

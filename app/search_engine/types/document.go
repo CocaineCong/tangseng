@@ -1,4 +1,4 @@
-package storage
+package types
 
 // Document 文档格式
 type Document struct {

@@ -5,7 +5,7 @@ import (
 
 	engine2 "github.com/CocaineCong/tangseng/app/search_engine/engine"
 	"github.com/CocaineCong/tangseng/app/search_engine/segment"
-	"github.com/CocaineCong/tangseng/app/search_engine/storage"
+	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	logs "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
@@ -15,7 +15,7 @@ type Index struct {
 }
 
 // AddDocument 添加文档
-func (in *Index) AddDocument(doc *storage.Document) (err error) {
+func (in *Index) AddDocument(doc *types.Document) (err error) {
 	if doc == nil || doc.DocId <= 0 || doc.Title == "" {
 		return fmt.Errorf("doc err: doc || doc_id || title")
 	}

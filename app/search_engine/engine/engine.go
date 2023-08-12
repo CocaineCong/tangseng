@@ -6,7 +6,7 @@ import (
 
 	"github.com/CocaineCong/tangseng/app/search_engine/query"
 	"github.com/CocaineCong/tangseng/app/search_engine/segment"
-	"github.com/CocaineCong/tangseng/app/search_engine/storage"
+	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	"github.com/CocaineCong/tangseng/consts"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
@@ -58,7 +58,7 @@ func (e *Engine) indexCount() {
 }
 
 // AddForwardIndex 落库正排索引
-func (e *Engine) AddForwardIndex(doc *storage.Document) error {
+func (e *Engine) AddForwardIndex(doc *types.Document) error {
 	return e.Seg[e.CurrSegId].AddForwardByDoc(doc)
 }
 

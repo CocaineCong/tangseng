@@ -1,6 +1,4 @@
-# Tangseng 重构中...
-
-基于Go语言的搜索引擎
+# Tangseng 基于Go语言的搜索引擎
 
 # 项目大体框架
 
@@ -9,14 +7,13 @@
 3、用户模块和收藏夹模块使用共同的数据库。\
 4、搜索引擎单独设立数据库，并且预留了一个redis作为缓存，存储搜索引擎数据采用读写分离模式，主要负责读，次要负责写，允许主从复制的延迟。
 
-# 前端地址
+# 🧑🏻‍💻 前端地址
 
-前端用的是react, but still coding
+前端用的是 react, but still coding
 
 [react-tangseng](https://github.com/CocaineCong/react-tangseng)
 
-
-# 项目主要功能
+# 🌈 项目主要功能
 ## 1. 用户模块
 - 登录注册
 
@@ -26,14 +23,10 @@
 
 ## 3. 搜索模块
 
-重构中...
-
-现状:
-
-* x.term存储term文件
-* x.forward存储正排文件
-* x.inverted存储倒排索引文件
-* segments.json 存储segment元数据信息，包括上述文件属性
+> * x.term存储term文件
+> * x.forward存储正排文件
+> * x.inverted存储倒排索引文件
+> * segments.json 存储segment元数据信息，包括上述文件属性
 
 #### 正排库
 * 正排文件，通过 bolt 进行kv存储 docid 主键
@@ -43,10 +36,9 @@
 **后续看实现难度，能不能用mmap来读取倒排索引** 
 
 #### segment merge
-
 * channel 实现消息队列，flush后发送消息
 * term merge通过b+tree前序遍历，重组b+tree
-* 倒排表merge的话，可以通过merge b+树的时候，读取倒排表数据，进行读取后重写，效率可能会慢，待定。
+* 倒排表merge的话，可以通过merge b+树的时候，读取倒排表数据，进行读取后重写，效率可能会慢，待定
 * 需要添加segment的引用计数，为0才可以删除
 * 正排也是b+tree操作
 
@@ -59,11 +51,13 @@
 
 ### 未来规划
 #### 1.架构相关
+
 - [ ] 引入降级熔断
 - [ ] 引入jaeger进行链路追踪
 - [ ] 引入skywalking进行监控
 
 #### 2.功能相关
+
 - [ ] 构建索引的时候太慢了..想办法优化..都不知道wukong是怎么做的构建索引那么快的...
 - [ ] bolt产生的三个文件过多，太大了，因为目前存的是postingsList，也就是倒排索引表，后续改成存offset
 - [x] 相关性的计算要考虑一下，TFIDF，bm25
@@ -72,7 +66,7 @@
 - [ ] 多个segment召回结合合并，并且差运输
 - [ ] 分页，排序
 - [ ] 纠正输入的query,比如“陆加嘴”-->“陆家嘴”
-- [ ] 输入进行词库联系
+- [ ] 输入进行词条可以进行联想，比如 “东方明” 提示--> “东方明珠”
 - [ ] 目前是基于块的索引方法，后续看看能不能改成分布式mapreduce来构建索引
 - [ ] 在上一条的基础上再加上动态索引（还不知道上一条能不能实现...）
 
@@ -87,7 +81,7 @@
 - viper
 - protobuf
 
-# 项目结构
+# ✨ 项目结构
 
 ## 1.tangseng 项目总体
 ```
@@ -144,7 +138,7 @@ user/
 ```
 
 ## 4.search-engine 搜索引擎模块
-重构中...
+
 ```
 seach-engine/
 ├── cmd                   // 启动入口
@@ -248,13 +242,10 @@ make proto # 生成proto文件，如果proto有改变的话，则需要重新生
 ## 手动启动
 
 1. 利用compose快速构建环境
-
 ```shell
 docker-compose up -d
 ```
-
 2. 保证mysql,etcd活跃, 在 app 文件夹下的各个模块的 cmd 下执行
-
 ```go
 go run main.go
 ```
@@ -273,17 +264,3 @@ go run main.go
 效果
 
 ![postman](doc/4.效果.png)
-
-
-# 项目启动
-- 在各模块下进行
-
-```go
-go mod tidy
-```
-
-- 在各模块下的cmd目录
-
-```go
-go run main.go
-```

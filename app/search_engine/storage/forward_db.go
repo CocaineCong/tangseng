@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/cast"
 	bolt "go.etcd.io/bbolt"
 
+	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	"github.com/CocaineCong/tangseng/consts"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
@@ -25,7 +26,7 @@ func NewForwardDB(dbName string) (*ForwardDB, error) {
 }
 
 // AddForwardByDoc 通过doc进行存储
-func (f *ForwardDB) AddForwardByDoc(doc *Document) error {
+func (f *ForwardDB) AddForwardByDoc(doc *types.Document) error {
 	key := cast.ToString(doc.DocId)
 	body, _ := sonic.Marshal(doc.Body)
 	return Put(f.db, consts.ForwardBucket, []byte(key), body)
