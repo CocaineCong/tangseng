@@ -150,3 +150,69 @@ func TestGobFile(t *testing.T) {
 	}
 	fmt.Println(string(buffer))
 }
+
+func TestBinaryStruct(t *testing.T) {
+	buf := new(bytes.Buffer)
+	p := &TermValue{
+		DocCount: 100,
+		Offset:   5,
+		Size:     15,
+	}
+	err := BinaryEncoding(buf, p)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	p2 := &TermValue{
+		DocCount: 200,
+		Offset:   25,
+		Size:     25,
+	}
+	err = BinaryEncoding(buf, p2)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(buf.Bytes())
+
+	p3 := new(TermValue)
+	err = BinaryDecoding(buf, p3)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(p3)
+
+	p4 := new(TermValue)
+	err = BinaryDecoding(buf, p4)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(p4)
+
+	p5 := new(TermValue)
+	err = BinaryDecoding(buf, p5)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(p5)
+}
+
+func TestBinarySlice(t *testing.T) {
+	buf := new(bytes.Buffer)
+	p := make([]int, 0)
+	for i := 0; i < 5; i++ {
+		p = append(p, i)
+	}
+	fmt.Println(p)
+	err := BinaryEncoding(buf, p)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(buf)
+	p2 := make([]int, 0)
+
+	err = BinaryDecoding(buf, p2)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(p2)
+}

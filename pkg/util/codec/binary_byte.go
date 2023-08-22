@@ -27,27 +27,6 @@ func BinaryWrite(buf *bytes.Buffer, v any) (err error) {
 	binary.Write(buf, binary.LittleEndian, v)
 
 	return
-	// if v == nil {
-	// 	err = errors.New("BinaryWrite the value is nil")
-	// 	return
-	// }
-	// buf = new(bytes.Buffer)
-	//
-	// switch reflect.Indirect(reflect.ValueOf(v)).Kind() { // TODO:反射很影响性能，后续看看怎么优化
-	// case reflect.Int64, reflect.Int32, reflect.Int:
-	// 	buf.Write([]byte(cast.ToString(v)))
-	// case reflect.String:
-	// 	buf.Write([]byte(v.(string)))
-	// case reflect.Slice, reflect.Array, reflect.Struct:
-	// 	value, errx := json.Marshal(v)
-	// 	if errx != nil {
-	// 		err = errx
-	// 		return
-	// 	}
-	// 	buf.Write(value)
-	// }
-
-	// return
 }
 
 // GobWrite 将所有的类型 转成 bytes.Buffer 类型，易于存储// TODO change
@@ -80,6 +59,32 @@ func EncodePostings(postings *types.InvertedIndexValue) (buf []byte, err error) 
 		log.LogrusObj.Errorf("sonic.Marshal err:%v,postings:%+v", err, postings)
 		return
 	}
+
+	return
+}
+
+// BinaryEncoding 二进制编码
+func BinaryEncoding(buf *bytes.Buffer, v any) (err error) {
+	size := binary.Size(v) // 只能传入
+	if size < 0 {
+		err = errors.New(fmt.Sprintf("encodePostings binary.Size err,size: %v", size))
+		return
+	}
+
+	err = binary.Write(buf, binary.LittleEndian, v)
+
+	return
+}
+
+// BinaryDecoding 二进制解码
+func BinaryDecoding(buf *bytes.Buffer, v any) (err error) {
+	size := binary.Size(v) // 只能传入
+	if size < 0 {
+		err = errors.New(fmt.Sprintf("encodePostings binary.Size err,size: %v", size))
+		return
+	}
+
+	err = binary.Read(buf, binary.LittleEndian, v)
 
 	return
 }
