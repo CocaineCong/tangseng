@@ -6,6 +6,7 @@ const (
 	ForwardBucket   = "forward"
 	ForwardCountKey = "forwardCount"
 	TermBucket      = "term"
+	DictBucket      = "dict"
 )
 
 const (

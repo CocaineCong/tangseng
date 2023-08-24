@@ -19,7 +19,7 @@ func InitSegmentDb(segId SegId) (*storage2.InvertedDB, *storage2.ForwardDB) {
 		log.LogrusObj.Infof("db Init :%d<0", segId)
 	}
 	log.LogrusObj.Infof("index:[termName:%s,invertedName:%s,forwardName:%s]", termName, invertedName, forwardName)
-	termName, invertedName, forwardName = GetDbName(segId)
+	termName, invertedName, forwardName, dictName = GetDbName(segId)
 	forwardDB, err := storage2.NewForwardDB(forwardName)
 	if err != nil {
 		log.LogrusObj.Error(err)
@@ -44,9 +44,10 @@ func CreateNewInvertedIndex(token query.Tokenization, docCount int64) *types.Inv
 }
 
 // GetDbName 获取db的路径+名称
-func GetDbName(segId SegId) (string, string, string) {
+func GetDbName(segId SegId) (string, string, string, string) {
 	termName = fmt.Sprintf("%s%d%s", config.Conf.SeConfig.StoragePath, segId, TermDbSuffix)
 	invertedName = fmt.Sprintf("%s%d%s", config.Conf.SeConfig.StoragePath, segId, InvertedDbSuffix)
 	forwardName = fmt.Sprintf("%s%d%s", config.Conf.SeConfig.StoragePath, segId, ForwardDbSuffix)
-	return termName, invertedName, forwardName
+	dictName = fmt.Sprintf("%s%d%s", config.Conf.SeConfig.StoragePath, segId, DictDbSuffix)
+	return termName, invertedName, forwardName, dictName
 }

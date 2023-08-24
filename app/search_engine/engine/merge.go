@@ -202,7 +202,7 @@ func (m *MergeScheduler) deleteOldSeg(segInfos []*segment2.SegInfo) error {
 }
 
 func (m *MergeScheduler) deleteSegFile(segId segment2.SegId) error {
-	term, inverted, forward := segment2.GetDbName(segId)
+	term, inverted, forward, dictName := segment2.GetDbName(segId)
 	log.LogrusObj.Infof("delete seg file forward:%s,invert:%s,term:%s", term, inverted, forward)
 	err := os.Remove(inverted)
 	if err != nil {
@@ -213,6 +213,10 @@ func (m *MergeScheduler) deleteSegFile(segId segment2.SegId) error {
 		return err
 	}
 	os.Remove(forward)
+	if err != nil {
+		return err
+	}
+	os.Remove(dictName)
 	if err != nil {
 		return err
 	}
