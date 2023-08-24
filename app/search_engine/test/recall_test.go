@@ -27,6 +27,9 @@ func TestRecall(t *testing.T) {
 		fmt.Println(err)
 	}
 	for i := range searchItem {
+		if searchItem[i].DocId == 0 {
+			continue
+		}
 		fmt.Println(searchItem[i].Score, searchItem[i].DocId, searchItem[i].Content)
 	}
 }
