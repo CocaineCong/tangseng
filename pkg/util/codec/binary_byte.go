@@ -65,7 +65,7 @@ func EncodePostings(postings *types.InvertedIndexValue) (buf []byte, err error) 
 
 // BinaryEncoding 二进制编码
 func BinaryEncoding(buf *bytes.Buffer, v any) (err error) {
-	size := binary.Size(v) // 只能传入
+	size := binary.Size(v) // 只能传入结构体
 	if size < 0 {
 		err = errors.New(fmt.Sprintf("encodePostings binary.Size err,size: %v", size))
 		return
@@ -78,7 +78,7 @@ func BinaryEncoding(buf *bytes.Buffer, v any) (err error) {
 
 // BinaryDecoding 二进制解码
 func BinaryDecoding(buf *bytes.Buffer, v any) (err error) {
-	size := binary.Size(v) // 只能传入
+	size := binary.Size(v) // 只能传入结构体
 	if size < 0 {
 		err = errors.New(fmt.Sprintf("encodePostings binary.Size err,size: %v", size))
 		return

@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/CocaineCong/tangseng/app/search_engine/query"
-	storage2 "github.com/CocaineCong/tangseng/app/search_engine/storage"
+	"github.com/CocaineCong/tangseng/app/search_engine/storage"
 	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	"github.com/CocaineCong/tangseng/config"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
@@ -14,18 +14,29 @@ import (
 type InvertedIndexHash map[string]*types.InvertedIndexValue
 
 // InitSegmentDb 读取对应segment文件下的db
-func InitSegmentDb(segId SegId) (*storage2.InvertedDB, *storage2.ForwardDB) {
+func InitSegmentDb(segId SegId) (invertedDb *storage.InvertedDB, forwardDb *storage.ForwardDB, dictDb *storage.DictDB, err error) {
 	if segId < 0 {
 		log.LogrusObj.Infof("db Init :%d<0", segId)
 	}
-	log.LogrusObj.Infof("index:[termName:%s,invertedName:%s,forwardName:%s]", termName, invertedName, forwardName)
+	log.LogrusObj.Infof("index:[termName:%s,invertedName:%s,forwardName:%s,dictName:%s]",
+		termName, invertedName, forwardName, dictName)
+
 	termName, invertedName, forwardName, dictName = GetDbName(segId)
-	forwardDB, err := storage2.NewForwardDB(forwardName)
+	forwardDb, err = storage.NewForwardDB(forwardName)
 	if err != nil {
 		log.LogrusObj.Error(err)
-		return nil, nil
+		return
 	}
-	return storage2.NewInvertedDB(termName, invertedName), forwardDB
+
+	dictDb, err = storage.NewDictDB(dictName)
+	if err != nil {
+		log.LogrusObj.Error(err)
+		return
+	}
+
+	invertedDb = storage.NewInvertedDB(termName, invertedName)
+
+	return
 }
 
 // CreateNewInvertedIndex 创建倒排索引

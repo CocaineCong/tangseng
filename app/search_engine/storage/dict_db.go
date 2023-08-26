@@ -1,10 +1,15 @@
 package storage
 
 import (
+	"bytes"
+
+	"github.com/spf13/cast"
 	bolt "go.etcd.io/bbolt"
 
 	"github.com/CocaineCong/tangseng/consts"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/CocaineCong/tangseng/pkg/trie"
+	"github.com/CocaineCong/tangseng/pkg/util/codec"
 )
 
 type DictDB struct {
@@ -22,8 +27,16 @@ func NewDictDB(dbName string) (*DictDB, error) {
 	return &DictDB{db}, nil
 }
 
-func (d *DictDB) StorageDict() {
+func (d *DictDB) StorageDict(segId int, trieTree *trie.Trie) (err error) {
+	buf := bytes.NewBuffer(nil)
+	err = codec.BinaryEncoding(buf, trieTree)
+	if err != nil {
+		return
+	}
 
+	err = d.PutTrimTreeByKV([]byte(cast.ToString(segId)), buf.Bytes())
+
+	return
 }
 
 // PutTrimTreeByKV 通过kv进行存储
