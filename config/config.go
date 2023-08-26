@@ -17,6 +17,7 @@ type Config struct {
 	Services map[string]*Service `yaml:"services"`
 	Domain   map[string]*Domain  `yaml:"domain"`
 	SeConfig *SeConfig           `yaml:"SeConfig"`
+	Kafka    *Kafka              `yaml:"kafka"`
 }
 
 type SeConfig struct {
@@ -64,6 +65,10 @@ type Service struct {
 	Name        string   `yaml:"name"`
 	LoadBalance bool     `yaml:"loadBalance"`
 	Addr        []string `yaml:"addr"`
+}
+
+type Kafka struct {
+	Address []string `yaml:"address"`
 }
 
 type Domain struct {

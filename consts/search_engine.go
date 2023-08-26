@@ -13,3 +13,7 @@ const (
 	EngineBufSize         = 10000
 	ForwardCountInitValue = "0"
 )
+
+const (
+	KafkaCrawlTopic = "kafka-crawl-topic"
+)
