@@ -1,4 +1,4 @@
-package index
+package inputData
 
 import (
 	"os"
