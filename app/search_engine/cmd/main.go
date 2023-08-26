@@ -21,8 +21,6 @@ func main() {
 	loading.Loading()
 	rpc.Init()
 	query.InitSeg()
-	// index.RunningIndex()
-	// index.SearchRecall(query)
 
 	// etcd 地址
 	etcdAddress := []string{viper.GetString("etcd.address")}

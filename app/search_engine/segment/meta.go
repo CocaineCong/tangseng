@@ -31,6 +31,7 @@ type SegInfo struct {
 	SegSize          int64 `json:"seg_size"`           // 写入doc数量
 	InvertedFileSize int64 `json:"inverted_file_size"` // 写入inverted文件大小
 	ForwardFileSize  int64 `json:"forward_file_size"`  // 写入forward文件大小
+	DictFileSize     int64 `json:"dict_file_size"`     // 写入forward文件大小
 	DelSize          int64 `json:"del_size"`           // 删除文档数量
 	DelFileSize      int64 `json:"del_file_size"`      // 删除文档文件大小
 	TermSize         int64 `json:"term_size"`          // term文档文件大小

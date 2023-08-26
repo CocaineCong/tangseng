@@ -18,11 +18,10 @@ func InitLog() {
 		LogrusObj.Out = src
 		return
 	}
-	// 实例化
-	logger := logrus.New()
-	src, _ := setOutputFile()
+	logger := logrus.New() // 实例化
 	// 设置输出
-	logger.Out = src
+	// src, _ := setOutputFile()
+	// logger.Out = src
 	// 设置日志级别
 	logger.SetLevel(logrus.DebugLevel)
 	// 设置日志格式
