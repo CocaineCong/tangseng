@@ -22,21 +22,21 @@ func AddDoc(in *index.Index) {
 	wg := new(sync.WaitGroup)
 	for _, item := range docList[1:] {
 		wg.Add(1)
-		doc, err := doc2Struct(item)
-		if err != nil {
-			log.LogrusObj.Errorf("index addDoc doc2Struct: %v", err)
-			continue
-		}
-		err = in.AddDocument(doc)
-		if err != nil {
-			log.LogrusObj.Errorf("index addDoc AddDocument: %v", err)
-			continue
-		}
-		wg.Done()
+		go func(item string) {
+			doc, err := doc2Struct(item)
+			if err != nil {
+				log.LogrusObj.Errorf("index addDoc doc2Struct: %v", err)
+			}
+			err = in.AddDocument(doc)
+			if err != nil {
+				log.LogrusObj.Errorf("index addDoc AddDocument: %v", err)
+			}
+			wg.Done()
+		}(item)
 	}
 	wg.Wait()
 	// 读取结束 写入磁盘
-	err := in.Flush(true)
+	err := in.FlushInvertedIndex(true)
 	if err != nil {
 		log.LogrusObj.Errorf("index addDoc AddDocument: %v", err)
 		return

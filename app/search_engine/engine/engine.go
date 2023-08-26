@@ -4,11 +4,14 @@ import (
 	"sync"
 	"sync/atomic"
 
+	"github.com/spf13/cast"
+
 	"github.com/CocaineCong/tangseng/app/search_engine/query"
 	"github.com/CocaineCong/tangseng/app/search_engine/segment"
 	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	"github.com/CocaineCong/tangseng/consts"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/CocaineCong/tangseng/pkg/trie"
 )
 
 // Engine 写入引擎
@@ -43,15 +46,6 @@ func NewEngine(meta *Meta, engineMode segment.Mode) *Engine {
 	return EngineIns
 }
 
-// Close --
-func (e *Engine) Close() {
-	for _, seg := range e.Seg {
-		seg.Close()
-	}
-
-	e.Scheduler.Close()
-}
-
 // indexCount index 计数
 func (e *Engine) indexCount() {
 	atomic.AddInt64(&e.meta.IndexCount, 1)
@@ -71,12 +65,14 @@ func (e *Engine) Text2PostingsLists(text string, docId int64) (err error) {
 	}
 
 	bufInvertedHash := make(segment.InvertedIndexHash)
+	trieTree := new(trie.Trie)
 	for _, token := range tokens {
 		err = segment.Token2PostingsLists(bufInvertedHash, token, docId)
 		if err != nil {
 			log.LogrusObj.Errorf("Token2PostingsLists err:%v", err)
 			return
 		}
+		trieTree.Insert(token.Token)
 	}
 
 	log.LogrusObj.Infof("buf InvertedHash :%v", bufInvertedHash)
@@ -94,7 +90,14 @@ func (e *Engine) Text2PostingsLists(text string, docId int64) (err error) {
 	// 达到阈值，刷新存储
 	if len(e.PostingsHashBuf) > 0 && (e.BufCount >= e.BufSize) {
 		log.LogrusObj.Infof("text2PostingsLists need flush")
-		err = e.Flush()
+
+		err = e.FlushDict(trieTree)
+		if err != nil {
+			log.LogrusObj.Errorf("Flush err:%v", err)
+			return
+		}
+
+		err = e.FlushInvertedIndex()
 		if err != nil {
 			log.LogrusObj.Errorf("Flush err:%v", err)
 			return
@@ -116,9 +119,9 @@ func (e *Engine) UpdateCount(num int64) (err error) {
 	return seg.UpdateForwardCount(count)
 }
 
-// Flush 落盘操作
-func (e *Engine) Flush(isEnd ...bool) (err error) {
-	err = e.Seg[e.CurrSegId].Flush(e.PostingsHashBuf)
+// FlushInvertedIndex 倒排索引落盘操作
+func (e *Engine) FlushInvertedIndex(isEnd ...bool) (err error) {
+	err = e.Seg[e.CurrSegId].FlushInvertedIndex(e.PostingsHashBuf)
 	if err != nil {
 		log.LogrusObj.Errorln("Flush", err)
 		return
@@ -155,4 +158,29 @@ func (e *Engine) Flush(isEnd ...bool) (err error) {
 	e.Seg = seg
 
 	return
+}
+
+// FlushDict 刷新dict
+func (e *Engine) FlushDict(trieTree *trie.Trie, isEnd ...bool) (err error) {
+	currSegId := cast.ToInt64(e.CurrSegId)
+	err = e.Seg[e.CurrSegId].FlushTokenDict(currSegId, trieTree)
+	if err != nil {
+		log.LogrusObj.Errorln("Flush", err)
+		return
+	}
+
+	if len(isEnd) > 0 && isEnd[0] {
+		return
+	}
+
+	return
+}
+
+// Close --
+func (e *Engine) Close() {
+	for _, seg := range e.Seg {
+		seg.Close()
+	}
+
+	e.Scheduler.Close()
 }

@@ -5,12 +5,14 @@ import (
 	storage2 "github.com/CocaineCong/tangseng/app/search_engine/storage"
 	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/CocaineCong/tangseng/pkg/trie"
 	"github.com/CocaineCong/tangseng/pkg/util/codec"
 )
 
 type Segment struct {
 	*storage2.ForwardDB  // 正排索引库
 	*storage2.InvertedDB // 倒排索引库
+	*storage2.DictDB     // 存储trie树
 }
 
 // Token2PostingsLists 词条 转化成 倒排索引表
@@ -78,8 +80,8 @@ func (e *Segment) FetchPostings(token string) (p *types.InvertedIndexValue, err 
 	return
 }
 
-// Flush 落盘操作
-func (e *Segment) Flush(PostingsHashBuf InvertedIndexHash) (err error) {
+// FlushInvertedIndex 落盘操作
+func (e *Segment) FlushInvertedIndex(PostingsHashBuf InvertedIndexHash) (err error) {
 	if len(PostingsHashBuf) == 0 {
 		log.LogrusObj.Infof("Flush err: %v", "in.PostingsHashBuf is empty")
 		return
@@ -92,6 +94,13 @@ func (e *Segment) Flush(PostingsHashBuf InvertedIndexHash) (err error) {
 			return
 		}
 	}
+	return
+}
+
+// FlushTokenDict 刷新写入 token dict
+func (e *Segment) FlushTokenDict(currSegId int64, trieTree *trie.Trie) (err error) {
+	err = e.StorageDict(currSegId, trieTree)
+
 	return
 }
 
@@ -143,9 +152,10 @@ func NewSegments(meta *SegMeta, mode Mode) (SegId, map[SegId]*Segment) {
 }
 
 func NewSegment(segId SegId) *Segment {
-	inDb, forDb := InitSegmentDb(segId)
+	inDb, forDb, dictDb, _ := InitSegmentDb(segId)
 	return &Segment{
 		InvertedDB: inDb,
 		ForwardDB:  forDb,
+		DictDB:     dictDb,
 	}
 }

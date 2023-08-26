@@ -27,7 +27,7 @@ func NewDictDB(dbName string) (*DictDB, error) {
 	return &DictDB{db}, nil
 }
 
-func (d *DictDB) StorageDict(segId int, trieTree *trie.Trie) (err error) {
+func (d *DictDB) StorageDict(segId int64, trieTree *trie.Trie) (err error) {
 	buf := bytes.NewBuffer(nil)
 	err = codec.BinaryEncoding(buf, trieTree)
 	if err != nil {
