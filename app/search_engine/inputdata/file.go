@@ -7,7 +7,7 @@ import (
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
-func readFiles(fileName []string) []string {
+func ReadFiles(fileName []string) []string {
 	docList := make([]string, 0)
 	for _, sourceName := range fileName {
 		docs := readFile(sourceName)

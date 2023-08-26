@@ -2,10 +2,12 @@ package index
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/CocaineCong/tangseng/app/search_engine/engine"
 	inputData "github.com/CocaineCong/tangseng/app/search_engine/inputdata"
+	"github.com/CocaineCong/tangseng/config"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
@@ -35,9 +37,39 @@ func RunningIndex() {
 }
 
 func Run(meta *engine.Meta) {
-	index := NewIndexEngine(meta)
-	defer index.Close()
+	in := NewIndexEngine(meta)
+	defer in.Close()
 
-	inputData.AddDoc(index)
+	AddDoc(in)
 	log.LogrusObj.Infof("index run end")
+}
+
+// AddDoc 读取配置文件，进行doc文件转成struct
+func AddDoc(in *Index) {
+	// TODO: 后续配置文件改成多选择的
+	docList := inputData.ReadFiles([]string{config.Conf.SeConfig.SourceWuKoFile})
+	go in.Scheduler.Merge()
+	wg := new(sync.WaitGroup)
+	for _, item := range docList[1:] {
+		wg.Add(1)
+		go func(item string) {
+			doc, err := inputData.Doc2Struct(item)
+			if err != nil {
+				log.LogrusObj.Errorf("index addDoc doc2Struct: %v", err)
+			}
+
+			err = in.AddDocument(doc)
+			if err != nil {
+				log.LogrusObj.Errorf("index addDoc AddDocument: %v", err)
+			}
+			wg.Done()
+		}(item)
+	}
+	wg.Wait()
+	// 读取结束 写入磁盘
+	err := in.FlushInvertedIndex(true)
+	if err != nil {
+		log.LogrusObj.Errorf("index addDoc AddDocument: %v", err)
+		return
+	}
 }

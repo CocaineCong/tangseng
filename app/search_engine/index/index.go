@@ -24,6 +24,7 @@ func (in *Index) AddDocument(doc *types.Document) (err error) {
 		logs.LogrusObj.Errorf("forward doc add err:%v", err)
 		return
 	}
+
 	err = in.Text2PostingsLists(doc.Body, doc.DocId)
 	if err != nil {
 		logs.LogrusObj.Errorf("Text2PostingsLists:%v", err)
