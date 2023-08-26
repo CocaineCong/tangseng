@@ -1,7 +1,7 @@
 server:
   port: :4000
   version: 1.0
-  jwtSecret: 38324-search-engine
+  jwtSecret: "38324-search-engine"
 
 mysql:
   driverName: mysql
@@ -11,6 +11,12 @@ mysql:
   username: search_engine
   password: search_engine
   charset: utf8mb4
+
+es:
+  EsHost: 127.0.0.1
+  EsPort: 9200
+  EsIndex: mylog
+
 
 redis:
   user_name: default
@@ -39,16 +45,30 @@ services:
     addr:
       - 127.0.0.1:10003
 
-  searchEngine:
-    name: favorite
+  search_engine:
+    name: search_engine
     loadBalance: false
     addr:
       - 127.0.0.1:10004
+
+SeConfig:
+  Version: "1.0.0"
+  StoragePath: "/Users/mac/GolandProjects/Go-SearchEngine/app/search_engine/data/db/"
+  SourceWuKoFile: "/Users/mac/GolandProjects/Go-SearchEngine/app/search_engine/data/movies.csv"
+  MetaPath: "/Users/mac/GolandProjects/Go-SearchEngine/app/search_engine/data/db/segments.json"
+  SourceFiles:
+    - "./source"
+    - "./"
+  MergeChannelSize:
+
+kafka:
+  address:
+    - 127.0.0.1:9200
 
 domain:
   user:
     name: user
   favorite:
     name: favorite
-  searchEngine:
-    name: searchEngine
+  search_engine:
+    name: search_engine
