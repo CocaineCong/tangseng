@@ -24,7 +24,15 @@ message SearchEngineResponse{
 	repeated string data = 4;
 }
 
+message WordAssociationResponse{
+	int64 code=1;
+	string msg=2;
+	repeated string word_association_list = 3;
+	string data = 4;
+}
+
 
 service SearchEngineService{
 	rpc SearchEngineSearch(SearchEngineRequest) returns(SearchEngineResponse);
+	rpc WordAssociation(SearchEngineRequest) returns(WordAssociationResponse);
 }

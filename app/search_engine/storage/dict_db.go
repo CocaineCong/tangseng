@@ -3,7 +3,6 @@ package storage
 import (
 	"bytes"
 
-	"github.com/spf13/cast"
 	bolt "go.etcd.io/bbolt"
 
 	"github.com/CocaineCong/tangseng/consts"
@@ -27,25 +26,40 @@ func NewDictDB(dbName string) (*DictDB, error) {
 	return &DictDB{db}, nil
 }
 
-func (d *DictDB) StorageDict(segId int64, trieTree *trie.Trie) (err error) {
+func (d *DictDB) StorageDict(trieTree *trie.Trie) (err error) {
 	buf := bytes.NewBuffer(nil)
 	err = codec.BinaryEncoding(buf, trieTree)
 	if err != nil {
 		return
 	}
 
-	err = d.PutTrimTreeByKV([]byte(cast.ToString(segId)), buf.Bytes())
+	err = d.PutTrieTree([]byte(consts.DictBucket), buf.Bytes())
 
 	return
 }
 
-// PutTrimTreeByKV 通过kv进行存储
-func (d *DictDB) PutTrimTreeByKV(key, value []byte) error {
+// GetTrieTreeDict 获取 trie tree
+func (d *DictDB) GetTrieTreeDict(buf *bytes.Buffer, trieTree *trie.Trie) (err error) {
+	v, err := d.GetTrieTree([]byte(consts.DictBucket))
+	if err != nil {
+		return
+	}
+	buf = bytes.NewBuffer(v)
+	err = codec.BinaryDecoding(buf, trieTree)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+// PutTrieTree 存储
+func (d *DictDB) PutTrieTree(key, value []byte) error {
 	return Put(d.db, consts.DictBucket, key, value)
 }
 
-// GetTrimTree 通过term获取value
-func (d *DictDB) GetTrimTree(key []byte) (value []byte, err error) {
+// GetTrieTree 通过term获取value
+func (d *DictDB) GetTrieTree(key []byte) (value []byte, err error) {
 	return Get(d.db, consts.DictBucket, key)
 }
 

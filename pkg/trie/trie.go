@@ -1,64 +1,118 @@
 package trie
 
-// TrieNode 树节点
+import (
+	"fmt"
+)
+
 type TrieNode struct {
-	Char     string             // Unicode 字符
-	IsEnding bool               // 是否是单词结尾
-	Children map[rune]*TrieNode // 该节点的子节点字典
+	IsEnd    bool               `json:"is_end"`   // 标记该节点是否为一个单词的末尾
+	Children map[byte]*TrieNode `json:"children"` // 存储子节点的指针
 }
 
-// NewTrieNode 初始化 Trie 树节点
-func NewTrieNode(char string) *TrieNode {
+func NewTrieNode() *TrieNode {
 	return &TrieNode{
-		Char:     char,
-		IsEnding: false,
-		Children: make(map[rune]*TrieNode),
+		IsEnd:    false,
+		Children: make(map[byte]*TrieNode),
 	}
 }
 
-// Trie 树结构
 type Trie struct {
-	Root *TrieNode // 根节点指针
+	Root *TrieNode // 存储 Trie 树的根节点
 }
 
-// NewTrie 初始化 Trie 树
 func NewTrie() *Trie {
-	// 初始化根节点
-	trieNode := NewTrieNode("/")
-	return &Trie{trieNode}
+	return &Trie{Root: NewTrieNode()}
 }
 
-// Insert 往 Trie 树中插入一个单词
-func (t *Trie) Insert(word string) {
-	node := t.Root              // 获取根节点
-	for _, code := range word { // 以 Unicode 字符遍历该单词
-		value, ok := node.Children[code] // 获取 code 编码对应子节点
-		if !ok {
-			// 不存在则初始化该节点
-			value = NewTrieNode(string(code))
-			// 然后将其添加到子节点字典
-			node.Children[code] = value
+func (trie *Trie) Insert(word string) {
+	node := trie.Root
+	for i := 0; i < len(word); i++ {
+		c := word[i]
+		if _, ok := node.Children[c]; !ok {
+			node.Children[c] = NewTrieNode()
 		}
-		// 当前节点指针指向当前子节点
-		node = value
+		node = node.Children[c]
 	}
-	node.IsEnding = true // 一个单词遍历完所有字符后将结尾字符打上标记
+	node.IsEnd = true
 }
 
-// Find 在 Trie 树中查找一个单词
-func (t *Trie) Find(word string) bool {
-	node := t.Root
-	for _, code := range word {
-		value, ok := node.Children[code] // 获取对应子节点
-		if !ok {
-			// 不存在则直接返回
+func (trie *Trie) Search(word string) bool {
+	node := trie.Root
+	for i := 0; i < len(word); i++ {
+		c := word[i]
+		if _, ok := node.Children[c]; !ok {
 			return false
 		}
-		// 否则继续往后遍历
-		node = value
+		node = node.Children[c]
 	}
-	if node.IsEnding == false {
-		return false // 不能完全匹配，只是前缀
+	return node.IsEnd
+}
+
+func (trie *Trie) StartsWith(prefix string) bool {
+	node := trie.Root
+	for i := 0; i < len(prefix); i++ {
+		c := prefix[i]
+		if _, ok := node.Children[c]; !ok {
+			return false
+		}
+		node = node.Children[c]
 	}
-	return true // 找到对应单词
+	return true
+}
+
+func (trie *Trie) FindAllByPrefix(prefix string) []string {
+	node := trie.Root
+	for i := 0; i < len(prefix); i++ {
+		c := prefix[i]
+		if _, ok := node.Children[c]; !ok {
+			return nil
+		}
+		node = node.Children[c]
+	}
+	words := make([]string, 0)
+	trie.dfs(node, prefix, &words)
+	return words
+}
+
+func (trie *Trie) dfs(node *TrieNode, word string, words *[]string) {
+	if node.IsEnd {
+		*words = append(*words, word)
+	}
+	for c, child := range node.Children {
+		trie.dfs(child, word+string(c), words)
+	}
+}
+
+func (trie *Trie) Merge(other *Trie) {
+	if other == nil {
+		return
+	}
+
+	var mergeNodes func(n1, n2 *TrieNode)
+	mergeNodes = func(n1, n2 *TrieNode) {
+		for c, child := range n2.Children {
+			if _, ok := n1.Children[c]; ok {
+				mergeNodes(n1.Children[c], child)
+			} else {
+				n1.Children[c] = child
+			}
+		}
+		n1.IsEnd = n1.IsEnd || n2.IsEnd
+	}
+
+	mergeNodes(trie.Root, other.Root)
+}
+
+func traverse(node *TrieNode, prefix string) {
+	if node.IsEnd {
+		fmt.Println(prefix)
+	}
+
+	for c, child := range node.Children {
+		traverse(child, prefix+string(c))
+	}
+}
+
+func (trie *Trie) Traverse() {
+	traverse(trie.Root, "")
 }

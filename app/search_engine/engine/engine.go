@@ -4,8 +4,6 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/spf13/cast"
-
 	"github.com/CocaineCong/tangseng/app/search_engine/query"
 	"github.com/CocaineCong/tangseng/app/search_engine/segment"
 	"github.com/CocaineCong/tangseng/app/search_engine/types"
@@ -65,7 +63,7 @@ func (e *Engine) Text2PostingsLists(text string, docId int64) (err error) {
 	}
 
 	bufInvertedHash := make(segment.InvertedIndexHash)
-	trieTree := new(trie.Trie)
+	trieTree := trie.NewTrie()
 	for _, token := range tokens {
 		err = segment.Token2PostingsLists(bufInvertedHash, token, docId)
 		if err != nil {
@@ -162,8 +160,7 @@ func (e *Engine) FlushInvertedIndex(isEnd ...bool) (err error) {
 
 // FlushDict 刷新dict
 func (e *Engine) FlushDict(trieTree *trie.Trie, isEnd ...bool) (err error) {
-	currSegId := cast.ToInt64(e.CurrSegId)
-	err = e.Seg[e.CurrSegId].FlushTokenDict(currSegId, trieTree)
+	err = e.Seg[e.CurrSegId].FlushTokenDict(trieTree)
 	if err != nil {
 		log.LogrusObj.Errorln("Flush", err)
 		return

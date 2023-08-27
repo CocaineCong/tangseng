@@ -59,10 +59,6 @@ func AddDoc(in *Index) {
 			}
 
 			err = in.AddDocument(doc)
-			if err != nil {
-				log.LogrusObj.Errorf("index addDoc AddDocument: %v", err)
-			}
-			wg.Done()
 		}(item)
 	}
 	wg.Wait()

@@ -98,8 +98,8 @@ func (e *Segment) FlushInvertedIndex(PostingsHashBuf InvertedIndexHash) (err err
 }
 
 // FlushTokenDict 刷新写入 token dict
-func (e *Segment) FlushTokenDict(currSegId int64, trieTree *trie.Trie) (err error) {
-	err = e.StorageDict(currSegId, trieTree)
+func (e *Segment) FlushTokenDict(trieTree *trie.Trie) (err error) {
+	err = e.StorageDict(trieTree)
 
 	return
 }

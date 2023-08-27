@@ -1,7 +1,6 @@
 package inputData
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/spf13/cast"
@@ -14,10 +13,11 @@ import (
 func Doc2Struct(docStr string) (*types.Document, error) {
 	docStr = strings.Replace(docStr, "\"", "", -1)
 	d := strings.Split(docStr, ",")
-	if len(d) < 3 {
-		return nil, fmt.Errorf("doc2Struct err: %v", "docStr is not right")
+	if len(d) <= 5 { // just fix the stupid data
+		for i := 0; i < 6-len(d); i++ {
+			d = append(d, "a")
+		}
 	}
-
 	doc := &types.Document{
 		DocId: cast.ToInt64(d[0]),
 		Title: d[1],
