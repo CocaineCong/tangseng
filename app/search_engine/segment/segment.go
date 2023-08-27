@@ -55,28 +55,11 @@ func (e *Segment) getTokenCount(token string) (termInfo *types.TermValue, err er
 
 // FetchPostings 通过 token 读取倒排表数据，返回倒排索引
 func (e *Segment) FetchPostings(token string) (p *types.InvertedIndexValue, err error) {
-	// term, err := e.InvertedDB.GetTermInfo(token)
-	// if err != nil {
-	// 	log.LogrusObj.Errorf("FetchPostings GetTermInfo err: %v", err)
-	// 	return
-	// }
-	//
-	// c, err := e.InvertedDB.GetInvertedDoc(term.Offset, term.Size)
-	// if err != nil {
-	// 	log.LogrusObj.Errorf("FetchPostings GetInvertedDoc err: %v", err)
-	// 	return
-	// }
 	p, err = e.InvertedDB.GetInvertedInfo(token)
 	if err != nil {
 		log.LogrusObj.Errorf("FetchPostings GetInvertedDoc err: %v", err)
 		return
 	}
-	// p, err = codec.DecodePostings(c)
-	// if err != nil {
-	// 	log.LogrusObj.Errorf("FetchPostings DecodePostings err: %v", err)
-	// 	return
-	// }
-
 	return
 }
 

@@ -19,6 +19,7 @@ type Engine struct {
 	BufCount        int64                              // 倒排索引 缓冲区的文档数
 	BufSize         int64                              // 设定的缓冲区大小
 	PostingsHashBuf segment.InvertedIndexHash          // 倒排索引缓冲区
+	TrieTree        *trie.Trie                         // 词典前缀树
 	CurrSegId       segment.SegId                      // 当前engine关联的segId查询
 	Seg             map[segment.SegId]*segment.Segment // 当前engine关联的segment
 	// TODO 更换并发安全的map，需要写入性能好的
@@ -36,6 +37,7 @@ func NewEngine(meta *Meta, engineMode segment.Mode) *Engine {
 			Scheduler:       NewScheduler(meta),
 			BufSize:         consts.EngineBufSize,
 			PostingsHashBuf: make(segment.InvertedIndexHash),
+			TrieTree:        trie.NewTrie(),
 			CurrSegId:       segId,
 			Seg:             seg,
 		}
@@ -72,6 +74,7 @@ func (e *Engine) Text2PostingsLists(text string, docId int64) (err error) {
 		}
 		trieTree.Insert(token.Token)
 	}
+	e.TrieTree.Merge(trieTree)
 
 	log.LogrusObj.Infof("buf InvertedHash :%v", bufInvertedHash)
 
@@ -89,7 +92,7 @@ func (e *Engine) Text2PostingsLists(text string, docId int64) (err error) {
 	if len(e.PostingsHashBuf) > 0 && (e.BufCount >= e.BufSize) {
 		log.LogrusObj.Infof("text2PostingsLists need flush")
 
-		err = e.FlushDict(trieTree)
+		err = e.FlushDict()
 		if err != nil {
 			log.LogrusObj.Errorf("Flush err:%v", err)
 			return
@@ -152,6 +155,7 @@ func (e *Engine) FlushInvertedIndex(isEnd ...bool) (err error) {
 
 	e.BufCount = 0
 	e.PostingsHashBuf = make(segment.InvertedIndexHash)
+	e.TrieTree = trie.NewTrie()
 	e.CurrSegId = segId
 	e.Seg = seg
 
@@ -159,8 +163,9 @@ func (e *Engine) FlushInvertedIndex(isEnd ...bool) (err error) {
 }
 
 // FlushDict 刷新dict
-func (e *Engine) FlushDict(trieTree *trie.Trie, isEnd ...bool) (err error) {
-	err = e.Seg[e.CurrSegId].FlushTokenDict(trieTree)
+func (e *Engine) FlushDict(isEnd ...bool) (err error) {
+
+	err = e.Seg[e.CurrSegId].FlushTokenDict(e.TrieTree)
 	if err != nil {
 		log.LogrusObj.Errorln("Flush", err)
 		return

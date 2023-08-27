@@ -1,14 +1,11 @@
 package storage
 
 import (
-	"bytes"
-
 	bolt "go.etcd.io/bbolt"
 
 	"github.com/CocaineCong/tangseng/consts"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/CocaineCong/tangseng/pkg/trie"
-	"github.com/CocaineCong/tangseng/pkg/util/codec"
 )
 
 type DictDB struct {
@@ -27,28 +24,25 @@ func NewDictDB(dbName string) (*DictDB, error) {
 }
 
 func (d *DictDB) StorageDict(trieTree *trie.Trie) (err error) {
-	buf := bytes.NewBuffer(nil)
-	err = codec.BinaryEncoding(buf, trieTree)
+	tt, err := trieTree.MarshalJSON()
 	if err != nil {
 		return
 	}
 
-	err = d.PutTrieTree([]byte(consts.DictBucket), buf.Bytes())
+	err = d.PutTrieTree([]byte(consts.DictBucket), tt)
 
 	return
 }
 
 // GetTrieTreeDict 获取 trie tree
-func (d *DictDB) GetTrieTreeDict(buf *bytes.Buffer, trieTree *trie.Trie) (err error) {
+func (d *DictDB) GetTrieTreeDict() (trieTree *trie.Trie, err error) {
 	v, err := d.GetTrieTree([]byte(consts.DictBucket))
 	if err != nil {
 		return
 	}
-	buf = bytes.NewBuffer(v)
-	err = codec.BinaryDecoding(buf, trieTree)
-	if err != nil {
-		return
-	}
+
+	trieTree = trie.NewTrie()
+	err = trieTree.UnmarshalJSON(v)
 
 	return
 }

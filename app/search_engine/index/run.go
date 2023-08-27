@@ -2,7 +2,6 @@ package index
 
 import (
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/CocaineCong/tangseng/app/search_engine/engine"
@@ -49,23 +48,30 @@ func AddDoc(in *Index) {
 	// TODO: 后续配置文件改成多选择的
 	docList := inputData.ReadFiles([]string{config.Conf.SeConfig.SourceWuKoFile})
 	go in.Scheduler.Merge()
-	wg := new(sync.WaitGroup)
-	for _, item := range docList[1:] {
-		wg.Add(1)
-		go func(item string) {
-			doc, err := inputData.Doc2Struct(item)
-			if err != nil {
-				log.LogrusObj.Errorf("index addDoc doc2Struct: %v", err)
-			}
+	// wg := new(sync.WaitGroup)
+	for _, item := range docList[1:20] {
+		// wg.Add(1)
+		// go func(item string) {
+		doc, err := inputData.Doc2Struct(item)
+		if err != nil {
+			log.LogrusObj.Errorf("index addDoc doc2Struct: %v", err)
+		}
 
-			err = in.AddDocument(doc)
-		}(item)
+		err = in.AddDocument(doc)
+		// }(item)
 	}
-	wg.Wait()
+	// wg.Wait()
 	// 读取结束 写入磁盘
-	err := in.FlushInvertedIndex(true)
+	err := in.FlushDict(true)
 	if err != nil {
-		log.LogrusObj.Errorf("index addDoc AddDocument: %v", err)
+		log.LogrusObj.Errorf("AddDoc-FlushDict: %v", err)
 		return
 	}
+
+	err = in.FlushInvertedIndex(true)
+	if err != nil {
+		log.LogrusObj.Errorf("AddDoc-FlushInvertedIndex: %v", err)
+		return
+	}
+
 }

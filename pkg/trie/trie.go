@@ -6,18 +6,18 @@ import (
 
 type TrieNode struct {
 	IsEnd    bool               `json:"is_end"`   // 标记该节点是否为一个单词的末尾
-	Children map[byte]*TrieNode `json:"children"` // 存储子节点的指针
+	Children map[rune]*TrieNode `json:"children"` // 存储子节点的指针
 }
 
 func NewTrieNode() *TrieNode {
 	return &TrieNode{
 		IsEnd:    false,
-		Children: make(map[byte]*TrieNode),
+		Children: make(map[rune]*TrieNode),
 	}
 }
 
 type Trie struct {
-	Root *TrieNode // 存储 Trie 树的根节点
+	Root *TrieNode `json:"root"` // 存储 Trie 树的根节点
 }
 
 func NewTrie() *Trie {
@@ -25,9 +25,10 @@ func NewTrie() *Trie {
 }
 
 func (trie *Trie) Insert(word string) {
+	words := []rune(word)
 	node := trie.Root
-	for i := 0; i < len(word); i++ {
-		c := word[i]
+	for i := 0; i < len(words); i++ {
+		c := words[i]
 		if _, ok := node.Children[c]; !ok {
 			node.Children[c] = NewTrieNode()
 		}
@@ -37,9 +38,10 @@ func (trie *Trie) Insert(word string) {
 }
 
 func (trie *Trie) Search(word string) bool {
+	words := []rune(word)
 	node := trie.Root
-	for i := 0; i < len(word); i++ {
-		c := word[i]
+	for i := 0; i < len(words); i++ {
+		c := words[i]
 		if _, ok := node.Children[c]; !ok {
 			return false
 		}
@@ -49,9 +51,10 @@ func (trie *Trie) Search(word string) bool {
 }
 
 func (trie *Trie) StartsWith(prefix string) bool {
+	prefixs := []rune(prefix)
 	node := trie.Root
-	for i := 0; i < len(prefix); i++ {
-		c := prefix[i]
+	for i := 0; i < len(prefixs); i++ {
+		c := prefixs[i]
 		if _, ok := node.Children[c]; !ok {
 			return false
 		}
@@ -61,9 +64,10 @@ func (trie *Trie) StartsWith(prefix string) bool {
 }
 
 func (trie *Trie) FindAllByPrefix(prefix string) []string {
+	prefixs := []rune(prefix)
 	node := trie.Root
-	for i := 0; i < len(prefix); i++ {
-		c := prefix[i]
+	for i := 0; i < len(prefixs); i++ {
+		c := prefixs[i]
 		if _, ok := node.Children[c]; !ok {
 			return nil
 		}

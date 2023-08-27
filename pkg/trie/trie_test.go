@@ -1,8 +1,6 @@
 package trie
 
 import (
-	"bytes"
-	"encoding/gob"
 	"fmt"
 	"testing"
 )
@@ -30,16 +28,14 @@ func TestTrieTree(t *testing.T) {
 }
 
 func TestBinaryTree(t *testing.T) {
+	str := "啊啊睡觉滴哦叫爱哦大家爱哦大家哦i"
+	var chars = []rune(str) // 将str转换为rune数组（[]rune）
+	for i := range chars {
+		fmt.Println(chars[i], string(chars[i]))
+	}
 	t2 := NewTrie()
-	t3 := NewTrie()
-	t2.Insert("hello")
-	t2.Insert("golang")
-	t2.Insert("programming")
-	buf := new(bytes.Buffer)
-	err := gob.NewEncoder(buf).Encode(t2)
-	fmt.Println(err)
-	err = gob.NewDecoder(buf).Decode(t3)
-	fmt.Println(err)
-
-	t3.Traverse()
+	t2.Insert("啊啊啊")
+	t2.Insert("则美")
+	t2.Insert("成型")
+	t2.Traverse()
 }

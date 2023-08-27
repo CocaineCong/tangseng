@@ -163,24 +163,24 @@ func (m *MergeScheduler) mergeSegments(segs *MergeMessage) (err error) {
 	err = segment.MergeKForwardSegments(engineTmp.Seg[engineTmp.CurrSegId], forNodes, forChs)
 	if err != nil {
 		log.LogrusObj.Infof("forward merge error:%v", err)
-		return err
+		return
 	}
 
 	// 更新 meta info
 	err = m.Meta.UpdateSegMeta(engineTmp.CurrSegId, docSize)
 	if err != nil {
 		log.LogrusObj.Infof("update seg meta err:%v", err)
-		return err
+		return
 	}
 
 	// 删除老的segs
 	err = m.deleteOldSeg(*segs)
 	if err != nil {
 		log.LogrusObj.Infof("update seg meta err:%v", err)
-		return err
+		return
 	}
 
-	return nil
+	return
 }
 
 func (m *MergeScheduler) deleteOldSeg(segInfos []*segment.SegInfo) error {
