@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
 	"github.com/CocaineCong/tangseng/app/search_engine/index"
@@ -62,7 +63,7 @@ func (s *SearchEngineSrv) WordAssociation(ctx context.Context, req *pb.SearchEng
 		}
 	}
 	resp.WordAssociationList = wordAssociationList
-
+	fmt.Println(resp.WordAssociationList)
 	return
 }
 
