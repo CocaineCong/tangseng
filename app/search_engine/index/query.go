@@ -20,6 +20,7 @@ func NewRecallServ(meta *engine.Meta) *Recall {
 	return &Recall{r}
 }
 
+// SearchRecall 词条回归
 func SearchRecall(query string) (res []*types.SearchItem, err error) {
 	meta, err := engine.ParseMeta()
 	if err != nil {
@@ -45,6 +46,24 @@ func SearchRecall(query string) (res []*types.SearchItem, err error) {
 	// 	ticker.Stop()
 	// 	fmt.Println("close")
 	// }()
+
+	return
+}
+
+// SearchQuery 词条联想
+func SearchQuery(query string) (res []*types.DictTireTree, err error) {
+	meta, err := engine.ParseMeta()
+	if err != nil {
+		log.LogrusObj.Errorf("SearchRecall-ParseMeta:%+v", err)
+		return
+	}
+
+	recallService := NewRecallServ(meta)
+	res, err = recallService.SearchQuery(query)
+	if err != nil {
+		log.LogrusObj.Errorf("SearchRecall-NewRecallServ:%+v", err)
+		return
+	}
 
 	return
 }

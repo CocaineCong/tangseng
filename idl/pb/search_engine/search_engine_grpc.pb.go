@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SearchEngineServiceClient interface {
 	SearchEngineSearch(ctx context.Context, in *SearchEngineRequest, opts ...grpc.CallOption) (*SearchEngineResponse, error)
+	WordAssociation(ctx context.Context, in *SearchEngineRequest, opts ...grpc.CallOption) (*WordAssociationResponse, error)
 }
 
 type searchEngineServiceClient struct {
@@ -42,11 +43,21 @@ func (c *searchEngineServiceClient) SearchEngineSearch(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *searchEngineServiceClient) WordAssociation(ctx context.Context, in *SearchEngineRequest, opts ...grpc.CallOption) (*WordAssociationResponse, error) {
+	out := new(WordAssociationResponse)
+	err := c.cc.Invoke(ctx, "/SearchEngineService/WordAssociation", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SearchEngineServiceServer is the server API for SearchEngineService service.
 // All implementations must embed UnimplementedSearchEngineServiceServer
 // for forward compatibility
 type SearchEngineServiceServer interface {
 	SearchEngineSearch(context.Context, *SearchEngineRequest) (*SearchEngineResponse, error)
+	WordAssociation(context.Context, *SearchEngineRequest) (*WordAssociationResponse, error)
 	mustEmbedUnimplementedSearchEngineServiceServer()
 }
 
@@ -56,6 +67,9 @@ type UnimplementedSearchEngineServiceServer struct {
 
 func (UnimplementedSearchEngineServiceServer) SearchEngineSearch(context.Context, *SearchEngineRequest) (*SearchEngineResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SearchEngineSearch not implemented")
+}
+func (UnimplementedSearchEngineServiceServer) WordAssociation(context.Context, *SearchEngineRequest) (*WordAssociationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method WordAssociation not implemented")
 }
 func (UnimplementedSearchEngineServiceServer) mustEmbedUnimplementedSearchEngineServiceServer() {}
 
@@ -88,6 +102,24 @@ func _SearchEngineService_SearchEngineSearch_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SearchEngineService_WordAssociation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchEngineRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SearchEngineServiceServer).WordAssociation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/SearchEngineService/WordAssociation",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SearchEngineServiceServer).WordAssociation(ctx, req.(*SearchEngineRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SearchEngineService_ServiceDesc is the grpc.ServiceDesc for SearchEngineService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -98,6 +130,10 @@ var SearchEngineService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SearchEngineSearch",
 			Handler:    _SearchEngineService_SearchEngineSearch_Handler,
+		},
+		{
+			MethodName: "WordAssociation",
+			Handler:    _SearchEngineService_WordAssociation_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -48,8 +48,8 @@ func AddDoc(in *Index) {
 	// TODO: 后续配置文件改成多选择的
 	docList := inputData.ReadFiles([]string{config.Conf.SeConfig.SourceWuKoFile})
 	go in.Scheduler.Merge()
-	// wg := new(sync.WaitGroup)
-	for _, item := range docList[1:20] {
+	// wg := new(sync.WaitGroup) // TODO: 后续改成并发的，稍微留意一下map的一些结构体字段
+	for _, item := range docList[1:] {
 		// wg.Add(1)
 		// go func(item string) {
 		doc, err := inputData.Doc2Struct(item)

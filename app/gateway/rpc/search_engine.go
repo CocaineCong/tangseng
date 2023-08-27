@@ -21,3 +21,17 @@ func SearchEngineSearch(ctx context.Context, req *pb.SearchEngineRequest) (r *pb
 
 	return
 }
+
+func WordAssociation(ctx context.Context, req *pb.SearchEngineRequest) (r *pb.WordAssociationResponse, err error) {
+	r, err = SearchEngineClient.WordAssociation(ctx, req)
+	if err != nil {
+		return
+	}
+
+	if r.Code != e.SUCCESS {
+		err = errors.New(r.Msg)
+		return
+	}
+
+	return
+}

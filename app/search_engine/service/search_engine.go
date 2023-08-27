@@ -25,6 +25,7 @@ func GetSearchEngineSrv() *SearchEngineSrv {
 	return SearchEngineSrvIns
 }
 
+// SearchEngineSearch 搜索
 func (s *SearchEngineSrv) SearchEngineSearch(ctx context.Context, req *pb.SearchEngineRequest) (resp *pb.SearchEngineResponse, err error) {
 	resp = new(pb.SearchEngineResponse)
 	resp.Code = e.SUCCESS
@@ -44,6 +45,23 @@ func (s *SearchEngineSrv) SearchEngineSearch(ctx context.Context, req *pb.Search
 		log.LogrusObj.Error("SearchEngineSearch-BuildSearchEngineResp", err)
 		return
 	}
+
+	return
+}
+
+// WordAssociation 词语联想
+func (s *SearchEngineSrv) WordAssociation(ctx context.Context, req *pb.SearchEngineRequest) (resp *pb.WordAssociationResponse, err error) {
+	resp = new(pb.WordAssociationResponse)
+	resp.Code = e.SUCCESS
+	query := req.Query
+	sResult, err := index.SearchQuery(query)
+	wordAssociationList := make([]string, 0)
+	for _, v := range sResult {
+		if v != nil {
+			wordAssociationList = append(wordAssociationList, v.Value)
+		}
+	}
+	resp.WordAssociationList = wordAssociationList
 
 	return
 }

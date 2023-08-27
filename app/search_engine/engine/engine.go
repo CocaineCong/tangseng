@@ -178,6 +178,22 @@ func (e *Engine) FlushDict(isEnd ...bool) (err error) {
 	return
 }
 
+// GetDict 获取dict
+func (e *Engine) GetDict(query string) (res []*types.DictTireTree, err error) {
+	trieTree, err := e.Seg[e.CurrSegId+1].GetTrieTreeDict()
+	if err != nil {
+		return
+	}
+	res = make([]*types.DictTireTree, 0)
+	r := trieTree.FindAllByPrefix(query)
+	for i := range r {
+		// 计算相关性
+		res = append(res, &types.DictTireTree{Value: r[i]})
+	}
+
+	return
+}
+
 // Close --
 func (e *Engine) Close() {
 	for _, seg := range e.Seg {

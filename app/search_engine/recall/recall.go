@@ -43,6 +43,11 @@ func (r *Recall) Search(query string) ([]*types2.SearchItem, error) {
 	return r.searchDoc()
 }
 
+// SearchQuery 入口
+func (r *Recall) SearchQuery(query string) ([]*types2.DictTireTree, error) {
+	return r.GetDict(query)
+}
+
 func (r *Recall) splitQuery2Tokens(query string) (err error) {
 	err = r.Text2PostingsLists(query, 0)
 	if err != nil {
