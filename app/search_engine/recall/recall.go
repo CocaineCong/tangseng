@@ -80,6 +80,9 @@ func (r *Recall) searchDoc() (recalls []*types2.SearchItem, err error) {
 		post.DocCount = count
 		for postings != nil {
 			docId := postings.DocId
+			if postings.DocId == 0 {
+				continue
+			}
 			sItem := &types2.SearchItem{
 				DocId:    docId,
 				Content:  "",
