@@ -2,13 +2,12 @@ package recall
 
 import (
 	"errors"
-	"sort"
 
 	"github.com/CocaineCong/tangseng/app/search_engine/engine"
+	"github.com/CocaineCong/tangseng/app/search_engine/ranking"
 	"github.com/CocaineCong/tangseng/app/search_engine/segment"
 	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
-	"github.com/CocaineCong/tangseng/pkg/util/relevant"
 )
 
 // Recall 查询召回
@@ -61,10 +60,7 @@ func (r *Recall) splitQuery2Tokens(query string) (err error) {
 
 func (r *Recall) searchDoc() (recalls []*types.SearchItem, err error) {
 	recalls = make([]*types.SearchItem, 0)
-
-	// 为每个token初始化游标
-	for token, post := range r.PostingsHashBuf {
-		// 正常不会出现
+	for token, post := range r.PostingsHashBuf { // 为每个token初始化游标
 		if token == "" {
 			err = errors.New("token is nil1")
 			return
@@ -100,41 +96,10 @@ func (r *Recall) searchDoc() (recalls []*types.SearchItem, err error) {
 			postings = postings.Next
 		}
 
-		recalls = r.calculateScore(token, recalls)
+		recalls = ranking.CalculateScoreBm25(token, recalls)
 	}
 
 	log.LogrusObj.Infof("recalls size:%v", len(recalls))
-
-	return
-}
-
-// calculateScore 计算相关性
-func (r *Recall) calculateScore(token string, searchItem []*types.SearchItem) (resp []*types.SearchItem) {
-	recallToken := make([]string, 0)
-
-	for i := range searchItem {
-		recallToken = append(recallToken, searchItem[i].Content)
-	}
-	corpus, _ := relevant.MakeCorpus(recallToken)
-	docs := relevant.MakeDocuments(recallToken, corpus)
-	tf := relevant.New()
-
-	for _, doc := range docs {
-		tf.Add(doc)
-	}
-	tf.CalculateIDF()
-	tokenRecall := relevant.Doc{corpus[token]}
-	bm25Scores := relevant.BM25(tf, tokenRecall, docs, 1.5, 0.75)
-	sort.Sort(sort.Reverse(bm25Scores))
-
-	for i := range bm25Scores {
-		searchItem[bm25Scores[i].ID].Score = bm25Scores[i].Score
-	}
-	sort.Slice(searchItem, func(i, j int) bool {
-		return searchItem[i].Score > searchItem[j].Score
-	})
-	resp = make([]*types.SearchItem, 0)
-	resp = searchItem
 
 	return
 }
