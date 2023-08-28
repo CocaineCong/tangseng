@@ -5,6 +5,15 @@ import (
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
+// CreateNewPostingsList 创建倒排索引
+func CreateNewPostingsList(docId int64) *types.PostingsList {
+	p := new(types.PostingsList)
+	p.DocId = docId
+	p.PositionCount = 1
+	p.Positions = make([]int64, 0)
+	return p
+}
+
 // MergePostings 合并两个posting
 func MergePostings(pa, pb *types.PostingsList) *types.PostingsList {
 	ret := new(types.PostingsList)
@@ -47,85 +56,4 @@ func MergeInvertedIndex(base, toBeAdd InvertedIndexHash) {
 		(base)[tokenId] = index
 	}
 
-}
-
-// DecodePostings 解码 return *PostingsList postingslen err
-// func DecodePostings(buf *bytes.Buffer) (p *types.PostingsList, postingsLen int64, err error) {
-// 	if buf == nil || buf.Len() == 0 {
-// 		log.LogrusObj.Infoln("DecodePostings-buf 为空")
-// 		return
-// 	}
-//
-// 	dec := gob.NewDecoder(buf)
-// 	err = dec.Decode(&postingsLen)
-// 	if err != nil {
-// 		log.LogrusObj.Errorln("binary.Read", err)
-// 		return
-// 	}
-//
-// 	cp := new(types.PostingsList)
-// 	p = cp
-// 	for buf.Len() > 0 {
-// 		tmp := new(types.PostingsList)
-// 		err = dec.Decode(&tmp.DocId)
-// 		if err != nil {
-// 			log.LogrusObj.Errorln("binary.Read", err)
-// 			return
-// 		}
-//
-// 		err = dec.Decode(&tmp.PositionCount)
-// 		if err != nil {
-// 			log.LogrusObj.Errorln("binary.Read", err)
-// 			return
-// 		}
-//
-// 		tmp.Positions = make([]int64, tmp.PositionCount)
-// 		err = dec.Decode(&tmp.Positions)
-// 		if err != nil {
-// 			log.LogrusObj.Errorln("binary.Read", err)
-// 			return
-// 		}
-// 		log.LogrusObj.Infoln("postings", tmp)
-// 		cp.Next = tmp
-// 		cp = tmp
-//
-// 	}
-//
-// 	return p.Next, postingsLen, nil
-// }
-
-// EncodePostings 编码
-// func EncodePostings(postings *PostingsList, postingsLen int64) (buf *bytes.Buffer, err error) {
-// 	buf, err = codec.GobWrite(postingsLen)
-// 	if err != nil {
-// 		return
-// 	}
-//
-// 	for postings != nil {
-// 		log.LogrusObj.Infof("docid:%d,count:%d,positions:%v \n", postings.DocId, postings.PositionCount, postings.Positions)
-// 		buf, err = codec.GobWrite(postings.DocId)
-// 		if err != nil {
-// 			return
-// 		}
-// 		buf, err = codec.GobWrite(postings.PositionCount)
-// 		if err != nil {
-// 			return
-// 		}
-// 		buf, err = codec.GobWrite(postings.Positions)
-// 		if err != nil {
-// 			return
-// 		}
-// 		postings = postings.Next
-// 	}
-//
-// 	return
-// }
-
-// CreateNewPostingsList 创建倒排索引
-func CreateNewPostingsList(docId int64) *types.PostingsList {
-	p := new(types.PostingsList)
-	p.DocId = docId
-	p.PositionCount = 1
-	p.Positions = make([]int64, 0)
-	return p
 }

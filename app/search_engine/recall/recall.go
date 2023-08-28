@@ -20,7 +20,7 @@ type Recall struct {
 
 // NewRecall --
 func NewRecall(meta *engine.Meta) *Recall {
-	e := engine.NewEngine(meta, segment.SearchMode)
+	e := engine.NewTangSengEngine(meta, segment.SearchMode)
 	var docCount int64 = 0
 	for _, seg := range e.Seg {
 		num, err := seg.ForwardCount()

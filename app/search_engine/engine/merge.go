@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/CocaineCong/tangseng/app/search_engine/repository/storage"
 	"github.com/CocaineCong/tangseng/app/search_engine/segment"
-	"github.com/CocaineCong/tangseng/app/search_engine/storage"
 	"github.com/CocaineCong/tangseng/config"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
@@ -150,11 +150,11 @@ func (m *MergeScheduler) mergeSegments(segs *MergeMessage) (err error) {
 		return
 	}
 
-	engineTmp := NewEngine(m.Meta, segment.MergeMode)
+	engineTmp := NewTangSengEngine(m.Meta, segment.MergeMode)
 	// 落盘
 	err = engineTmp.Seg[engineTmp.CurrSegId].FlushInvertedIndex(res)
 	if err != nil {
-		log.LogrusObj.Errorf("NewEngine-Flush:%v", err)
+		log.LogrusObj.Errorf("NewTangsengEngine-Flush:%v", err)
 		return
 	}
 	log.LogrusObj.Infof("start forward:%s", strings.Repeat("-", 20))

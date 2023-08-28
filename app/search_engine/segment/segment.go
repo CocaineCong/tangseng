@@ -2,7 +2,7 @@ package segment
 
 import (
 	"github.com/CocaineCong/tangseng/app/search_engine/analyzer"
-	storage2 "github.com/CocaineCong/tangseng/app/search_engine/storage"
+	"github.com/CocaineCong/tangseng/app/search_engine/repository/storage"
 	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/CocaineCong/tangseng/pkg/trie"
@@ -10,9 +10,9 @@ import (
 )
 
 type Segment struct {
-	*storage2.ForwardDB  // 正排索引库
-	*storage2.InvertedDB // 倒排索引库
-	*storage2.DictDB     // 存储trie树
+	*storage.ForwardDB  // 正排索引库
+	*storage.InvertedDB // 倒排索引库
+	*storage.DictDB     // 存储trie树
 }
 
 // Token2PostingsLists 词条 转化成 倒排索引表

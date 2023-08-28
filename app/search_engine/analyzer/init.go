@@ -4,6 +4,8 @@ import (
 	"github.com/go-ego/gse"
 )
 
+// 分词器相关
+
 var (
 	GobalSeg gse.Segmenter
 )

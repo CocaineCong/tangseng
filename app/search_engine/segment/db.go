@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/CocaineCong/tangseng/app/search_engine/analyzer"
-	"github.com/CocaineCong/tangseng/app/search_engine/storage"
+	"github.com/CocaineCong/tangseng/app/search_engine/repository/storage"
 	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	"github.com/CocaineCong/tangseng/config"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
