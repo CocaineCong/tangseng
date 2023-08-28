@@ -1,23 +1,22 @@
-package index
+package recall
 
 import (
 	"time"
 
 	"github.com/CocaineCong/tangseng/app/search_engine/engine"
-	"github.com/CocaineCong/tangseng/app/search_engine/recall"
 	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
-// Recall 召回
-type Recall struct {
-	*recall.Recall
+// RecallServ 召回
+type RecallServ struct {
+	*Recall
 }
 
 // NewRecallServ 创建召回服务
-func NewRecallServ(meta *engine.Meta) *Recall {
-	r := recall.NewRecall(meta)
-	return &Recall{r}
+func NewRecallServ(meta *engine.Meta) *RecallServ {
+	r := NewRecall(meta)
+	return &RecallServ{r}
 }
 
 // SearchRecall 词条回归

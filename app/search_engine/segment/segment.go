@@ -1,7 +1,7 @@
 package segment
 
 import (
-	"github.com/CocaineCong/tangseng/app/search_engine/query"
+	"github.com/CocaineCong/tangseng/app/search_engine/analyzer"
 	storage2 "github.com/CocaineCong/tangseng/app/search_engine/storage"
 	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
@@ -16,7 +16,7 @@ type Segment struct {
 }
 
 // Token2PostingsLists 词条 转化成 倒排索引表
-func Token2PostingsLists(bufInvertHash InvertedIndexHash, token query.Tokenization, docId int64) (err error) {
+func Token2PostingsLists(bufInvertHash InvertedIndexHash, token analyzer.Tokenization, docId int64) (err error) {
 	bufInvert := new(types.InvertedIndexValue)
 	if len(bufInvertHash) > 0 {
 		if item, ok := bufInvertHash[token.Token]; ok {

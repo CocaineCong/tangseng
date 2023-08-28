@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/CocaineCong/tangseng/app/search_engine/index"
+	"github.com/CocaineCong/tangseng/app/search_engine/recall"
 	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	"github.com/CocaineCong/tangseng/consts/e"
 	pb "github.com/CocaineCong/tangseng/idl/pb/search_engine"
@@ -31,11 +31,11 @@ func (s *SearchEngineSrv) SearchEngineSearch(ctx context.Context, req *pb.Search
 	resp = new(pb.SearchEngineResponse)
 	resp.Code = e.SUCCESS
 	query := req.Query
-	sResult, err := index.SearchRecall(query)
+	sResult, err := recall.SearchRecall(query)
 	if err != nil {
 		resp.Code = e.ERROR
 		resp.Msg = err.Error()
-		log.LogrusObj.Error("SearchEngineSearch-index.SearchRecall", err)
+		log.LogrusObj.Error("SearchEngineSearch-recall.SearchRecall", err)
 		return
 	}
 
@@ -55,7 +55,7 @@ func (s *SearchEngineSrv) WordAssociation(ctx context.Context, req *pb.SearchEng
 	resp = new(pb.WordAssociationResponse)
 	resp.Code = e.SUCCESS
 	query := req.Query
-	sResult, err := index.SearchQuery(query)
+	sResult, err := recall.SearchQuery(query)
 	wordAssociationList := make([]string, 0)
 	for _, v := range sResult {
 		if v != nil {

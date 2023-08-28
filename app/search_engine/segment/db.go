@@ -3,7 +3,7 @@ package segment
 import (
 	"fmt"
 
-	"github.com/CocaineCong/tangseng/app/search_engine/query"
+	"github.com/CocaineCong/tangseng/app/search_engine/analyzer"
 	"github.com/CocaineCong/tangseng/app/search_engine/storage"
 	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	"github.com/CocaineCong/tangseng/config"
@@ -40,7 +40,7 @@ func InitSegmentDb(segId SegId) (invertedDb *storage.InvertedDB, forwardDb *stor
 }
 
 // CreateNewInvertedIndex 创建倒排索引
-func CreateNewInvertedIndex(token query.Tokenization, docCount int64) *types.InvertedIndexValue {
+func CreateNewInvertedIndex(token analyzer.Tokenization, docCount int64) *types.InvertedIndexValue {
 	return &types.InvertedIndexValue{ // TODO：优化一下结构
 		Token:         token.Token,
 		PostingsList:  new(types.PostingsList),

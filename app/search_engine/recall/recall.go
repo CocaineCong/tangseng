@@ -4,23 +4,23 @@ import (
 	"errors"
 	"sort"
 
-	engine2 "github.com/CocaineCong/tangseng/app/search_engine/engine"
-	segment2 "github.com/CocaineCong/tangseng/app/search_engine/segment"
-	types2 "github.com/CocaineCong/tangseng/app/search_engine/types"
+	"github.com/CocaineCong/tangseng/app/search_engine/engine"
+	"github.com/CocaineCong/tangseng/app/search_engine/segment"
+	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/CocaineCong/tangseng/pkg/util/relevant"
 )
 
 // Recall 查询召回
 type Recall struct {
-	*engine2.Engine
+	*engine.Engine
 	docCount     int64 // 文档总数 ，用于计算相关性
 	enablePhrase bool
 }
 
 // NewRecall --
-func NewRecall(meta *engine2.Meta) *Recall {
-	e := engine2.NewEngine(meta, segment2.SearchMode)
+func NewRecall(meta *engine.Meta) *Recall {
+	e := engine.NewEngine(meta, segment.SearchMode)
 	var docCount int64 = 0
 	for _, seg := range e.Seg {
 		num, err := seg.ForwardCount()
@@ -29,11 +29,12 @@ func NewRecall(meta *engine2.Meta) *Recall {
 		}
 		docCount += num
 	}
+
 	return &Recall{e, docCount, true}
 }
 
 // Search 入口
-func (r *Recall) Search(query string) ([]*types2.SearchItem, error) {
+func (r *Recall) Search(query string) ([]*types.SearchItem, error) {
 	err := r.splitQuery2Tokens(query)
 	if err != nil {
 		log.LogrusObj.Errorf("splitQuery2Tokens err:%v", err)
@@ -44,7 +45,7 @@ func (r *Recall) Search(query string) ([]*types2.SearchItem, error) {
 }
 
 // SearchQuery 入口
-func (r *Recall) SearchQuery(query string) ([]*types2.DictTireTree, error) {
+func (r *Recall) SearchQuery(query string) ([]*types.DictTireTree, error) {
 	return r.GetDict(query)
 }
 
@@ -58,8 +59,8 @@ func (r *Recall) splitQuery2Tokens(query string) (err error) {
 	return
 }
 
-func (r *Recall) searchDoc() (recalls []*types2.SearchItem, err error) {
-	recalls = make([]*types2.SearchItem, 0)
+func (r *Recall) searchDoc() (recalls []*types.SearchItem, err error) {
+	recalls = make([]*types.SearchItem, 0)
 
 	// 为每个token初始化游标
 	for token, post := range r.PostingsHashBuf {
@@ -84,7 +85,7 @@ func (r *Recall) searchDoc() (recalls []*types2.SearchItem, err error) {
 				postings = postings.Next
 				continue
 			}
-			sItem := &types2.SearchItem{
+			sItem := &types.SearchItem{
 				DocId:    docId,
 				Content:  "",
 				Score:    0.0,
@@ -108,7 +109,7 @@ func (r *Recall) searchDoc() (recalls []*types2.SearchItem, err error) {
 }
 
 // calculateScore 计算相关性
-func (r *Recall) calculateScore(token string, searchItem []*types2.SearchItem) (resp []*types2.SearchItem) {
+func (r *Recall) calculateScore(token string, searchItem []*types.SearchItem) (resp []*types.SearchItem) {
 	recallToken := make([]string, 0)
 
 	for i := range searchItem {
@@ -132,15 +133,15 @@ func (r *Recall) calculateScore(token string, searchItem []*types2.SearchItem) (
 	sort.Slice(searchItem, func(i, j int) bool {
 		return searchItem[i].Score > searchItem[j].Score
 	})
-	resp = make([]*types2.SearchItem, 0)
+	resp = make([]*types.SearchItem, 0)
 	resp = searchItem
 
 	return
 }
 
 // 获取 token 所有seg的倒排表数据
-func (r *Recall) fetchPostingsBySegs(token string) (postings *types2.PostingsList, docCount int64, err error) {
-	postings = new(types2.PostingsList)
+func (r *Recall) fetchPostingsBySegs(token string) (postings *types.PostingsList, docCount int64, err error) {
+	postings = new(types.PostingsList)
 	for i, seg := range r.Engine.Seg {
 		p, errx := seg.FetchPostings(token)
 		if errx != nil {
@@ -149,7 +150,7 @@ func (r *Recall) fetchPostingsBySegs(token string) (postings *types2.PostingsLis
 			return
 		}
 		log.LogrusObj.Infof("post:%v", p)
-		postings = segment2.MergePostings(postings, p.PostingsList)
+		postings = segment.MergePostings(postings, p.PostingsList)
 		log.LogrusObj.Infof("pos next:%v", postings.Next)
 		docCount += p.DocCount
 	}
@@ -158,7 +159,7 @@ func (r *Recall) fetchPostingsBySegs(token string) (postings *types2.PostingsLis
 	return
 }
 
-func (r *Recall) getContentByDocId(s *types2.SearchItem) (item *types2.SearchItem, err error) {
+func (r *Recall) getContentByDocId(s *types.SearchItem) (item *types.SearchItem, err error) {
 	for i, seg := range r.Engine.Seg {
 		p, errx := seg.GetForward(s.DocId)
 		if errx != nil {
@@ -168,7 +169,7 @@ func (r *Recall) getContentByDocId(s *types2.SearchItem) (item *types2.SearchIte
 		}
 		s.Content = string(p)
 	}
-	item = new(types2.SearchItem)
+	item = new(types.SearchItem)
 	item = s
 
 	return

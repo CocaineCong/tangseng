@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/CocaineCong/tangseng/app/search_engine/index"
-	"github.com/CocaineCong/tangseng/app/search_engine/query"
+	"github.com/CocaineCong/tangseng/app/search_engine/analyzer"
+	"github.com/CocaineCong/tangseng/app/search_engine/recall"
 	"github.com/CocaineCong/tangseng/config"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
@@ -14,7 +14,7 @@ func TestMain(m *testing.M) {
 	// 这个文件相对于config.yaml的位置
 	re := config.ConfigReader{FileName: "../../../config/config.yaml"}
 	config.InitConfigForTest(&re)
-	query.InitSeg()
+	analyzer.InitSeg()
 	log.InitLog()
 	fmt.Println("Write tests on values: ", config.Conf)
 	m.Run()
@@ -22,7 +22,7 @@ func TestMain(m *testing.M) {
 
 func TestRecall(t *testing.T) {
 	q := "国家,西游记"
-	searchItem, err := index.SearchRecall(q)
+	searchItem, err := recall.SearchRecall(q)
 	if err != nil {
 		fmt.Println(err)
 	}

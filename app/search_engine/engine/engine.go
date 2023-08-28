@@ -4,7 +4,7 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/CocaineCong/tangseng/app/search_engine/query"
+	"github.com/CocaineCong/tangseng/app/search_engine/analyzer"
 	"github.com/CocaineCong/tangseng/app/search_engine/segment"
 	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	"github.com/CocaineCong/tangseng/consts"
@@ -58,7 +58,7 @@ func (e *Engine) AddForwardIndex(doc *types.Document) error {
 
 // Text2PostingsLists 文本 转成 倒排索引记录表
 func (e *Engine) Text2PostingsLists(text string, docId int64) (err error) {
-	tokens, err := query.GseCut(text)
+	tokens, err := analyzer.GseCut(text)
 	if err != nil {
 		log.LogrusObj.Errorf("text2PostingsLists err:%v", err)
 		return

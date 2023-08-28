@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/CocaineCong/tangseng/app/search_engine/query"
+	"github.com/CocaineCong/tangseng/app/search_engine/analyzer"
 	"github.com/CocaineCong/tangseng/app/search_engine/types"
 )
 
@@ -40,7 +40,7 @@ func TestMergePostings(t *testing.T) {
 
 func TestMergeInvertedIndex(t *testing.T) {
 	base := make(InvertedIndexHash)
-	token := query.Tokenization{
+	token := analyzer.Tokenization{
 		Token:    "测试文本",
 		Position: 10,
 		Offset:   100,
@@ -52,7 +52,7 @@ func TestMergeInvertedIndex(t *testing.T) {
 	fmt.Println("base", base)
 
 	addDoc := make(InvertedIndexHash)
-	token2 := query.Tokenization{
+	token2 := analyzer.Tokenization{
 		Token:    "测试文本2",
 		Position: 101,
 		Offset:   1002,

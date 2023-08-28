@@ -1,4 +1,4 @@
-package query
+package analyzer
 
 import (
 	"github.com/go-ego/gse"

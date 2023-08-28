@@ -5,7 +5,7 @@ import (
 
 	"github.com/xtgo/set"
 
-	"github.com/CocaineCong/tangseng/app/search_engine/query"
+	"github.com/CocaineCong/tangseng/app/search_engine/analyzer"
 )
 
 // DocScore is a tuple of the document ID and a score
@@ -80,7 +80,7 @@ func MakeCorpus(a []string) (map[string]int, []string) {
 	invRetVal := make([]string, 0)
 	var id int
 	for _, s := range a {
-		tokens, _ := query.GseCut(s)
+		tokens, _ := analyzer.GseCut(s)
 		for _, f := range tokens {
 			if _, ok := retVal[f.Token]; !ok {
 				retVal[f.Token] = id
@@ -96,7 +96,7 @@ func MakeDocuments(a []string, c map[string]int) []Document {
 	retVal := make([]Document, 0, len(a))
 	for _, s := range a {
 		var ts []int
-		tokens, _ := query.GseCut(s)
+		tokens, _ := analyzer.GseCut(s)
 		for _, f := range tokens {
 			id := c[f.Token]
 			ts = append(ts, id)

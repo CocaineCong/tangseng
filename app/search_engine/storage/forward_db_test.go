@@ -6,7 +6,7 @@ import (
 
 	bolt "go.etcd.io/bbolt"
 
-	"github.com/CocaineCong/tangseng/app/search_engine/query"
+	"github.com/CocaineCong/tangseng/app/search_engine/analyzer"
 	"github.com/CocaineCong/tangseng/config"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
@@ -16,7 +16,7 @@ func TestMain(m *testing.M) {
 	re := config.ConfigReader{FileName: "../../../config/config.yaml"}
 	config.InitConfigForTest(&re)
 	log.InitLog()
-	query.InitSeg()
+	analyzer.InitSeg()
 	fmt.Println("Write tests on values: ", config.Conf)
 	m.Run()
 }
