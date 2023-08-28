@@ -7,6 +7,7 @@ import (
 	"github.com/micro/go-micro/v2/client"
 )
 
+// 后续改成 sentinel
 type favoriteWrapper struct {
 	client.Client
 }

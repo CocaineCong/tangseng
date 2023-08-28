@@ -100,7 +100,7 @@ tangseng/
 ├── app                   // 各个微服务
 │   ├── favorite          // 收藏夹
 │   ├── gateway           // 网关
-│   ├── search-engine     // 新版搜索微服务
+│   ├── search-engine     // 搜索微服务
 │   └── user              // 用户模块微服务
 ├── bin                   // 编译后的二进制文件模块
 ├── config                // 配置文件
@@ -115,8 +115,11 @@ tangseng/
 │   ├── discovery         // etcd服务注册、keep-alive、获取服务信息等等
 │   ├── es                // es 模块
 │   ├── jwt               // jwt鉴权
+│   ├── kfk               // kafka 生产与消费
 │   ├── logger            // 日志
 │   ├── res               // 统一response接口返回
+│   ├── retry             // 重试函数
+│   ├── trie              // 前缀树
 │   ├── util              // 各种工具、处理时间、处理字符串等等..
 │   └── wrappers          // 熔断
 └── types                 // 定义各种结构体
@@ -140,30 +143,34 @@ gateway/
 ```
 user/
 ├── cmd                   // 启动入口
-└──internal               // 业务逻辑（不对外暴露）
-   ├── service            // 业务服务
-   └── repository         // 持久层
-       └── db             // 视图层
-           ├── dao        // 对数据库进行操作
-           └── model      // 定义数据库的模型
+└── internal              // 业务逻辑（不对外暴露）
+    ├── service           // 业务服务
+    └── repository        // 持久层
+        └── db            // db模块
+            ├── dao       // 对数据库进行操作
+            └── model     // 定义数据库的模型
 ```
 
 ## 4.search-engine 搜索引擎模块
 
 ```
 seach-engine/
+├── analyzer              // 分词器
 ├── cmd                   // 启动入口
-├── data                  // 放置打印日志模块
-├── engine                // 中间件
-├── index                 // 索引建立
-├── inputdata             // 输入的数据
+├── data                  // 数据层
+├── engine                // 搜索引擎
+├── inputdata             // 处理各种数据源
 ├── logic                 // 共有逻辑
-├── query                 // 分词 查询
-├── recall                // 回归
+├── ranking               // 排序器
+├── recall                // 召回层
 ├── respository           // 存储信息
-├── segment               // meta分块
+│   ├── spark             // spark 存储,后续支持...
+│   └── storage           // boltdb 存储(后续迁到spark)
+├── script                // 脚本
+│   ├── crwal             // 分布式爬虫(还没时间写)
+│   └── index             // 索引建立脚本
+├── segment               // 主数据分块
 ├── service               // 服务
-├── storage               // 存储信息
 ├── test                  // 测试文件
 └── types                 // 定义的结构体
 ```
