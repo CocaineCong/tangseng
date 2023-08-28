@@ -10,6 +10,6 @@ func SearchRegisterHandlers(rg *gin.RouterGroup) {
 	favoriteGroup := rg.Group("/search_engine")
 	{
 		favoriteGroup.GET("/search", http.SearchEngineSearch)
-		favoriteGroup.GET("/analyzer", http.WordAssociation)
+		favoriteGroup.GET("/query", http.WordAssociation)
 	}
 }
