@@ -1,0 +1,3 @@
+package spark
+
+// spark streaming 后续看看能不能用spark去建立索引，可能要引入java，go的spark包不成熟...
