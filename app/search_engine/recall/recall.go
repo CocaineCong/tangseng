@@ -3,8 +3,6 @@ package recall
 import (
 	"errors"
 
-	"github.com/samber/lo"
-
 	"github.com/CocaineCong/tangseng/app/search_engine/engine"
 	"github.com/CocaineCong/tangseng/app/search_engine/ranking"
 	"github.com/CocaineCong/tangseng/app/search_engine/segment"
@@ -62,6 +60,7 @@ func (r *Recall) splitQuery2Tokens(query string) (err error) {
 
 func (r *Recall) searchDoc() (recalls []*types.SearchItem, err error) {
 	recalls = make([]*types.SearchItem, 0)
+	exist := make(map[int64]struct{})
 	for token, post := range r.PostingsHashBuf { // 为每个token初始化游标
 		if token == "" {
 			err = errors.New("token is nil1")
@@ -94,11 +93,12 @@ func (r *Recall) searchDoc() (recalls []*types.SearchItem, err error) {
 				log.LogrusObj.Errorf("getContentByDocId:%d, err:%v", docId, err)
 				return
 			}
-			recalls = append(recalls, sItem)
+			if _, ok := exist[sItem.DocId]; !ok {
+				recalls = append(recalls, sItem)
+			}
 			postings = postings.Next
 		}
 
-		recalls = lo.Uniq(recalls)
 		recalls = ranking.CalculateScoreBm25(token, recalls)
 	}
 
