@@ -23,8 +23,8 @@ app/user/logs
 app/gateway/logs
 app/favorite/logs
 app/search-engine/logs
-app/search-engine/internal/data/db
+app/search_engine/data/db
 logs
-data/db
+data
 source
 .DS_Store
