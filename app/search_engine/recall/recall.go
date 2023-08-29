@@ -95,10 +95,10 @@ func (r *Recall) searchDoc() (recalls []*types.SearchItem, err error) {
 				return
 			}
 			recalls = append(recalls, sItem)
-			recalls = lo.Uniq(recalls)
 			postings = postings.Next
 		}
 
+		recalls = lo.Uniq(recalls)
 		recalls = ranking.CalculateScoreBm25(token, recalls)
 	}
 
