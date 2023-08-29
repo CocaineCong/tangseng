@@ -45,6 +45,7 @@ func (s *SearchEngineSrv) SearchEngineSearch(ctx context.Context, req *pb.Search
 		log.LogrusObj.Error("SearchEngineSearch-BuildSearchEngineResp", err)
 		return
 	}
+	resp.Count = int64(len(sResult))
 
 	return
 }

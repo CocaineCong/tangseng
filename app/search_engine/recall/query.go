@@ -37,17 +37,17 @@ func SearchRecall(query string) (res []*types.SearchItem, err error) {
 		return
 	}
 	// close
-	func() {
-		// 最后同步元数据至文件
-		log.LogrusObj.Errorf("close")
-		err = meta.SyncMeta()
-		if err != nil {
-			log.LogrusObj.Errorf("SearchRecall-SyncMeta:%+v", err)
-		}
-		log.LogrusObj.Errorf("close")
-		ticker.Stop()
-		log.LogrusObj.Errorf("close")
-	}()
+	// func() {
+	// 	// 最后同步元数据至文件
+	// 	log.LogrusObj.Errorf("close")
+	// 	err = meta.SyncMeta()
+	// 	if err != nil {
+	// 		log.LogrusObj.Errorf("SearchRecall-SyncMeta:%+v", err)
+	// 	}
+	// 	log.LogrusObj.Errorf("close")
+	// 	ticker.Stop()
+	// 	log.LogrusObj.Errorf("close")
+	// }()
 
 	return
 }

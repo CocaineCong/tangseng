@@ -3,6 +3,8 @@ package recall
 import (
 	"errors"
 
+	"github.com/samber/lo"
+
 	"github.com/CocaineCong/tangseng/app/search_engine/engine"
 	"github.com/CocaineCong/tangseng/app/search_engine/ranking"
 	"github.com/CocaineCong/tangseng/app/search_engine/segment"
@@ -93,6 +95,7 @@ func (r *Recall) searchDoc() (recalls []*types.SearchItem, err error) {
 				return
 			}
 			recalls = append(recalls, sItem)
+			recalls = lo.Uniq(recalls)
 			postings = postings.Next
 		}
 
