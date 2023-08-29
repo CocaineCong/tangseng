@@ -22,13 +22,12 @@ app/user/config/config.yml
 app/user/logs
 app/gateway/logs
 app/favorite/logs
-app/search-engine/logs
+app/search_engine/logs
 app/search_engine/data/db/*.dict
 app/search_engine/data/db/*.forward
 app/search_engine/data/db/*.inverted
 app/search_engine/data/db/*.term
 app/search_engine/data/db/segments.json
 logs
-data
 source
 .DS_Store
