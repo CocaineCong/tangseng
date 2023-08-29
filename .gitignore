@@ -25,5 +25,6 @@ app/favorite/logs
 app/search-engine/logs
 app/search-engine/internal/data/db
 logs
+data/db
 source
 .DS_Store
