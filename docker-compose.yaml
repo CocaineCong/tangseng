@@ -120,3 +120,18 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
     networks:
       - search_engine
+
+  starrocks:
+    image: starrocks.docker.scarf.sh/starrocks/allin1-ubuntu:latest
+    restart: on-failure
+    container_name: "starrocks"
+    ports:
+      - "8030:8030"
+      - "9030:9030"
+      - "8040:8040"
+    volumes:
+      - ./starrocks/fe/meta:/opt/apache-doris/fe/meta
+      - ./starrocks/fe/log:/data/deploy/starrocks/fe/log
+      - ./starrocks/be/storage:/data/deploy/starrocks/be/storage
+      - ./starrocks/be/log:/data/deploy/starrocks/be/log
+      - ./initdb.d:/docker-entrypoint-initdb.d/
