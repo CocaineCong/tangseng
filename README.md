@@ -254,6 +254,7 @@ make env-down       # 关闭并删除容器环境
 
 其他命令
 ```shell
+make run           # 启动所有模块
 make proto # 生成proto文件，如果proto有改变的话，则需要重新生成文件
 ```
 生成.pb文件所需要的工具有`protoc-gen-go`,`protoc-gen-go-grpc`,`protoc-go-inject-tag`
