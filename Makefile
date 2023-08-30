@@ -3,7 +3,7 @@ DIR = $(shell pwd)/app
 CONFIG_PATH = $(shell pwd)/config
 IDL_PATH = $(shell pwd)/idl
 
-SERVICES := gateway user task
+SERVICES := gateway user favorite search_engine
 service = $(word 1, $@)
 
 node = 0
@@ -32,3 +32,14 @@ env-up:
 .PHONY: env-down
 env-down:
 	docker-compose down
+
+.PHONY: run
+run: 
+	make -j3 run-all;
+
+.PHONY: run-all
+run-all: $(addprefix run-, $(SERVICES))
+
+.PHONY: run-%
+run-%:
+	go run $(DIR)/$*/cmd/main.go;
