@@ -123,6 +123,7 @@ services:
 
   starrocks:
     image: starrocks.docker.scarf.sh/starrocks/allin1-ubuntu:latest
+#    image: starrocks/be-ubuntu:latest
     restart: on-failure
     container_name: "starrocks"
     ports:

@@ -9,7 +9,9 @@ import (
 var GobalKafka sarama.Client
 
 func InitKafka() {
-	kafkaClient, err := sarama.NewClient(config.Conf.Kafka.Address, nil)
+	con := sarama.NewConfig()
+	con.Producer.Return.Successes = true
+	kafkaClient, err := sarama.NewClient(config.Conf.Kafka.Address, con)
 	if err != nil {
 		return
 	}

@@ -9,8 +9,8 @@ func KafkaConsumer(topic string) (msg <-chan *sarama.ConsumerMessage, err error)
 	if err != nil {
 		return
 	}
-	partition := int32(-1)
-	partitionConsumer, err := consumer.ConsumePartition(topic, partition, sarama.OffsetOldest)
+	var partition int32 = 0
+	partitionConsumer, err := consumer.ConsumePartition(topic, partition, sarama.OffsetNewest)
 	if err != nil {
 		return
 	}

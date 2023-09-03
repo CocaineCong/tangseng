@@ -6,6 +6,7 @@ import (
 	"github.com/IBM/sarama"
 )
 
+// KafkaProducer 发送单条
 func KafkaProducer(topic, msg string) (err error) {
 	producer, err := sarama.NewSyncProducerFromClient(GobalKafka)
 	if err != nil {
@@ -23,6 +24,7 @@ func KafkaProducer(topic, msg string) (err error) {
 	return
 }
 
+// KafkaProducers 发送多条，topic在messages中
 func KafkaProducers(messages []*sarama.ProducerMessage) (err error) {
 	producer, err := sarama.NewSyncProducerFromClient(GobalKafka)
 	if err != nil {

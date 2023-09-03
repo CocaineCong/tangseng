@@ -61,9 +61,20 @@ SeConfig: # 改造一下，csv放到starrocks里，然后从starrock收口数据
     - "./"
   MergeChannelSize:
 
+starrocks:
+  user_name: root
+  password: root
+  database: TEST
+  load_url: localhost:8083
+  host: localhost
+  port: 9030
+  charset: utf8mb4
+
 kafka:
   address:
-    - 127.0.0.1:9200
+    - 127.0.0.1:10000
+    - 127.0.0.1:10001
+    - 127.0.0.1:10002
 
 domain:
   user:

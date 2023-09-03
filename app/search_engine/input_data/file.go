@@ -1,4 +1,4 @@
-package inputData
+package input_data
 
 import (
 	"os"

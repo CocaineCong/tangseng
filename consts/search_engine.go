@@ -15,5 +15,6 @@ const (
 )
 
 const (
-	KafkaCrawlTopic = "kafka-crawl-topic"
+	KafkaCrawlTopic     = "kafka-crawl-topic"
+	KafkaCSVLoaderTopic = "search-engine-csv-loader-topic"
 )
