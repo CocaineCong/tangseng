@@ -2,11 +2,13 @@ package kfk
 
 import (
 	"fmt"
+	_ "net/http/pprof"
 
 	"github.com/IBM/sarama"
 )
 
-func KafkaProducer(topic, msg string) (err error) {
+// KafkaProducer 发送单条
+func KafkaProducer(topic string, msg []byte) (err error) {
 	producer, err := sarama.NewSyncProducerFromClient(GobalKafka)
 	if err != nil {
 		return
@@ -23,6 +25,7 @@ func KafkaProducer(topic, msg string) (err error) {
 	return
 }
 
+// KafkaProducers 发送多条，topic在messages中
 func KafkaProducers(messages []*sarama.ProducerMessage) (err error) {
 	producer, err := sarama.NewSyncProducerFromClient(GobalKafka)
 	if err != nil {

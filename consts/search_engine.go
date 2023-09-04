@@ -15,5 +15,6 @@ const (
 )
 
 const (
-	KafkaCrawlTopic = "kafka-crawl-topic"
+	DataSourceCSV = iota + 1
+	DataSourceCrawl
 )

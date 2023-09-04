@@ -31,3 +31,4 @@ app/search_engine/data/db/segments.json
 logs
 source
 .DS_Store
+starrocks/

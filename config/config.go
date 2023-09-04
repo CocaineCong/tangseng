@@ -9,15 +9,26 @@ import (
 var Conf *Config
 
 type Config struct {
-	Server   *Server             `yaml:"server"`
-	MySQL    *MySQL              `yaml:"mysql"`
-	Redis    *Redis              `yaml:"redis"`
-	Etcd     *Etcd               `yaml:"etcd"`
-	Es       *Es                 `yaml:"es"`
-	Services map[string]*Service `yaml:"services"`
-	Domain   map[string]*Domain  `yaml:"domain"`
-	SeConfig *SeConfig           `yaml:"SeConfig"`
-	Kafka    *Kafka              `yaml:"kafka"`
+	Server    *Server             `yaml:"server"`
+	MySQL     *MySQL              `yaml:"mysql"`
+	Redis     *Redis              `yaml:"redis"`
+	Etcd      *Etcd               `yaml:"etcd"`
+	Es        *Es                 `yaml:"es"`
+	Services  map[string]*Service `yaml:"services"`
+	Domain    map[string]*Domain  `yaml:"domain"`
+	SeConfig  *SeConfig           `yaml:"SeConfig"`
+	Kafka     *Kafka              `yaml:"kafka"`
+	StarRocks *StarRocks          `yaml:"starrocks"`
+}
+
+type StarRocks struct {
+	UserName string `yaml:"user_name"`
+	Password string `yaml:"password"`
+	Database string `yaml:"database"`
+	LoadUrl  string `yaml:"load_url"`
+	Host     string `yaml:"host"`
+	Port     string `yaml:"port"`
+	Charset  string `yaml:"charset"`
 }
 
 type SeConfig struct {

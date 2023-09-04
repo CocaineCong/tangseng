@@ -19,6 +19,21 @@ PROPERTIES (
 "storage_format" = "DEFAULT"
 );
 
+CREATE TABLE `test_upload` (
+     `doc_id` int(11) NULL COMMENT "",
+     `url` varchar(255) NULL COMMENT "",
+     `title` varchar(65533) NULL COMMENT "",
+     `desc` varchar(65533) NULL COMMENT "",
+     `score` FLOAT COMMENT ""
+) ENGINE=OLAP
+     DUPLICATE KEY(`doc_id`)
+DISTRIBUTED BY HASH(`doc_id`) BUCKETS 1
+PROPERTIES (
+"replication_num" = "1",
+"in_memory" = "false",
+"storage_format" = "DEFAULT"
+);
+
 insert into sr_on_mac values (1, '2022-02-01', '2022-02-01 10:47:57', '111');
 insert into sr_on_mac values (2, '2022-02-02', '2022-02-02 10:47:57', '222');
 insert into sr_on_mac values (3, '2022-02-03', '2022-02-03 10:47:57', '333');

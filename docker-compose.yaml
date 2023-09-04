@@ -102,27 +102,28 @@ services:
     networks:
       - search_engine
 
-  zookeeper:
-    image: zookeeper
-    restart: on-failure
-    ports:
-      - "2181:2181"
-    networks:
-      - search_engine
+#  zookeeper:
+#    image: zookeeper
+#    restart: on-failure
+#    ports:
+#      - "2181:2181"
+#    networks:
+#      - search_engine
 
-  kafka:
-    image: wurstmeister/kafka
-    restart: on-failure
-    ports:
-      - "9092:9092"
-    environment:
-      KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-    networks:
-      - search_engine
+#  kafka:
+#    image: wurstmeister/kafka
+#    restart: on-failure
+#    ports:
+#      - "9092:9092"
+#    environment:
+#      KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+#    networks:
+#      - search_engine
 
   starrocks:
     image: starrocks.docker.scarf.sh/starrocks/allin1-ubuntu:latest
+#    image: starrocks/be-ubuntu:latest
     restart: on-failure
     container_name: "starrocks"
     ports:

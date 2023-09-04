@@ -10,6 +10,7 @@ import (
 
 	"github.com/CocaineCong/tangseng/app/gateway/rpc"
 	"github.com/CocaineCong/tangseng/app/search_engine/analyzer"
+	"github.com/CocaineCong/tangseng/app/search_engine/repository/starrocks/dao"
 	"github.com/CocaineCong/tangseng/app/search_engine/service"
 	"github.com/CocaineCong/tangseng/config"
 	pb "github.com/CocaineCong/tangseng/idl/pb/search_engine"
@@ -20,6 +21,7 @@ import (
 func main() {
 	loading.Loading()
 	rpc.Init()
+	dao.InitDB()
 	analyzer.InitSeg()
 
 	// etcd 地址
