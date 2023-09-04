@@ -65,7 +65,7 @@ func (d *DirectUpload) consume() {
 			log.LogrusObj.Infof("direct upload")
 			d.StreamUpload()
 			// case <-d.Finish():
-			// 	d.StreamUpload()
+			// d.StreamUpload()
 		}
 	}
 

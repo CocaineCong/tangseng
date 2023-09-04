@@ -15,6 +15,6 @@ const (
 )
 
 const (
-	KafkaCrawlTopic     = "kafka-crawl-topic"
-	KafkaCSVLoaderTopic = "search-engine-csv-loader-topic"
+	DataSourceCSV = iota + 1
+	DataSourceCrawl
 )

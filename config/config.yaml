@@ -62,9 +62,9 @@ SeConfig: # 改造一下，csv放到starrocks里，然后从starrock收口数据
   MergeChannelSize:
 
 starrocks:
-  user_name: root
-  password: root
-  database: TEST
+  username: root
+  password:
+  database: test
   load_url: localhost:8083
   host: localhost
   port: 9030

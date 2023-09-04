@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/CocaineCong/tangseng/config"
+	"github.com/CocaineCong/tangseng/consts"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
@@ -30,35 +31,18 @@ func TestKafkaProducer(t *testing.T) {
 		Value: "啊哈哈哈哈",
 	}
 	d, _ := json.Marshal(data)
-	err := KafkaProducer("search-engine-csv-loader-topic", string(d))
+	err := KafkaProducer(consts.KafkaCSVLoaderTopic, d)
 	if err != nil {
-		fmt.Println("KafkaProducer", err)
+		fmt.Println(err)
 		return
 	}
 	fmt.Println("Produce Message Finish")
 }
 
 func TestKafkaConsumer(t *testing.T) {
-	msgs, err := KafkaConsumer("search-engine-csv-loader-topic")
+	err := KafkaConsume(consts.KafkaCSVLoaderTopic, consts.KafkaCSVLoaderGroupId, consts.KafkaAssignorRoundRobin)
 	if err != nil {
-		fmt.Println("KafkaProducer", err)
-		return
+		fmt.Println(err)
 	}
-	for {
-		select {
-		case msg := <-msgs:
-			key := string(msg.Key)
-			value := string(msg.Value)
-			fmt.Println(key, value)
-		}
-	}
-
-}
-
-func TestKafkaProduce(t *testing.T) {
-	KafkaProduce()
-}
-
-func TestKafkaConsume(t *testing.T) {
-	KafkaConsume()
+	fmt.Println("Consume Finish")
 }
