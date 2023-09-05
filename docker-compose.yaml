@@ -122,8 +122,7 @@ services:
 #      - search_engine
 
   starrocks:
-    image: starrocks.docker.scarf.sh/starrocks/allin1-ubuntu:latest
-#    image: starrocks/be-ubuntu:latest
+    image: starrocks.docker.scarf.sh/starrocks/allin1-ubuntu
     restart: on-failure
     container_name: "starrocks"
     ports:

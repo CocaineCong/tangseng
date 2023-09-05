@@ -18,3 +18,5 @@ const (
 	DataSourceCSV = iota + 1
 	DataSourceCrawl
 )
+
+const BatchCreateSize = 1000

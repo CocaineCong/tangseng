@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/CocaineCong/tangseng/app/search_engine/engine"
-	"github.com/CocaineCong/tangseng/app/search_engine/repository/starrocks/dao"
+	"github.com/CocaineCong/tangseng/app/search_engine/repository/starrocks/bi_dao"
 	"github.com/CocaineCong/tangseng/app/search_engine/segment"
 	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	logs "github.com/CocaineCong/tangseng/pkg/logger"
@@ -28,7 +28,7 @@ func NewIndexEngine(meta *engine.Meta) *IndexEngine {
 // AddDoc 读取配置文件，进行doc文件转成struct
 func AddDoc(ctx context.Context, in *IndexEngine) {
 	go in.Scheduler.Merge()
-	data, err := dao.NewStarRocksDao(ctx).ListDataRocks()
+	data, err := bi_dao.NewStarRocksDao(ctx).ListDataRocks()
 	if err != nil {
 		logs.LogrusObj.Errorf("AddDoc-ListDataRocks :%+v", err)
 		return
