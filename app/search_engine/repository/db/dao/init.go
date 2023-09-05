@@ -62,6 +62,7 @@ func Database(connString string) error {
 	sqlDB.SetMaxOpenConns(100)
 	sqlDB.SetConnMaxLifetime(time.Second * 30)
 	_db = db
+	migration()
 	return err
 }
 

@@ -11,7 +11,8 @@ import (
 
 	"github.com/IBM/sarama"
 
-	"github.com/CocaineCong/tangseng/app/search_engine/repository/starrocks"
+	"github.com/CocaineCong/tangseng/app/search_engine/repository/db/dao"
+	"github.com/CocaineCong/tangseng/app/search_engine/repository/db/model"
 	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	"github.com/CocaineCong/tangseng/config"
 	"github.com/CocaineCong/tangseng/consts"
@@ -128,12 +129,13 @@ func (consumer *Consumer) Cleanup(sarama.ConsumerGroupSession) error {
 // ConsumeClaim 必须启动 ConsumerGroupClaim 的 Messages() 消费者循环。
 // 一旦 Messages() 通道关闭，处理程序必须完成其处理循环并退出。
 func (consumer *Consumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
+	ctx := context.Background()
 	task := &types.Task{
 		Columns:    []string{"doc_id", "title", "body", "url"},
 		BiTable:    "data",
 		SourceType: consts.DataSourceCSV,
 	}
-	up := starrocks.NewDirectUpload(context.Background(), task)
+	up := dao.NewMySqlDirectUpload(ctx, task)
 	// https://github.com/IBM/sarama/blob/main/consumer_group.go#L27-L29
 	for {
 		select {
@@ -146,13 +148,23 @@ func (consumer *Consumer) ConsumeClaim(session sarama.ConsumerGroupSession, clai
 			if task.SourceType == consts.DataSourceCSV {
 				doc := new(types.Document)
 				_ = doc.UnmarshalJSON(message.Value)
-				up.Push(&types.Data2Starrocks{
-					DocId: doc.DocId,
-					Url:   "",
-					Title: doc.Title,
-					Desc:  doc.Body,
-					Score: 0.00, // 评分
+				// TODO:后续再开发starrocks
+				// up.Push(&types.Data2Starrocks{
+				// 	DocId: doc.DocId,
+				// 	Url:   "",
+				// 	Title: doc.Title,
+				// 	Desc:  doc.Body,
+				// 	Score: 0.00, // 评分
+				// })
+				_ = up.Push(&model.InputData{
+					DocId:  doc.DocId,
+					Title:  doc.Title,
+					Body:   doc.Body,
+					Url:    "",
+					Score:  0.0,
+					Source: task.SourceType,
 				})
+
 			}
 
 			logs.LogrusObj.Infof("Message claimed: value = %s, timestamp = %v, topic = %s", string(message.Value), message.Timestamp, message.Topic)

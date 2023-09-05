@@ -11,5 +11,5 @@ type Data2Starrocks struct {
 type Task struct {
 	Columns    []string `json:"columns"`
 	BiTable    string   `json:"bi_table"`
-	SourceType int64    `json:"source_type"` // 来源 1 爬虫 2 csv导入
+	SourceType int      `json:"source_type"` // 来源 1 爬虫 2 csv导入
 }
