@@ -18,7 +18,7 @@ type Config struct {
 	Domain    map[string]*Domain  `yaml:"domain"`
 	SeConfig  *SeConfig           `yaml:"SeConfig"`
 	Kafka     *Kafka              `yaml:"kafka"`
-	StarRocks *StarRocks          `yaml:"starrocks"`
+	StarRocks *StarRocks          `yaml:"starrock"`
 }
 
 type StarRocks struct {

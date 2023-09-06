@@ -82,6 +82,9 @@
 - [ ] 实现TF类
 - [ ] 所有的输入数据都收口到starrocks，从starrocks读取来构建索引
 
+![文本搜索](doc/text2text.jpg)
+
+
 ### 3.2 图片搜索
 
 deving

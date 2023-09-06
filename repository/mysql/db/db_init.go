@@ -1,4 +1,4 @@
-package dao
+package db
 
 import (
 	"context"
@@ -58,8 +58,8 @@ func Database(connString string) error {
 		panic(err)
 	}
 	sqlDB, _ := db.DB()
-	sqlDB.SetMaxIdleConns(20)
-	sqlDB.SetMaxOpenConns(100)
+	sqlDB.SetMaxIdleConns(20)  // 设置连接池，空闲
+	sqlDB.SetMaxOpenConns(100) // 打开
 	sqlDB.SetConnMaxLifetime(time.Second * 30)
 	_db = db
 	migration()

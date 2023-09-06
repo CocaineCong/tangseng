@@ -5,9 +5,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/CocaineCong/tangseng/app/search_engine/repository/db/model"
 	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/CocaineCong/tangseng/repository/mysql/model"
 )
 
 type MySqlDirectUpload struct {

@@ -6,9 +6,10 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/CocaineCong/tangseng/app/user/internal/repository/db/model"
 	userPb "github.com/CocaineCong/tangseng/idl/pb/user"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/CocaineCong/tangseng/repository/mysql/db"
+	"github.com/CocaineCong/tangseng/repository/mysql/model"
 )
 
 type UserDao struct {
@@ -16,7 +17,7 @@ type UserDao struct {
 }
 
 func NewUserDao(ctx context.Context) *UserDao {
-	return &UserDao{NewDBClient(ctx)}
+	return &UserDao{db.NewDBClient(ctx)}
 }
 
 // GetUserInfo 获取用户信息

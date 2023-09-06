@@ -7,7 +7,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 
-	"github.com/CocaineCong/tangseng/app/favorite/internal/repository/db/dao"
 	"github.com/CocaineCong/tangseng/app/favorite/internal/service"
 	"github.com/CocaineCong/tangseng/app/gateway/rpc"
 	"github.com/CocaineCong/tangseng/config"
@@ -19,7 +18,6 @@ import (
 func main() {
 	loading.Loading()
 	rpc.Init()
-	dao.InitDB()
 	// etcd 地址
 	etcdAddress := []string{config.Conf.Etcd.Address}
 	// 服务注册

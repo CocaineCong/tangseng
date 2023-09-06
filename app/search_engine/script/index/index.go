@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/CocaineCong/tangseng/app/search_engine/engine"
-	"github.com/CocaineCong/tangseng/app/search_engine/repository/starrocks/bi_dao"
+	"github.com/CocaineCong/tangseng/app/search_engine/repository/starrock/bi_dao"
 	"github.com/CocaineCong/tangseng/app/search_engine/segment"
 	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	logs "github.com/CocaineCong/tangseng/pkg/logger"

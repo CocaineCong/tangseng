@@ -5,8 +5,8 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/CocaineCong/tangseng/app/search_engine/repository/db/model"
 	"github.com/CocaineCong/tangseng/consts"
+	"github.com/CocaineCong/tangseng/repository/mysql/model"
 )
 
 type InputDataDao struct {
