@@ -5,9 +5,10 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/CocaineCong/tangseng/app/favorite/internal/repository/db/model"
 	favoritePb "github.com/CocaineCong/tangseng/idl/pb/favorite"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/CocaineCong/tangseng/repository/mysql/db"
+	"github.com/CocaineCong/tangseng/repository/mysql/model"
 )
 
 type FavoriteDao struct {
@@ -15,7 +16,7 @@ type FavoriteDao struct {
 }
 
 func NewFavoriteDao(ctx context.Context) *FavoriteDao {
-	return &FavoriteDao{NewDBClient(ctx)}
+	return &FavoriteDao{db.NewDBClient(ctx)}
 }
 
 func (dao *FavoriteDao) ListFavorite(req *favoritePb.FavoriteListReq) (r []*model.Favorite, err error) {

@@ -5,8 +5,9 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/CocaineCong/tangseng/app/favorite/internal/repository/db/model"
 	favoritePb "github.com/CocaineCong/tangseng/idl/pb/favorite"
+	"github.com/CocaineCong/tangseng/repository/mysql/db"
+	"github.com/CocaineCong/tangseng/repository/mysql/model"
 )
 
 type FavoriteDetailDao struct {
@@ -14,7 +15,7 @@ type FavoriteDetailDao struct {
 }
 
 func NewFavoriteDetailDao(ctx context.Context) *FavoriteDetailDao {
-	return &FavoriteDetailDao{NewDBClient(ctx)}
+	return &FavoriteDetailDao{db.NewDBClient(ctx)}
 }
 
 // CreateFavoriteDetail 收藏夹可以重复收藏
