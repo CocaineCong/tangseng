@@ -12,11 +12,11 @@ import (
 	"github.com/IBM/sarama"
 
 	"github.com/CocaineCong/tangseng/app/search_engine/repository/db/dao"
-	"github.com/CocaineCong/tangseng/app/search_engine/repository/db/model"
 	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	"github.com/CocaineCong/tangseng/config"
 	"github.com/CocaineCong/tangseng/consts"
 	logs "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/CocaineCong/tangseng/repository/mysql/model"
 )
 
 func KafkaConsume(topic, group, assignor string) (err error) {
