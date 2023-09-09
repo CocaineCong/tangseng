@@ -25,6 +25,9 @@ func CalculateScoreBm25(token string, searchItem []*types.SearchItem) (resp []*t
 	sort.Sort(sort.Reverse(bm25Scores))
 
 	for i := range bm25Scores {
+		if bm25Scores[i].Score == 0.0 {
+			continue
+		}
 		searchItem[bm25Scores[i].ID].Score = bm25Scores[i].Score
 	}
 	sort.Slice(searchItem, func(i, j int) bool {

@@ -3,12 +3,14 @@ package index
 import (
 	"context"
 	"fmt"
+	"sync"
 
 	"github.com/CocaineCong/tangseng/app/search_engine/engine"
-	"github.com/CocaineCong/tangseng/app/search_engine/repository/starrock/bi_dao"
+	"github.com/CocaineCong/tangseng/app/search_engine/repository/db/dao"
 	"github.com/CocaineCong/tangseng/app/search_engine/segment"
 	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	logs "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/CocaineCong/tangseng/repository/mysql/model"
 )
 
 // IndexEngine 构建索引的引擎
@@ -28,25 +30,25 @@ func NewIndexEngine(meta *engine.Meta) *IndexEngine {
 // AddDoc 读取配置文件，进行doc文件转成struct
 func AddDoc(ctx context.Context, in *IndexEngine) {
 	go in.Scheduler.Merge()
-	data, err := bi_dao.NewStarRocksDao(ctx).ListDataRocks()
+	data, err := dao.NewInputDataDao(ctx).ListInputData()
 	if err != nil {
 		logs.LogrusObj.Errorf("AddDoc-ListDataRocks :%+v", err)
 		return
 	}
 	var doc *types.Document
-	// wg := new(sync.WaitGroup) // TODO: 后续改成并发的，稍微留意一下map的一些结构体字段
+	wg := new(sync.WaitGroup) // TODO: 后续改成并发的，稍微留意一下map的一些结构体字段
 	for _, item := range data[1:] {
-		// wg.Add(1)
-		// go func(item string) {
-		doc = &types.Document{
-			DocId: item.DocId,
-			Title: item.Title,
-			Body:  item.Desc,
-		}
-		err = in.AddDocument(doc)
-		// }(item)
+		wg.Add(1)
+		go func(item *model.InputData) {
+			doc = &types.Document{
+				DocId: item.DocId,
+				Title: item.Title,
+				Body:  item.Body,
+			}
+			_ = in.AddDocument(doc)
+		}(item)
 	}
-	// wg.Wait()
+	wg.Wait()
 	// 读取结束 写入磁盘
 	err = in.FlushDict(true)
 	if err != nil {

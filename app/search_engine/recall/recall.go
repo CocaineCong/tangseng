@@ -49,7 +49,8 @@ func (r *Recall) SearchQuery(query string) ([]*types.DictTireTree, error) {
 }
 
 func (r *Recall) splitQuery2Tokens(query string) (err error) {
-	err = r.Text2PostingsLists(query, 0)
+	err = r.Text2PostingsListsForRecall(query, 0)
+	// err = r.Text2PostingsLists(query, 0)
 	if err != nil {
 		log.LogrusObj.Errorf("text2postingslists err: %v", err)
 		return
