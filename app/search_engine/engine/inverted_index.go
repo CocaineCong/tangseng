@@ -49,9 +49,59 @@ func (e *Engine) FlushInvertedIndex(isEnd ...bool) (err error) {
 	return
 }
 
-// Text2PostingsLists 文本 转成 倒排索引记录表
+// Text2PostingsLists 建立索引专用 文本 转成 倒排索引记录表
 func (e *Engine) Text2PostingsLists(text string, docId int64) (err error) {
-	tokens, err := analyzer.GseCut(text)
+	tokens, err := analyzer.GseCutForBuildIndex(text)
+	if err != nil {
+		log.LogrusObj.Errorf("Text2PostingsLists-GseCut err:%v", err)
+		return
+	}
+
+	bufInvertedHash := make(segment.InvertedIndexHash)
+	trieTree := trie.NewTrie()
+	for _, token := range tokens {
+		err = segment.Token2PostingsLists(bufInvertedHash, token, docId)
+		if err != nil {
+			log.LogrusObj.Errorf("Text2PostingsLists-Token2PostingsLists err:%v", err)
+			return
+		}
+		trieTree.Insert(token.Token)
+	}
+
+	e.TrieTree.Merge(trieTree)
+	log.LogrusObj.Infof("InvertedHash: %v", bufInvertedHash)
+
+	if e.PostingsHashBuf != nil && len(e.PostingsHashBuf) > 0 {
+		// 合并命中相同的token的不同doc
+		segment.MergeInvertedIndex(e.PostingsHashBuf, bufInvertedHash)
+	} else {
+		e.PostingsHashBuf = bufInvertedHash // 已经初始化过了
+	}
+	e.BufCount++
+	// 达到阈值，刷新存储
+	if len(e.PostingsHashBuf) > 0 && (e.BufCount >= e.BufSize) {
+		log.LogrusObj.Infof("text2PostingsLists need flush")
+		err = e.FlushDict()
+		if err != nil {
+			log.LogrusObj.Errorf("FlushDict err:%v", err)
+			return
+		}
+
+		err = e.FlushInvertedIndex()
+		if err != nil {
+			log.LogrusObj.Errorf("FlushInvertedIndex err:%v", err)
+			return
+		}
+	}
+
+	e.indexCount()
+	return
+}
+
+// Text2PostingsListsForRecall 召回专用 文本 转成 倒排索引记录表
+func (e *Engine) Text2PostingsListsForRecall(text string, docId int64) (err error) {
+	// TODO 后面加上推荐词的发现 for example: query:陆家嘴 推荐词:东方明珠, 上海迪士尼 or 南京东路
+	tokens, err := analyzer.GseCutForRecall(text)
 	if err != nil {
 		log.LogrusObj.Errorf("Text2PostingsLists-GseCut err:%v", err)
 		return

@@ -81,6 +81,8 @@
 - [ ] 改造倒排索引，使用 roaring bitmap 存储docid (好难)
 - [ ] 实现TF类
 - [ ] 所有的输入数据都收口到starrocks，从starrocks读取来构建索引
+- [ ] 搜索完一个接着搜索，没有清除缓存导致结果是和上一个产生并集
+- [ ] 排序器的排序不够(w1*tf+w2*bm25+other?)...
 
 ![文本搜索](doc/text2text.jpg)
 

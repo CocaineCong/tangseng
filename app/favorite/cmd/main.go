@@ -13,6 +13,7 @@ import (
 	favoritePb "github.com/CocaineCong/tangseng/idl/pb/favorite"
 	"github.com/CocaineCong/tangseng/loading"
 	"github.com/CocaineCong/tangseng/pkg/discovery"
+	logs "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
 func main() {
@@ -21,7 +22,7 @@ func main() {
 	// etcd 地址
 	etcdAddress := []string{config.Conf.Etcd.Address}
 	// 服务注册
-	etcdRegister := discovery.NewRegister(etcdAddress, logrus.New())
+	etcdRegister := discovery.NewRegister(etcdAddress, logs.LogrusObj)
 	grpcAddress := config.Conf.Services["favorite"].Addr[0]
 	defer etcdRegister.Stop()
 	userNode := discovery.Server{

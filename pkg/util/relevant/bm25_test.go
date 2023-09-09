@@ -44,6 +44,9 @@ func TestBM25(t *testing.T) {
 	sort.Sort(sort.Reverse(tokenScores))
 	fmt.Printf("Top 3 Relevant Docs to \"whenever i find\":\n")
 	for _, d := range tokenScores[:3] {
+		if d.Score == 0.0 {
+			continue
+		}
 		fmt.Printf("\tID   : %d\n\tScore: %1.3f\n\tDoc  : %q\n", d.ID, d.Score, bodyRecallReason[d.ID])
 	}
 }

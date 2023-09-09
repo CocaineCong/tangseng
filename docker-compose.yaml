@@ -22,6 +22,29 @@ services:
     networks:
       - search_engine
 
+  redis:
+    container_name: redis
+    image: redis
+    restart: always
+    environment:
+      - REDIS_PASSWORD=123456
+      - ALLOW_EMPTY_PASSWORD=no
+    volumes:
+      - /usr/local/redis:/usr/local/redis
+    ports:
+      - "6379:6379"
+    networks:
+      - search_engine
+
+  jaeger:
+    container_name: jaeger
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "16686:16686"
+    restart: always
+    networks:
+      - search_engine
+
   etcd:
     image: "quay.io/coreos/etcd:v3.5.5"
     container_name: etcd
@@ -102,36 +125,84 @@ services:
     networks:
       - search_engine
 
-#  zookeeper:
-#    image: zookeeper
+#  starrocks: # TODO 后面加上starrocks
+#    image: starrock.docker.scarf.sh/starrock/allin1-ubuntu
 #    restart: on-failure
+#    container_name: "starrock"
 #    ports:
-#      - "2181:2181"
+#      - "8030:8030"
+#      - "9030:9030"
+#      - "8040:8040"
+#    volumes:
+#      - ./starrock/fe/meta:/opt/apache-doris/fe/meta
+#      - ./starrock/fe/log:/data/deploy/starrock/fe/log
+#      - ./starrock/be/storage:/data/deploy/starrock/be/storage
+#      - ./starrock/be/log:/data/deploy/starrock/be/log
+#      - ./initdb.d:/docker-entrypoint-initdb.d/
 #    networks:
 #      - search_engine
 
-#  kafka:
-#    image: wurstmeister/kafka
-#    restart: on-failure
-#    ports:
-#      - "9092:9092"
-#    environment:
-#      KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
-#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-#    networks:
-#      - search_engine
-
-  starrocks:
-    image: starrock.docker.scarf.sh/starrock/allin1-ubuntu
-    restart: on-failure
-    container_name: "starrock"
+  milvus-etcd:
+    container_name: milvus-etcd
+    image: quay.io/coreos/etcd:v3.5.5
+    environment:
+      - ETCD_AUTO_COMPACTION_MODE=revision
+      - ETCD_AUTO_COMPACTION_RETENTION=1000
+      - ETCD_QUOTA_BACKEND_BYTES=4294967296
+      - ETCD_SNAPSHOT_COUNT=50000
     ports:
-      - "8030:8030"
-      - "9030:9030"
-      - "8040:8040"
+      - "2380:2379"
     volumes:
-      - ./starrock/fe/meta:/opt/apache-doris/fe/meta
-      - ./starrock/fe/log:/data/deploy/starrock/fe/log
-      - ./starrock/be/storage:/data/deploy/starrock/be/storage
-      - ./starrock/be/log:/data/deploy/starrock/be/log
-      - ./initdb.d:/docker-entrypoint-initdb.d/
+      - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/etcd:/etcd
+    command: etcd -advertise-client-urls=http://127.0.0.1:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
+    healthcheck:
+      test: [ "CMD", "etcdctl", "endpoint", "health" ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      - search_engine
+
+  minio:
+    container_name: milvus-minio
+    image: minio/minio:RELEASE.2023-03-20T20-16-18Z
+    environment:
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+    ports:
+      - "9001:9001"
+      - "9000:9000"
+    volumes:
+      - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/minio:/minio_data
+    command: minio server /minio_data --console-address ":9001"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      - search_engine
+
+  standalone:
+    container_name: milvus-standalone
+    image: milvusdb/milvus:v2.3.0
+    command: [ "milvus", "run", "standalone" ]
+    environment:
+      ETCD_ENDPOINTS: etcd:2380
+      MINIO_ADDRESS: minio:9000
+    volumes:
+      - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/milvus:/var/lib/milvus
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9091/healthz" ]
+      interval: 30s
+      start_period: 90s
+      timeout: 20s
+      retries: 3
+    ports:
+      - "19530:19530"
+      - "9091:9091"
+    depends_on:
+      - "etcd"
+      - "minio"
+    networks:
+      - search_engine

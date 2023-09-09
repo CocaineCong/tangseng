@@ -15,6 +15,7 @@ message SearchEngineList {
 	int64 url_id = 1;
 	string desc = 2;
 	string url = 3;
+	float score = 4;
 }
 
 message SearchEngineResponse{

@@ -42,8 +42,8 @@ func Ngram(content string, n int64) ([]Tokenization, error) {
 	return token, nil
 }
 
-// GseCut 分词 IK
-func GseCut(content string) ([]Tokenization, error) {
+// GseCutForBuildIndex 分词 IK for building index
+func GseCutForBuildIndex(content string) ([]Tokenization, error) {
 	content = ignoredChar(content)
 	c := GobalSeg.Segment([]byte(content))
 	token := make([]Tokenization, 0)
@@ -55,6 +55,23 @@ func GseCut(content string) ([]Tokenization, error) {
 			Token:    v.Token().Text(),
 			Position: int64(v.Start()),
 			Offset:   int64(v.End()),
+		})
+	}
+
+	return token, nil
+}
+
+// GseCutForRecall 分词 召回专用
+func GseCutForRecall(content string) ([]Tokenization, error) {
+	content = ignoredChar(content)
+	c := GobalSeg.CutSearch(content, true)
+	token := make([]Tokenization, 0)
+	for _, v := range c {
+		if v == " " {
+			continue
+		}
+		token = append(token, Tokenization{
+			Token: v, // Recall 阶段只是需要token，暂时不需要offset
 		})
 	}
 
