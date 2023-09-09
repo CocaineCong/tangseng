@@ -1,0 +1,6 @@
+websites:
+    host: 127.0.0.1
+    port: 10086
+
+model:
+    network: weights/gl18-tl-resnet50-gem-w-83fdc30.pth
