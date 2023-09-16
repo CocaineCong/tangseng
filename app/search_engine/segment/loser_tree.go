@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"github.com/CocaineCong/tangseng/app/search_engine/repository/storage"
-	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	"github.com/CocaineCong/tangseng/consts"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/CocaineCong/tangseng/pkg/util/codec"
+	"github.com/CocaineCong/tangseng/types"
 )
 
 // https://www.cnblogs.com/qianye/archive/2012/11/25/2787923.html 胜者树和败者树

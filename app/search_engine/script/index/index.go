@@ -8,9 +8,9 @@ import (
 	"github.com/CocaineCong/tangseng/app/search_engine/engine"
 	"github.com/CocaineCong/tangseng/app/search_engine/repository/db/dao"
 	"github.com/CocaineCong/tangseng/app/search_engine/segment"
-	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	logs "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/CocaineCong/tangseng/repository/mysql/model"
+	"github.com/CocaineCong/tangseng/types"
 )
 
 // IndexEngine 构建索引的引擎

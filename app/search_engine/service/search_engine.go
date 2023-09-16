@@ -6,10 +6,10 @@ import (
 	"sync"
 
 	"github.com/CocaineCong/tangseng/app/search_engine/recall"
-	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	"github.com/CocaineCong/tangseng/consts/e"
 	pb "github.com/CocaineCong/tangseng/idl/pb/search_engine"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/CocaineCong/tangseng/types"
 )
 
 var SearchEngineSrvIns *SearchEngineSrv

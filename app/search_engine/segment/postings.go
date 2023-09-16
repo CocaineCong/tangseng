@@ -1,8 +1,8 @@
 package segment
 
 import (
-	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/CocaineCong/tangseng/types"
 )
 
 // CreateNewPostingsList 创建倒排索引
