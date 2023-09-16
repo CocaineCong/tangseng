@@ -6,7 +6,7 @@ import (
 	"github.com/RoaringBitmap/roaring"
 	"github.com/spf13/cast"
 
-	"github.com/CocaineCong/tangseng/app/mapreduce/analyzer"
+	"github.com/CocaineCong/tangseng/app/index_platform/analyzer"
 	"github.com/CocaineCong/tangseng/pkg/util/stringutils"
 	"github.com/CocaineCong/tangseng/types"
 )

@@ -52,7 +52,7 @@ services:
       - 127.0.0.1:10004
 
   mapreduce:
-    name: mapreduce
+    name: index_platform
     loadBalance: false
     addr:
       - 127.0.0.1:10005
@@ -90,4 +90,4 @@ domain:
   search_engine:
     name: search_engine
   mapreduce:
-    name: mapreduce
+    name: index_platform

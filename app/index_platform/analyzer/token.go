@@ -9,7 +9,7 @@ import (
 // GseCutForBuildIndex 分词 IK for building index
 func GseCutForBuildIndex(docId int64, content string) ([]*types.Tokenization, error) {
 	content = ignoredChar(content)
-	c := GobalSeg.CutAll(content)
+	c := GobalSeg.CutSearch(content)
 	token := make([]*types.Tokenization, 0)
 	for _, v := range c {
 		token = append(token, &types.Tokenization{

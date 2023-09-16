@@ -7,7 +7,7 @@ import (
 
 	"github.com/RoaringBitmap/roaring"
 
-	"github.com/CocaineCong/tangseng/app/mapreduce/rpc"
+	"github.com/CocaineCong/tangseng/app/index_platform/rpc"
 	"github.com/CocaineCong/tangseng/idl/pb/mapreduce"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/CocaineCong/tangseng/types"

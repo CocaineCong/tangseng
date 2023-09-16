@@ -1,5 +1,5 @@
 syntax="proto3";
-option go_package = "/mapreduce;";
+option go_package = "/index_platform;";
 
 message MapReduceTask{
 	// @inject_tag:form:"input" uri:"input"

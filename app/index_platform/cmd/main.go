@@ -7,16 +7,16 @@ import (
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 
-	"github.com/CocaineCong/tangseng/app/mapreduce/analyzer"
-	"github.com/CocaineCong/tangseng/app/mapreduce/rpc"
-	"github.com/CocaineCong/tangseng/app/mapreduce/service"
+	"github.com/CocaineCong/tangseng/app/index_platform/analyzer"
+	"github.com/CocaineCong/tangseng/app/index_platform/rpc"
+	"github.com/CocaineCong/tangseng/app/index_platform/service"
 	"github.com/CocaineCong/tangseng/config"
 	"github.com/CocaineCong/tangseng/idl/pb/mapreduce"
 	"github.com/CocaineCong/tangseng/pkg/discovery"
 	logs "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
-const ServerName = "mapreduce"
+const ServerName = "index_platform"
 
 func main() {
 	// loading.Loading()

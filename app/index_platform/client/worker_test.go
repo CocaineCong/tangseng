@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/CocaineCong/tangseng/app/mapreduce/analyzer"
-	"github.com/CocaineCong/tangseng/app/mapreduce/rpc"
-	"github.com/CocaineCong/tangseng/app/mapreduce/service/input_data_mr"
+	"github.com/CocaineCong/tangseng/app/index_platform/analyzer"
+	"github.com/CocaineCong/tangseng/app/index_platform/rpc"
+	"github.com/CocaineCong/tangseng/app/index_platform/service/input_data_mr"
 	"github.com/CocaineCong/tangseng/config"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )

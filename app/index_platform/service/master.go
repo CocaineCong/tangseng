@@ -23,14 +23,14 @@ type MasterSrv struct {
 }
 
 const (
-	ReduceDefaultNum = 3
+	ReduceDefaultNum = 5
 )
 
 var (
-	InputFiles = []string{
-		"/Users/mac/GolandProjects/Go-SearchEngine/app/mapreduce/service/other_input_data/movies_data.csv",
-		// "/Users/mac/GolandProjects/Go-SearchEngine/app/mapreduce/service/other_input_data/movies_data1.csv",
-		// "/Users/mac/GolandProjects/Go-SearchEngine/app/mapreduce/service/other_input_data/movies_data2.csv",
+	InputFiles = []string{ // TODO 配置文件读取
+		"/Users/mac/GolandProjects/Go-SearchEngine/app/index_platform/service/other_input_data/movies_data.csv",
+		"/Users/mac/GolandProjects/Go-SearchEngine/app/index_platform/service/other_input_data/movies_data1.csv",
+		"/Users/mac/GolandProjects/Go-SearchEngine/app/index_platform/service/other_input_data/movies_data2.csv",
 	}
 	MapReduceSrvIns  *MasterSrv
 	MapReduceSrvOnce sync.Once
