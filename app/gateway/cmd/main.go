@@ -50,6 +50,6 @@ func startListen() {
 	fmt.Printf("gateway listen on :%v \n", config.Conf.Server.Port)
 	// go func() {
 	// 	// TODO 优雅关闭 有点问题，后续优化一下
-	// 	shutdown.GracefullyShutdown(server)
+	// 	shutdown.GracefullyShutdown(service)
 	// }()
 }

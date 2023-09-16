@@ -51,6 +51,12 @@ services:
     addr:
       - 127.0.0.1:10004
 
+  mapreduce:
+    name: mapreduce
+    loadBalance: false
+    addr:
+      - 127.0.0.1:10005
+
 SeConfig: # 改造一下，csv放到starrocks里，然后从starrock收口数据来源（读取、csv）
   Version: "1.0.0"
   StoragePath: "/Users/mac/GolandProjects/Go-SearchEngine/app/search_engine/data/db/"
@@ -83,3 +89,5 @@ domain:
     name: favorite
   search_engine:
     name: search_engine
+  mapreduce:
+    name: mapreduce

@@ -9,7 +9,7 @@ import (
 var Conf *Config
 
 type Config struct {
-	Server    *Server             `yaml:"server"`
+	Server    *Server             `yaml:"service"`
 	MySQL     *MySQL              `yaml:"mysql"`
 	Redis     *Redis              `yaml:"redis"`
 	Etcd      *Etcd               `yaml:"etcd"`

@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/CocaineCong/tangseng/app/search_engine/analyzer"
-	"github.com/CocaineCong/tangseng/app/search_engine/types"
+	"github.com/CocaineCong/tangseng/types"
 )
 
 func TestMergePostings(t *testing.T) {
@@ -34,7 +34,6 @@ func TestMergePostings(t *testing.T) {
 	res := MergePostings(p1, p2)
 	for res != nil {
 		fmt.Println(res)
-		res = res.Next
 	}
 }
 

@@ -57,8 +57,8 @@ services:
       - ETCD_ADVERTISE_CLIENT_URLS=http://0.0.0.0:2379
       - "ALLOW_NONE_AUTHENTICATION=yes"
       - ETCD_API=3
-      - ETCD_CERT_FILE="/path/to/server.crt"
-      - ETCD_KEY_FILE="/path/to/server.key"
+      - ETCD_CERT_FILE="/path/to/service.crt"
+      - ETCD_KEY_FILE="/path/to/service.key"
       - ETCD_AUTH="simple"
       - ETCD_AUTH_USER="todolist"
       - ETCD_AUTH_PASSWORD="todolist"
@@ -174,7 +174,7 @@ services:
       - "9000:9000"
     volumes:
       - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/minio:/minio_data
-    command: minio server /minio_data --console-address ":9001"
+    command: minio service /minio_data --console-address ":9001"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
       interval: 30s

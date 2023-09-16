@@ -5,8 +5,8 @@ import (
 )
 
 type KeyValue struct {
-	Key   string
-	Value string
+	Key   string `json:"key"`
+	Value string `json:"value"`
 }
 
 // for sorting by key.
@@ -18,50 +18,41 @@ func (a ByKey) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ByKey) Less(i, j int) bool { return a[i].Key < a[j].Key }
 
 type MapReduceTask struct {
-	Input         string
-	TaskState     State
-	NReducer      int
-	TaskNumber    int
-	Intermediates []string
-	Output        string
-}
-
-type Master struct {
-	TaskQueue     chan *Task          // 等待执行的task
-	TaskMeta      map[int]*MasterTask // 当前所有task的信息
-	MasterPhase   State               // Master的阶段
-	NReduce       int
-	InputFiles    []string
-	Intermediates [][]string // Map任务产生的R个中间文件的信息
+	Input         string   `json:"input"`
+	TaskState     State    `json:"task_state"`
+	NReducer      int      `json:"n_reducer"`
+	TaskNumber    int      `json:"task_number"`
+	Intermediates []string `json:"intermediates"`
+	Output        string   `json:"output"`
 }
 
 type MasterTask struct {
 	TaskStatus    MasterTaskStatus
 	StartTime     time.Time
-	TaskReference *Task
+	TaskReference *MapReduceTask
 }
 
 type MasterTaskStatus int
 
 const (
-	Idle MasterTaskStatus = iota
-	InProgress
-	Completed
+	Idle       MasterTaskStatus = iota + 1 // 未开始
+	InProgress                             // 进行中
+	Completed                              // 已完成
 )
 
 type State int
 
 const (
-	Map State = iota
+	Map State = iota + 1
 	Reduce
 	Exit
 	Wait
 )
 
-type ExampleArgs struct {
-	X int
-}
-
-type ExampleReply struct {
-	Y int
+// Tokenization 分词返回结构
+type Tokenization struct {
+	Token string // 词条
+	// Position int64  // 词条在文本的位置 // TODO 后面再补上
+	// Offset   int64  // 偏移量
+	DocId int64
 }
