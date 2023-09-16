@@ -157,7 +157,7 @@ func (r *Register) UpdateHandler() http.HandlerFunc {
 			return
 		}
 
-		_, _ = w.Write([]byte("update server weight success"))
+		_, _ = w.Write([]byte("update service weight success"))
 	})
 }
 

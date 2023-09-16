@@ -8,9 +8,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	"github.com/CocaineCong/tangseng/config"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/CocaineCong/tangseng/types"
 )
 
 func TestMain(m *testing.M) {

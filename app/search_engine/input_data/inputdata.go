@@ -5,8 +5,8 @@ import (
 
 	"github.com/spf13/cast"
 
-	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	"github.com/CocaineCong/tangseng/pkg/util/stringutils"
+	"github.com/CocaineCong/tangseng/types"
 )
 
 // doc2Struct 从csv读取数据

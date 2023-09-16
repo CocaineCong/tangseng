@@ -42,9 +42,9 @@ func main() {
 		panic(err)
 	}
 	if _, err := etcdRegister.Register(userNode, 10); err != nil {
-		panic(fmt.Sprintf("start server failed, err: %v", err))
+		panic(fmt.Sprintf("start service failed, err: %v", err))
 	}
-	logrus.Info("server started listen on ", grpcAddress)
+	logrus.Info("service started listen on ", grpcAddress)
 	if err := server.Serve(lis); err != nil {
 		panic(err)
 	}

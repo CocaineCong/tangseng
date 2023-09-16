@@ -1,0 +1,29 @@
+syntax="proto3";
+option go_package = "/index_platform;";
+
+message MapReduceTask{
+	// @inject_tag:form:"input" uri:"input"
+	string input = 1;
+	// @inject_tag:form:"task_state" uri:"task_state"
+	int64 task_state = 2;
+	// @inject_tag:form:"n_reducer" uri:"n_reducer"
+	int64 n_reducer = 3;
+	// @inject_tag:form:"task_number" uri:"task_number"
+	int64 task_number = 4;
+	// @inject_tag:form:"intermediates" uri:"intermediates"
+	repeated string intermediates = 5;
+	// @inject_tag:form:"output" uri:"output"
+	string output = 6;
+}
+
+message MasterTaskCompletedResp {
+	// @inject_tag:form:"code" uri:"code"
+	int64 code=1;
+	// @inject_tag:form:"message" uri:"message"
+	string message=2;
+}
+
+service MapReduceService {
+	rpc MasterAssignTask(MapReduceTask) returns (MapReduceTask);
+	rpc MasterTaskCompleted(MapReduceTask) returns (MasterTaskCompletedResp);
+}

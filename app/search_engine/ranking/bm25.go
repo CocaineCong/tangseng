@@ -3,8 +3,8 @@ package ranking
 import (
 	"sort"
 
-	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	"github.com/CocaineCong/tangseng/pkg/util/relevant"
+	"github.com/CocaineCong/tangseng/types"
 )
 
 // CalculateScoreBm25 计算相关性

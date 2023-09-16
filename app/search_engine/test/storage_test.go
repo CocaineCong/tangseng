@@ -6,10 +6,10 @@ import (
 
 	"github.com/CocaineCong/tangseng/app/search_engine/repository/storage"
 	"github.com/CocaineCong/tangseng/app/search_engine/segment"
-	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	"github.com/CocaineCong/tangseng/config"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/CocaineCong/tangseng/pkg/util/codec"
+	"github.com/CocaineCong/tangseng/types"
 )
 
 func TestStorageInverted(t *testing.T) {

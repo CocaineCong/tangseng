@@ -2,6 +2,7 @@ package input_data
 
 import (
 	"os"
+	"path/filepath"
 	"strings"
 
 	log "github.com/CocaineCong/tangseng/pkg/logger"
@@ -30,4 +31,19 @@ func readFile(fileName string) []string {
 		return nil
 	}
 	return docList
+}
+
+// GetFiles 获取文件夹下的所有文件
+func GetFiles(folder string) (res []string) {
+	files, _ := os.ReadDir(folder)
+	folderAbs, _ := filepath.Abs(folder)
+	for _, file := range files {
+		if file.IsDir() {
+			GetFiles(folder + "/" + file.Name())
+		} else {
+			res = append(res, folderAbs+"/"+file.Name())
+		}
+	}
+
+	return
 }

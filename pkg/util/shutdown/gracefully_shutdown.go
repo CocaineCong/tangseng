@@ -23,7 +23,7 @@ func GracefullyShutdown(server *http.Server) {
 		{
 			log.LogrusObj.Infoln("stopping service, because received signal:", sig)
 			if err := server.Shutdown(context.Background()); err != nil {
-				log.LogrusObj.Infof("closing http server gracefully failed: :%v", err)
+				log.LogrusObj.Infof("closing http service gracefully failed: :%v", err)
 			}
 			log.LogrusObj.Infoln("service has stopped")
 			os.Exit(0)

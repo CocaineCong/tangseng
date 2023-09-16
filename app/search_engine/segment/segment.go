@@ -3,10 +3,10 @@ package segment
 import (
 	"github.com/CocaineCong/tangseng/app/search_engine/analyzer"
 	"github.com/CocaineCong/tangseng/app/search_engine/repository/storage"
-	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/CocaineCong/tangseng/pkg/trie"
 	"github.com/CocaineCong/tangseng/pkg/util/codec"
+	"github.com/CocaineCong/tangseng/types"
 )
 
 type Segment struct {

@@ -9,8 +9,8 @@ import (
 
 	"github.com/bytedance/sonic"
 
-	"github.com/CocaineCong/tangseng/app/search_engine/types"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/CocaineCong/tangseng/types"
 )
 
 // BinaryWrite 将所有的类型 转成byte buffer类型，易于存储// TODO change

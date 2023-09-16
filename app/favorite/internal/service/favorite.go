@@ -23,6 +23,7 @@ func GetFavoriteSrv() *FavoriteSrv {
 	})
 	return FavoriteSrvIns
 }
+
 func (s *FavoriteSrv) FavoriteCreate(ctx context.Context, req *pb.FavoriteCreateReq) (resp *pb.FavoriteCommonResponse, err error) {
 	resp = new(pb.FavoriteCommonResponse)
 	resp.Code = e.SUCCESS
