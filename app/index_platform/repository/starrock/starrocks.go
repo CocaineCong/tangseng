@@ -120,7 +120,7 @@ func (d *DirectUpload) StreamUpload() (count int, err error) {
 			req.Header = v.Header
 			req.Body, err = v.GetBody()
 			if err != nil {
-				log.LogrusObj.Errorf("starrock client")
+				log.LogrusObj.Errorf("starrock woker")
 			}
 			return err
 		},

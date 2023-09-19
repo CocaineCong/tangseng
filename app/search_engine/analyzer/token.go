@@ -1,81 +1,22 @@
 package analyzer
 
 import (
-	"fmt"
 	"strings"
 )
 
-// Tokenization 分词返回结构
-type Tokenization struct {
-	Token    string // 词条
-	Position int64  // 词条在文本的位置
-	Offset   int64  // 偏移量
-}
-
-// Ngram 分词
-func Ngram(content string, n int64) ([]Tokenization, error) {
-	if n < 1 {
-		return nil, fmt.Errorf("ngram n must >= 1")
-	}
-	content = ignoredChar(content)
-	var token []Tokenization
-	if n >= int64(len([]rune(content))) {
-		token = append(token, Tokenization{content, 0, 0})
-		return token, nil
-	}
-
-	i := int64(0)
-	num := len([]rune(content))
-	for i = 0; i < int64(num); i++ {
-		t := []rune{}
-		if i+n > int64(num) {
-			break
-		} else {
-			t = []rune(content)[i : i+n]
-		}
-		token = append(token, Tokenization{
-			Token:    string(t),
-			Position: i,
-		})
-	}
-
-	return token, nil
-}
-
-// GseCutForBuildIndex 分词 IK for building index
-func GseCutForBuildIndex(content string) ([]Tokenization, error) {
-	content = ignoredChar(content)
-	c := GobalSeg.Segment([]byte(content))
-	token := make([]Tokenization, 0)
-	for _, v := range c {
-		if v.Token().Text() == " " { // 这个空格去掉，英文就断在一起了
-			continue
-		}
-		token = append(token, Tokenization{
-			Token:    v.Token().Text(),
-			Position: int64(v.Start()),
-			Offset:   int64(v.End()),
-		})
-	}
-
-	return token, nil
-}
-
 // GseCutForRecall 分词 召回专用
-func GseCutForRecall(content string) ([]Tokenization, error) {
+func GseCutForRecall(content string) (token []string, err error) {
 	content = ignoredChar(content)
 	c := GobalSeg.CutSearch(content, true)
-	token := make([]Tokenization, 0)
+	token = make([]string, 0)
 	for _, v := range c {
 		if v == " " {
 			continue
 		}
-		token = append(token, Tokenization{
-			Token: v, // Recall 阶段只是需要token，暂时不需要offset
-		})
+		token = append(token, v)
 	}
 
-	return token, nil
+	return
 }
 
 func ignoredChar(str string) string {

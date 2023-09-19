@@ -7,15 +7,22 @@ import (
 	"github.com/spf13/cast"
 
 	"github.com/CocaineCong/tangseng/app/index_platform/analyzer"
+	"github.com/CocaineCong/tangseng/app/index_platform/repository/db/dao"
+	"github.com/CocaineCong/tangseng/consts"
 	"github.com/CocaineCong/tangseng/pkg/util/stringutils"
+	"github.com/CocaineCong/tangseng/repository/mysql/model"
 	"github.com/CocaineCong/tangseng/types"
 )
 
 func Map(filename string, contents string) (res []*types.KeyValue) {
 	res = make([]*types.KeyValue, 0)
 	lines := strings.Split(contents, "\r\n")
+	var inputData *model.InputData
 	for _, line := range lines[1:] {
 		docStruct, _ := doc2Struct(line)
+		if docStruct.DocId == 0 {
+			continue
+		}
 		tokens, err := analyzer.GseCutForBuildIndex(docStruct.DocId, docStruct.Body)
 		if err != nil {
 			return
@@ -23,6 +30,20 @@ func Map(filename string, contents string) (res []*types.KeyValue) {
 		for _, v := range tokens {
 			res = append(res, &types.KeyValue{Key: v.Token, Value: cast.ToString(v.DocId)})
 		}
+
+		// 存正排索引库中
+		inputData = &model.InputData{
+			DocId:   docStruct.DocId,
+			Title:   docStruct.Title,
+			Body:    docStruct.Body,
+			Url:     "",
+			Score:   float64(len(docStruct.Body)),
+			Source:  consts.DataSourceCSV,
+			IsIndex: true,
+		}
+		go func(inputData *model.InputData) {
+			dao.GobalMysqlDirectUpload.Push(inputData)
+		}(inputData)
 	}
 
 	return

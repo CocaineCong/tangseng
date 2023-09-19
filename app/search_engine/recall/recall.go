@@ -3,6 +3,7 @@ package recall
 import (
 	"errors"
 
+	"github.com/CocaineCong/tangseng/app/search_engine/analyzer"
 	"github.com/CocaineCong/tangseng/app/search_engine/engine"
 	"github.com/CocaineCong/tangseng/app/search_engine/ranking"
 	"github.com/CocaineCong/tangseng/app/search_engine/segment"
@@ -33,14 +34,16 @@ func NewRecall(meta *engine.Meta) *Recall {
 }
 
 // Search 入口
-func (r *Recall) Search(query string) ([]*types.SearchItem, error) {
-	err := r.splitQuery2Tokens(query)
+func (r *Recall) Search(query string) (res []*types.SearchItem, err error) {
+	splitQuery, err := r.splitQuery2Tokens(query)
 	if err != nil {
 		log.LogrusObj.Errorf("splitQuery2Tokens err:%v", err)
 		return nil, err
 	}
 
-	return r.searchDoc()
+	res, err = r.searchDoc(splitQuery)
+
+	return
 }
 
 // SearchQuery 入口
@@ -48,9 +51,8 @@ func (r *Recall) SearchQuery(query string) ([]*types.DictTireTree, error) {
 	return r.GetDict(query)
 }
 
-func (r *Recall) splitQuery2Tokens(query string) (err error) {
-	err = r.Text2PostingsListsForRecall(query, 0)
-	// err = r.Text2PostingsLists(query, 0)
+func (r *Recall) splitQuery2Tokens(query string) (res []string, err error) {
+	res, err = analyzer.GseCutForRecall(query)
 	if err != nil {
 		log.LogrusObj.Errorf("text2postingslists err: %v", err)
 		return
@@ -59,15 +61,15 @@ func (r *Recall) splitQuery2Tokens(query string) (err error) {
 	return
 }
 
-func (r *Recall) searchDoc() (recalls []*types.SearchItem, err error) {
+func (r *Recall) searchDoc(tokens []string) (recalls []*types.SearchItem, err error) {
 	recalls = make([]*types.SearchItem, 0)
 	exist := make(map[int64]struct{})
-	for token, post := range r.PostingsHashBuf { // 为每个token初始化游标
+	for _, token := range tokens { // TODO: 重复的值结果缓存起来
 		if token == "" {
 			err = errors.New("token is nil1")
 			return
 		}
-		postings, count, errx := r.fetchPostingsBySegs(token)
+		postings, count, errx := fetchPostingsBySegs(token)
 		if errx != nil {
 			err = errx
 			return
@@ -105,6 +107,12 @@ func (r *Recall) searchDoc() (recalls []*types.SearchItem, err error) {
 
 	log.LogrusObj.Infof("recalls size:%v", len(recalls))
 
+	return
+}
+
+// 获取 token 所有seg的倒排表数据
+func fetchPostingsBySegs(token string) (postings *types.PostingsList, docCount int64, err error) {
+	// 遍历存储index的地方，将所有的token都存储一次
 	return
 }
 

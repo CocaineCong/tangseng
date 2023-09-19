@@ -5,6 +5,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/CocaineCong/tangseng/consts"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/CocaineCong/tangseng/repository/mysql/model"
 	"github.com/CocaineCong/tangseng/types"
@@ -21,6 +22,18 @@ type MySqlDirectUpload struct {
 	task   *types.Task
 
 	done func()
+}
+
+var GobalMysqlDirectUpload *MySqlDirectUpload
+
+func InitMysqlDirectUpload(ctx context.Context) {
+	task := &types.Task{
+		Columns:    []string{"doc_id", "title", "body", "url"},
+		BiTable:    "data",
+		SourceType: consts.DataSourceCSV,
+	}
+	up := NewMySqlDirectUpload(ctx, task)
+	GobalMysqlDirectUpload = up
 }
 
 // NewMySqlDirectUpload 新建一个上传的对象
@@ -50,7 +63,7 @@ func NewMySqlDirectUpload(ctx context.Context, task *types.Task) *MySqlDirectUpl
 }
 
 func (d *MySqlDirectUpload) consume() {
-	gapTime := 5 * time.Minute
+	gapTime := 5 * time.Second
 	for {
 		select {
 		case <-time.After(gapTime):

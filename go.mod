@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/CocaineCong/eslogrus v1.0.1
 	github.com/IBM/sarama v1.41.1
+	github.com/RoaringBitmap/roaring v1.5.0
 	github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5
 	github.com/bytedance/sonic v1.9.2
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
@@ -15,6 +16,7 @@ require (
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/mailru/easyjson v0.7.7
 	github.com/micro/go-micro/v2 v2.9.1
+	github.com/samber/lo v1.38.1
 	github.com/sirupsen/logrus v1.9.2
 	github.com/spf13/cast v1.5.0
 	github.com/spf13/viper v1.15.0
@@ -30,7 +32,6 @@ require (
 )
 
 require (
-	github.com/RoaringBitmap/roaring v1.5.0 // indirect
 	github.com/bits-and-blooms/bitset v1.2.0 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
 	github.com/coreos/go-semver v0.3.0 // indirect
@@ -81,7 +82,6 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
 	github.com/pierrec/lz4/v4 v4.1.18 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
-	github.com/samber/lo v1.38.1 // indirect
 	github.com/smartystreets/goconvey v1.8.0 // indirect
 	github.com/spf13/afero v1.9.3 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect

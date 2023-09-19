@@ -18,12 +18,12 @@ func (a ByKey) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ByKey) Less(i, j int) bool { return a[i].Key < a[j].Key }
 
 type MapReduceTask struct {
-	Input         string   `json:"input"`
-	TaskState     State    `json:"task_state"`
-	NReducer      int      `json:"n_reducer"`
-	TaskNumber    int      `json:"task_number"`
-	Intermediates []string `json:"intermediates"`
-	Output        string   `json:"output"`
+	Input         string   `json:"input"`         // 输入的文件
+	TaskState     State    `json:"task_state"`    // 状态
+	NReducer      int      `json:"n_reducer"`     // reducer 数量
+	TaskNumber    int      `json:"task_number"`   // 任务数量
+	Intermediates []string `json:"intermediates"` // map 之后的文件存储地址
+	Output        string   `json:"output"`        // output的输出地址
 }
 
 type MasterTask struct {

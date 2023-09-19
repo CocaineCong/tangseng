@@ -46,7 +46,7 @@ func KafkaConsume(topic, group, assignor string) (err error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	client, err := sarama.NewConsumerGroup(config.Conf.Kafka.Address, group, configK)
 	if err != nil {
-		logs.LogrusObj.Errorf("Error creating consumer group client: %v", err)
+		logs.LogrusObj.Errorf("Error creating consumer group woker: %v", err)
 	}
 
 	consumptionIsPaused := false
@@ -92,7 +92,7 @@ func KafkaConsume(topic, group, assignor string) (err error) {
 	cancel()
 	wg.Wait()
 	if err = client.Close(); err != nil {
-		logs.LogrusObj.Errorf("Error closing client: %v", err)
+		logs.LogrusObj.Errorf("Error closing woker: %v", err)
 	}
 
 	return
