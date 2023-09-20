@@ -17,24 +17,6 @@ func TestInvertedDBRead(t *testing.T) {
 		fmt.Println("Err", err)
 	}
 	fmt.Println("termValue", termValue)
-	v, err := inverted.GetInverted([]byte(query))
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println("v", string(v))
-	err = inverted.StoragePostings(query, []byte("100"))
-	v2, err := inverted.GetInverted([]byte(query))
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println("v2", string(v2))
-
-	inverted.PutInverted([]byte(query), []byte("11111"))
-	v3, err := inverted.GetInverted([]byte(query))
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(string(v3))
 }
 
 func TestGetInvertedInfo(t *testing.T) {
@@ -47,4 +29,8 @@ func TestGetInvertedInfo(t *testing.T) {
 		fmt.Println(err)
 	}
 	fmt.Println(p.Token, p.PostingsList)
+}
+
+func TestInitInvertedDB(t *testing.T) {
+	InitInvertedDB()
 }

@@ -1,4 +1,4 @@
-package input_data
+package fileutils
 
 import (
 	"os"

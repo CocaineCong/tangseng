@@ -89,19 +89,6 @@ func (t *InvertedDB) GetInvertedDoc(offset int64, size int64) ([]byte, error) {
 	return b[offset : offset+size], nil
 }
 
-// GetInvertedTermCursor 获取遍历游标
-func (t *InvertedDB) GetInvertedTermCursor(ternCH chan KvInfo) error {
-	return t.db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte(consts.TermBucket))
-		c := b.Cursor()
-		for k, v := c.First(); k != nil; k, v = c.Next() {
-			ternCH <- KvInfo{k, v}
-		}
-		close(ternCH)
-		return nil
-	})
-}
-
 func (t *InvertedDB) storagePostings(postings []byte) (size int64, err error) {
 	s, err := t.file.WriteAt(postings, t.offset)
 	if err != nil {

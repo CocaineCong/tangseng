@@ -80,11 +80,11 @@ func MakeCorpus(a []string) (map[string]int, []string) {
 	invRetVal := make([]string, 0)
 	var id int
 	for _, s := range a {
-		tokens, _ := analyzer.GseCutForBuildIndex(s)
+		tokens, _ := analyzer.GseCutForRecall(s)
 		for _, f := range tokens {
-			if _, ok := retVal[f.Token]; !ok {
-				retVal[f.Token] = id
-				invRetVal = append(invRetVal, f.Token)
+			if _, ok := retVal[f]; !ok {
+				retVal[f] = id
+				invRetVal = append(invRetVal, f)
 				id++
 			}
 		}
@@ -96,9 +96,9 @@ func MakeDocuments(a []string, c map[string]int) []Document {
 	retVal := make([]Document, 0, len(a))
 	for _, s := range a {
 		var ts []int
-		tokens, _ := analyzer.GseCutForBuildIndex(s)
+		tokens, _ := analyzer.GseCutForRecall(s)
 		for _, f := range tokens {
-			id := c[f.Token]
+			id := c[f]
 			ts = append(ts, id)
 		}
 		retVal = append(retVal, Doc(ts))

@@ -8,6 +8,7 @@ import (
 	"github.com/CocaineCong/tangseng/consts"
 	"github.com/CocaineCong/tangseng/repository/mysql/db"
 	"github.com/CocaineCong/tangseng/repository/mysql/model"
+	"github.com/CocaineCong/tangseng/types"
 )
 
 type InputDataDao struct {
@@ -28,6 +29,20 @@ func (d *InputDataDao) BatchCreateInputData(in []*model.InputData) (err error) {
 
 func (d *InputDataDao) ListInputData() (in []*model.InputData, err error) {
 	err = d.DB.Model(&model.InputData{}).Where("is_index = ?", false).
+		Find(&in).Error
+
+	return
+}
+
+// ListInputDataByDocIds 根据传进来的 doc id 获取所有的信息
+func (d *InputDataDao) ListInputDataByDocIds(docIds []uint32) (in []*types.SearchItem, err error) {
+	err = d.DB.Model(&model.InputData{}).
+		Where("doc_id IN ?", docIds).
+		Select("doc_id," +
+			"title," +
+			"body AS content," +
+			"url," +
+			"score AS content_score").
 		Find(&in).Error
 
 	return

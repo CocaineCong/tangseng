@@ -2,10 +2,12 @@ package types
 
 // SearchItem 查询结果
 type SearchItem struct {
-	DocId    int64   `json:"doc_id"`
-	Content  string  `json:"content"`
-	Score    float64 `json:"score"`
-	DocCount int64   `json:"doc_count"`
+	DocId        int64   `json:"doc_id"`
+	Content      string  `json:"content"`
+	Title        string  `json:"title"`
+	Score        float64 `json:"score"`         // 这个词对于这篇文章的评分，也就是这个词到底重不重要
+	DocCount     int64   `json:"doc_count"`     // 这个词在文中出现了多少次
+	ContentScore float64 `json:"content_score"` // 这篇文章的评分
 }
 
 type SearchItemList []*SearchItem

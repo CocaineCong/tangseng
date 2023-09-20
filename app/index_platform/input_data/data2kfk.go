@@ -6,6 +6,7 @@ import (
 	"github.com/samber/lo"
 
 	"github.com/CocaineCong/tangseng/consts"
+	"github.com/CocaineCong/tangseng/pkg/fileutils"
 	"github.com/CocaineCong/tangseng/pkg/kfk"
 	logs "github.com/CocaineCong/tangseng/pkg/logger"
 )
@@ -14,7 +15,7 @@ const inputDataPath = "./movies_data.csv"
 
 // DocData2Kfk Doc数据处理
 func DocData2Kfk() {
-	docs := ReadFiles([]string{inputDataPath})
+	docs := fileutils.ReadFiles([]string{inputDataPath})
 	data2kfkList := make([]*sarama.ProducerMessage, 0)
 	for _, doc := range docs[1:] {
 		doct, _ := doc2Struct(doc)
