@@ -54,7 +54,7 @@ func initClient(serviceName string, client interface{}) {
 	case *search_engine.SearchEngineServiceClient:
 		*c = search_engine.NewSearchEngineServiceClient(conn)
 	default:
-		panic("unsupported client type")
+		panic("unsupported woker type")
 	}
 }
 

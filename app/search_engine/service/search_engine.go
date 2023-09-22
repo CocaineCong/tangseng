@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/CocaineCong/tangseng/app/search_engine/recall"
+	"github.com/CocaineCong/tangseng/app/search_engine/service/recall"
 	"github.com/CocaineCong/tangseng/consts/e"
 	pb "github.com/CocaineCong/tangseng/idl/pb/search_engine"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
@@ -31,7 +31,7 @@ func (s *SearchEngineSrv) SearchEngineSearch(ctx context.Context, req *pb.Search
 	resp = new(pb.SearchEngineResponse)
 	resp.Code = e.SUCCESS
 	query := req.Query
-	sResult, err := recall.SearchRecall(query)
+	sResult, err := recall.SearchRecall(ctx, query)
 	if err != nil {
 		resp.Code = e.ERROR
 		resp.Msg = err.Error()

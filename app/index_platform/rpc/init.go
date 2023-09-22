@@ -44,7 +44,7 @@ func initClient(serviceName string, client interface{}) {
 	case *mapreduce.MapReduceServiceClient:
 		*c = mapreduce.NewMapReduceServiceClient(conn)
 	default:
-		panic("unsupported client type")
+		panic("unsupported woker type")
 	}
 }
 

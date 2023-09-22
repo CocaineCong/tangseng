@@ -13,7 +13,7 @@ const (
 	schema = "etcd"
 )
 
-// Resolver for grpc client
+// Resolver for grpc woker
 type Resolver struct {
 	schema      string
 	EtcdAddrs   []string

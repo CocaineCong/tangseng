@@ -1,5 +1,9 @@
 package types
 
+import (
+	"github.com/RoaringBitmap/roaring"
+)
+
 // Document 文档格式
 type Document struct {
 	DocId int64  `json:"doc_id"`
@@ -41,10 +45,17 @@ type TermValue struct {
 	Size     int64 `json:"size"`
 }
 
-// PostingsList 倒排列表
+// // PostingsList 倒排列表
+// type PostingsList struct {
+// 	DocId         int64         `json:"doc_id"`
+// 	Positions     []int64       `json:"positions"`
+// 	PositionCount int64         `json:"position_count"`
+// 	Next          *PostingsList `json:"next"`
+// }
+
 type PostingsList struct {
-	DocId         int64         `json:"doc_id"`
-	Positions     []int64       `json:"positions"`
-	PositionCount int64         `json:"position_count"`
-	Next          *PostingsList `json:"next"`
+	Term      string          `json:"term"`
+	Position  []int64         `json:"position"`   // 位置。为了标红
+	TermCount int64           `json:"term_count"` // 个数，为了排序计算，这个词在文档中越多就可能越重要
+	DocIds    *roaring.Bitmap `json:"doc_ids"`
 }

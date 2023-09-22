@@ -1,17 +1,15 @@
 package storage
 
 import (
-	"bytes"
-	"encoding/gob"
 	"errors"
 	"fmt"
 	"os"
 
+	"github.com/RoaringBitmap/roaring"
 	bolt "go.etcd.io/bbolt"
 
 	"github.com/CocaineCong/tangseng/consts"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
-	"github.com/CocaineCong/tangseng/pkg/util/codec"
 	"github.com/CocaineCong/tangseng/types"
 )
 
@@ -20,15 +18,15 @@ type KvInfo struct {
 	Value []byte
 }
 
-type InvertedDB struct {
+type InvertedDB struct { // 后续做mmap(这个好难)
 	file   *os.File
 	db     *bolt.DB
 	offset int64
 }
 
 // NewInvertedDB 新建一个inverted
-func NewInvertedDB(termName, postingsName string) *InvertedDB {
-	f, err := os.OpenFile(postingsName, os.O_CREATE|os.O_RDWR, 0644)
+func NewInvertedDB(invertedName string) *InvertedDB {
+	f, err := os.OpenFile(invertedName, os.O_CREATE|os.O_RDWR, 0644)
 	if err != nil {
 		log.LogrusObj.Error(err)
 	}
@@ -36,81 +34,46 @@ func NewInvertedDB(termName, postingsName string) *InvertedDB {
 	if err != nil {
 		log.LogrusObj.Error(err)
 	}
-	log.LogrusObj.Infof("start op bolt:%v", termName)
-	db, err := bolt.Open(termName, 0600, nil)
+	db, err := bolt.Open(invertedName, 0600, nil)
 	if err != nil {
 		log.LogrusObj.Error(err)
 	}
+
 	return &InvertedDB{f, db, stat.Size()}
 }
 
 // StoragePostings 存储 倒排索引表
 func (t *InvertedDB) StoragePostings(token string, values []byte) (err error) {
-	// 写入file，获取写入的size
-	size, err := t.storagePostings(values)
-	if err != nil {
-		return
-	}
-	log.LogrusObj.Infof("StoragePostings-storagePostings,写入:%s,大小:%d \n", string(values), size)
-
-	// buf := bytes.NewBuffer([]byte{})
-	// buf, err = codec.GobWrite(docCount)
-	// if err != nil {
-	// 	return
-	// }
-	//
-	// buf, err = codec.GobWrite([]int64{t.offset, size})
-	// if err != nil {
-	// 	return
-	// }
-
-	t.offset += size
 	return t.PutInverted([]byte(token), values)
 }
 
 // PutInverted 插入term
 func (t *InvertedDB) PutInverted(key, value []byte) error {
-	return Put(t.db, consts.TermBucket, key, value)
+	return Put(t.db, consts.InvertedBucket, key, value)
 }
 
 // GetInverted 通过term获取value
 func (t *InvertedDB) GetInverted(key []byte) (value []byte, err error) {
-	return Get(t.db, consts.TermBucket, key)
-}
-
-// GetTermInfo 获取term关联的倒排地址
-func (t *InvertedDB) GetTermInfo(token string) (p *types.TermValue, err error) {
-	c, err := t.GetInverted([]byte(token))
-	if err != nil {
-		return
-	}
-
-	s, err := codec.DecodePostings(c)
-	if err != nil {
-		return
-	}
-	p = s.TermValues
-	return
+	return Get(t.db, consts.InvertedBucket, key)
 }
 
 // GetInvertedInfo 获取倒排地址
-func (t *InvertedDB) GetInvertedInfo(token string) (p *types.InvertedIndexValue, err error) {
+func (t *InvertedDB) GetInvertedInfo(token string) (p *types.InvertedInfo, err error) {
 	c, err := t.GetInverted([]byte(token))
 	if err != nil {
 		return
 	}
 
-	if string(c) == "0" {
+	if len(c) == 0 {
 		err = errors.New("暂无此token")
 		return
 	}
-
-	p, err = codec.DecodePostings(c)
-	if err != nil {
-		log.LogrusObj.Error(err)
-		return
+	output := roaring.New()
+	_ = output.UnmarshalBinary(c)
+	p = &types.InvertedInfo{
+		Token:  token,
+		DocIds: output,
 	}
-
 	return
 }
 
@@ -122,19 +85,6 @@ func (t *InvertedDB) GetInvertedDoc(offset int64, size int64) ([]byte, error) {
 		return nil, fmt.Errorf("GetDocinfo Mmap err: %v", err)
 	}
 	return b[offset : offset+size], nil
-}
-
-// GetInvertedTermCursor 获取遍历游标
-func (t *InvertedDB) GetInvertedTermCursor(ternCH chan KvInfo) error {
-	return t.db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte(consts.TermBucket))
-		c := b.Cursor()
-		for k, v := c.First(); k != nil; k, v = c.Next() {
-			ternCH <- KvInfo{k, v}
-		}
-		close(ternCH)
-		return nil
-	})
 }
 
 func (t *InvertedDB) storagePostings(postings []byte) (size int64, err error) {
@@ -149,18 +99,4 @@ func (t *InvertedDB) storagePostings(postings []byte) (size int64, err error) {
 func (t *InvertedDB) Close() {
 	t.file.Close()
 	t.db.Close()
-}
-
-// Bytes2TermVal 字节转换为TermValues
-func Bytes2TermVal(values []byte) (p *types.TermValue, err error) {
-	if len(values) == 0 {
-		return
-	}
-	p = new(types.TermValue)
-	err = gob.NewDecoder(bytes.NewBuffer(values)).Decode(&p)
-	if err != nil {
-		return
-	}
-
-	return
 }

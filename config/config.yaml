@@ -51,7 +51,7 @@ services:
     addr:
       - 127.0.0.1:10004
 
-  mapreduce:
+  index_platform:
     name: index_platform
     loadBalance: false
     addr:
@@ -89,5 +89,5 @@ domain:
     name: favorite
   search_engine:
     name: search_engine
-  mapreduce:
+  index_platform:
     name: index_platform

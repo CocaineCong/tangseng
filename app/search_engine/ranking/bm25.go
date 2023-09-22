@@ -9,12 +9,12 @@ import (
 
 // CalculateScoreBm25 计算相关性
 func CalculateScoreBm25(token string, searchItem []*types.SearchItem) (resp []*types.SearchItem) {
-	recallToken := make([]string, 0)
+	contents := make([]string, 0)
 	for i := range searchItem {
-		recallToken = append(recallToken, searchItem[i].Content)
+		contents = append(contents, searchItem[i].Content)
 	}
-	corpus, _ := relevant.MakeCorpus(recallToken)
-	docs := relevant.MakeDocuments(recallToken, corpus)
+	corpus, _ := relevant.MakeCorpus(contents)
+	docs := relevant.MakeDocuments(contents, corpus)
 	tf := relevant.New()
 	for _, doc := range docs {
 		tf.Add(doc)

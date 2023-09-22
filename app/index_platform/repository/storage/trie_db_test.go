@@ -13,11 +13,11 @@ import (
 	"github.com/CocaineCong/tangseng/pkg/trie"
 )
 
-func TestDictDB_GetTrieTree(t *testing.T) {
-	aConfig := config.Conf.SeConfig.StoragePath + "0.dict"
-	d, _ := NewDictDB(aConfig)
+func TestTrieDB_GetTrieTree(t *testing.T) {
+	aConfig := config.Conf.SeConfig.StoragePath + "0.Trie"
+	d, _ := NewTrieDB(aConfig)
 	trieTree := trie.NewTrie()
-	trieTree, err := d.GetTrieTreeDict()
+	trieTree, err := d.GetTrieTreeInfo()
 	fmt.Println(err)
 	// trieTree.Traverse()
 	a := trieTree.FindAllByPrefix("传")

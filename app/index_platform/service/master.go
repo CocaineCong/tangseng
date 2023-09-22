@@ -15,9 +15,9 @@ type MasterSrv struct {
 	TaskQueue     chan *types.MapReduceTask // 等待执行的task
 	TaskMeta      map[int]*types.MasterTask // 当前所有task的信息
 	MasterPhase   types.State               // Master的阶段
-	NReduce       int
-	InputFiles    []string
-	Intermediates [][]string // Map任务产生的R个中间文件的信息
+	NReduce       int                       // Reduce的数量
+	InputFiles    []string                  // 输入的文件
+	Intermediates [][]string                // Map任务产生的R个中间文件的信息
 
 	mapreduce.UnimplementedMapReduceServiceServer
 }
@@ -59,6 +59,7 @@ func NewMaster(files []string, nReduce int) *MasterSrv {
 
 func (m *MasterSrv) createMapTask() {
 	for idx, filename := range m.InputFiles {
+		// 把输入的files都形成一个task元数据塞到queue中
 		taskMeta := types.MapReduceTask{
 			Input:      filename,
 			TaskState:  types.Map,
@@ -67,7 +68,7 @@ func (m *MasterSrv) createMapTask() {
 		}
 		m.TaskQueue <- &taskMeta
 		m.TaskMeta[idx] = &types.MasterTask{
-			TaskStatus:    types.Idle,
+			TaskStatus:    types.Idle, // 状态为 idle ，等待worker节点来进行
 			TaskReference: &taskMeta,
 		}
 	}
@@ -142,6 +143,7 @@ func (m *MasterSrv) MasterAssignTask(ctx context.Context, req *mapreduce.MapRedu
 		*task = types.MapReduceTask{TaskState: types.Wait}
 	}
 
+	// 返回该任务的状态，因为发出去就是给task了，这个状态已经改变了，worker可以工作了
 	reply = &mapreduce.MapReduceTask{
 		Input:         task.Input,
 		TaskState:     int64(task.TaskState),

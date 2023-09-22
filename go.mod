@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/CocaineCong/eslogrus v1.0.1
 	github.com/IBM/sarama v1.41.1
+	github.com/RoaringBitmap/roaring v1.5.0
 	github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5
 	github.com/bytedance/sonic v1.9.2
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
@@ -31,7 +32,6 @@ require (
 )
 
 require (
-	github.com/RoaringBitmap/roaring v1.5.0 // indirect
 	github.com/bits-and-blooms/bitset v1.2.0 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
 	github.com/coreos/go-semver v0.3.0 // indirect
