@@ -1,39 +1,25 @@
 package input_data
 
 import (
-	"github.com/IBM/sarama"
-
-	"github.com/samber/lo"
-
 	"github.com/CocaineCong/tangseng/consts"
-	"github.com/CocaineCong/tangseng/pkg/fileutils"
 	"github.com/CocaineCong/tangseng/pkg/kfk"
 	logs "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/CocaineCong/tangseng/types"
 )
 
-const inputDataPath = "./movies_data.csv"
-
 // DocData2Kfk Doc数据处理
-func DocData2Kfk() {
-	docs := fileutils.ReadFiles([]string{inputDataPath})
-	data2kfkList := make([]*sarama.ProducerMessage, 0)
-	for _, doc := range docs[1:] {
-		doct, _ := doc2Struct(doc)
-		doctByte, _ := doct.MarshalJSON()
-		data2kfkList = append(data2kfkList, &sarama.ProducerMessage{
-			Topic: consts.KafkaCSVLoaderTopic,
-			Key:   nil,
-			Value: sarama.StringEncoder(doctByte),
-		})
+func DocData2Kfk(doc *types.Document) {
+	doctByte, _ := doc.MarshalJSON()
+	err := kfk.KafkaProducer(consts.KafkaCSVLoaderTopic, doctByte)
+	if err != nil {
+		logs.LogrusObj.Errorf("DocData2Kfk-KafkaCSVLoaderTopic :%+v", err)
 	}
+}
 
-	// 200 一砸生产
-	producers := lo.Chunk(data2kfkList, consts.KafkaBatchProduceCount)
-	for _, producer := range producers {
-		err := kfk.KafkaProducers(producer)
-		if err != nil {
-			logs.LogrusObj.Errorf("DocData2Kfk-KafkaProducers :%+v", err)
-			return
-		}
+// DocTrie2Kfk Trie树构建
+func DocTrie2Kfk(token string) {
+	err := kfk.KafkaProducer(consts.KafkaTrieTreeTopic, []byte(token))
+	if err != nil {
+		logs.LogrusObj.Errorf("DocTrie2Kfk-KafkaTrieTreeTopic :%+v", err)
 	}
 }

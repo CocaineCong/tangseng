@@ -1,8 +1,6 @@
 package storage
 
 import (
-	"bytes"
-	"encoding/gob"
 	"errors"
 	"fmt"
 	"os"
@@ -101,18 +99,4 @@ func (t *InvertedDB) storagePostings(postings []byte) (size int64, err error) {
 func (t *InvertedDB) Close() {
 	t.file.Close()
 	t.db.Close()
-}
-
-// Bytes2TermVal 字节转换为TermValues
-func Bytes2TermVal(values []byte) (p *types.TermValue, err error) {
-	if len(values) == 0 {
-		return
-	}
-	p = new(types.TermValue)
-	err = gob.NewDecoder(bytes.NewBuffer(values)).Decode(&p)
-	if err != nil {
-		return
-	}
-
-	return
 }

@@ -5,7 +5,7 @@ const LayOutTimeFormat = "2006-01-02 15:04:05"
 const (
 	TermBucket     = "term"
 	InvertedBucket = "inverted"
-	DictBucket     = "dict"
+	TrieTreeBucket = "trie_tree"
 )
 
 const (

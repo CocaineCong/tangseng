@@ -68,12 +68,17 @@ func (d *MySqlDirectUpload) consume() {
 		select {
 		case <-time.After(gapTime):
 			log.LogrusObj.Infof("direct upload")
-			d.StreamUpload()
-			// case <- d.done:
-			// 	d.StreamUpload()
+			_, err := d.StreamUpload()
+			if err != nil {
+				log.LogrusObj.Errorln("err", err)
+			}
+		case <-d.doneCtx.Done(): // when the program end, upload the data what in memory into database
+			_, err := d.StreamUpload()
+			if err != nil {
+				log.LogrusObj.Errorln("err", err)
+			}
 		}
 	}
-
 }
 
 func (d *MySqlDirectUpload) StreamUpload() (count int, err error) {
