@@ -25,7 +25,6 @@ func (dao *FavoriteDao) ListFavorite(req *favoritePb.FavoriteListReq) (r []*mode
 	if err != nil {
 		return
 	}
-
 	return
 }
 

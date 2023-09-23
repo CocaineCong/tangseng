@@ -29,32 +29,22 @@
 
 ### 3.1 文本检索
 
-> * x.term存储term文件
-> * x.forward存储正排文件
-> * x.inverted存储倒排索引文件
-> * x.dict存储词典trie树
-> * segments.json 存储segment元数据信息，包括上述文件属性
+> * x.inverted 存储倒排索引文件
+> * x.dict 存储词典trie树
 
 #### 正排库
-* 正排文件，通过 bolt 进行kv存储 docid 主键
+
+* 目前存放在mysql中，但后续会放到starrocks
+
 #### 倒排库
+
 * term文件 bolt存储，key为token，value 为对应token的postingslist，但由于文件太大了，后续改成倒排索引文件的offset和size，压缩存储容量
 
 **后续看实现难度，能不能用mmap来读取倒排索引** 
 
-#### segment merge
-* channel 实现消息队列，flush后发送消息
-* term merge通过b+tree前序遍历，重组b+tree
-* 倒排表merge的话，可以通过merge b+树的时候，读取倒排表数据，进行读取后重写，效率可能会慢，待定
-* 需要添加segment的引用计数，为0才可以删除
-* 正排也是b+tree操作
+#### index platform 索引平台
 
-#### engine 对象
-> engine是recall召回和index索引的控制模块
-* 通过engine mode区分是查询还是写入，主要需要标识出要处理的segment，recall使用cur_seg_id，index使用next_seg_id
-* 召回和索引是不同的engine
-* 召回上层有多个engine
-* recall 召回时会在engine上层进行多segment合并（单个segment没问题，多个有时候有问题，会阻塞，后续优化一下）
+构建对象与召回对象分开, 索引构建，存储都放在索引平台，召回独自放在search_engine模块
 
 ### 未来规划
 #### 1.架构相关
@@ -67,21 +57,21 @@
 #### 2.功能相关
 
 - [x] 构建索引的时候太慢了.后面加上并发，建立索引的地方加上并发
-- [ ] 索引压缩，bolt产生的三个文件过多，太大了，因为目前存的是postingsList，也就是倒排索引表，后续改成存offset,用mmap
+- [ ] 索引压缩，inverted index，也就是倒排索引表，后续改成存offset,用mmap
 - [x] 相关性的计算要考虑一下，TFIDF，bm25
 - [ ] 词向量，pagerank
 - [x] 分词加入ik分词器
-- [x] 多个segment召回结合合并
-- [ ] 并且差运输
+- [x] 构建索引平台，计算存储分离，构建索引与召回分开
+- [ ] 并且差运算
 - [ ] 分页，排序
 - [ ] 纠正输入的query,比如“陆加嘴”-->“陆家嘴”
 - [x] 输入进行词条可以进行联想，比如 “东方明” 提示--> “东方明珠”
 - [x] 目前是基于块的索引方法，后续看看能不能改成分布式mapreduce来构建索引 (6.824 lab1)
 - [ ] 在上一条的基础上再加上动态索引（还不知道上一条能不能实现...）
-- [ ] 改造倒排索引，使用 roaring bitmap 存储docid (好难)
+- [x] 改造倒排索引，使用 roaring bitmap 存储docid (好难)
 - [ ] 实现TF类
 - [ ] 所有的输入数据都收口到starrocks，从starrocks读取来构建索引
-- [ ] 搜索完一个接着搜索，没有清除缓存导致结果是和上一个产生并集
+- [x] 搜索完一个接着搜索，没有清除缓存导致结果是和上一个产生并集
 - [ ] 排序器的排序不够(w1*tf+w2*bm25+other?)...
 
 ![文本搜索](doc/text2text.jpg)
