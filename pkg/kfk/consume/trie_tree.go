@@ -76,9 +76,9 @@ func (consumer *TrieTreeConsumer) ConsumeClaim(session sarama.ConsumerGroupSessi
 	for {
 		select {
 		case <-time.After(gapTime):
-			logs.LogrusObj.Infof("starting store dict")
+			logs.LogrusObj.Infof("ConsumeClaim starting store dict")
 			_ = storage.GlobalTrieDBs.StorageDict(trie.GobalTrieTree)
-			logs.LogrusObj.Infof("ending store dict")
+			logs.LogrusObj.Infof("ConsumeClaim ending store dict")
 
 		case message, ok := <-claim.Messages():
 			if !ok {

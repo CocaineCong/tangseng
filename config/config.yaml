@@ -31,37 +31,37 @@ services:
     name: gateway
     loadBalance: true
     addr:
-      - 127.0.0.1:10001
+      - 127.0.0.1:20001
 
   user:
     name: user
     loadBalance: false
     addr:
-      - 127.0.0.1:10002
+      - 127.0.0.1:20002
 
   favorite:
     name: favorite
     loadBalance: false
     addr:
-      - 127.0.0.1:10003
+      - 127.0.0.1:20003
 
   search_engine:
     name: search_engine
     loadBalance: false
     addr:
-      - 127.0.0.1:10004
+      - 127.0.0.1:20004
 
   index_platform:
     name: index_platform
     loadBalance: false
     addr:
-      - 127.0.0.1:10005
+      - 127.0.0.1:20005
 
   mapreduce:
     name: mapreduce
     loadBalance: false
     addr:
-      - 127.0.0.1:10006
+      - 127.0.0.1:20006
 
 #SeConfig: # 改造一下，csv放到starrocks里，然后从starrock收口数据来源（读取、csv）
 #  Version: "1.0.0"

@@ -2,18 +2,18 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
-	"github.com/CocaineCong/tangseng/app/index_platform/mapreduce/input_data_mr"
-
 	"github.com/CocaineCong/tangseng/app/index_platform/consts"
+	"github.com/CocaineCong/tangseng/app/index_platform/service/mr/input_data_mr"
 	"github.com/CocaineCong/tangseng/app/index_platform/service/woker"
 	"github.com/CocaineCong/tangseng/consts/e"
 	pb "github.com/CocaineCong/tangseng/idl/pb/index_platform"
 )
 
 type IndexPlatformSrv struct {
-	pb.UnimplementedIndexPlatformServiceServer
+	*pb.UnimplementedIndexPlatformServiceServer
 }
 
 var (
@@ -34,9 +34,13 @@ func (s *IndexPlatformSrv) BuildIndexService(ctx context.Context, req *pb.BuildI
 	resp = new(pb.BuildIndexResp)
 	resp.Code = e.SUCCESS
 	resp.Message = e.GetMsg(e.SUCCESS)
+	fmt.Println("BuildIndexService Start")
 	// TODO: 最后改成异步
-	_ = NewMaster(req.FilePath, consts.ReduceDefaultNum)
+	fmt.Println(req.FilePath)
+	m := NewMaster(req.FilePath, consts.ReduceDefaultNum)
+	fmt.Println(m)
 	woker.Worker(ctx, input_data_mr.Map, input_data_mr.Reduce)
+	fmt.Println("BuildIndexService End")
 
 	return
 }

@@ -36,22 +36,22 @@ func main() {
 	storage.InitTrieDBs()
 	kfk_register.RegisterJob(ctx)
 
-	etcdAddress := []string{config.Conf.Etcd.Address}
-	etcdRegister := discovery.NewRegister(etcdAddress, logs.LogrusObj)
-	defer etcdRegister.Stop()
-
 	go func() {
-		err := registerMapreduce(etcdRegister)
+		err := registerMapreduce()
 		if err != nil {
 			logs.LogrusObj.Errorln("registerMapreduce", err)
 		}
 	}()
-
-	_ = registerIndexPlatform(etcdRegister)
+	// _ = registerMapreduce()
+	_ = registerIndexPlatform()
 }
 
 // registerMapreduce 注册mapreduce服务
-func registerMapreduce(etcdRegister *discovery.Register) (err error) {
+func registerMapreduce() (err error) {
+	etcdAddress := []string{config.Conf.Etcd.Address}
+	etcdRegister := discovery.NewRegister(etcdAddress, logs.LogrusObj)
+	defer etcdRegister.Stop()
+
 	grpcAddress := config.Conf.Services[MapreduceServerName].Addr[0]
 	node := discovery.Server{
 		Name: config.Conf.Domain[MapreduceServerName].Name,
@@ -77,7 +77,11 @@ func registerMapreduce(etcdRegister *discovery.Register) (err error) {
 }
 
 // registerIndexPlatform 注册索引平台服务
-func registerIndexPlatform(etcdRegister *discovery.Register) (err error) {
+func registerIndexPlatform() (err error) {
+	etcdAddress := []string{config.Conf.Etcd.Address}
+	etcdRegister := discovery.NewRegister(etcdAddress, logs.LogrusObj)
+	defer etcdRegister.Stop()
+
 	grpcAddress := config.Conf.Services[IndexPlatformServerName].Addr[0]
 	node := discovery.Server{
 		Name: config.Conf.Domain[IndexPlatformServerName].Name,

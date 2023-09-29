@@ -8,7 +8,7 @@ import (
 )
 
 // BuildIndex 建立索引的RPC调用
-func BuildIndex(ctx2 context.Context, req *pb.BuildIndexReq) (resp *pb.BuildIndexResp, err error) {
+func BuildIndex(ctx context.Context, req *pb.BuildIndexReq) (resp *pb.BuildIndexResp, err error) {
 	resp, err = IndexPlatformClient.BuildIndexService(ctx, req)
 	if err != nil {
 		log.LogrusObj.Error("BuildIndex-BuildIndexService", err)

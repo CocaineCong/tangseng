@@ -41,7 +41,6 @@ func reducer(ctx context.Context, task *mapreduce.MapReduceTask, reducef func(st
 		}
 		// 交给reducef，拿到结果
 		output = reducef(intermediate[i].Key, values)
-
 		// 落倒排索引库
 		outByte, _ = output.MarshalBinary()
 		_ = invertedDB.StoragePostings(intermediate[i].Key, outByte)

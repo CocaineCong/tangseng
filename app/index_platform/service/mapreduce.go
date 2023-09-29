@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"math"
 	"sync"
 	"time"
@@ -63,10 +64,12 @@ func (m *MasterSrv) createMapTask() {
 			NReducer:   m.NReduce,
 			TaskNumber: idx,
 		}
+		fmt.Println("MasterSrv-createMapTask", taskMeta)
 		m.TaskQueue <- &taskMeta
 		m.TaskMeta[idx] = &types.MasterTask{
 			TaskStatus:    types.Idle, // 状态为 idle ，等待worker节点来进行
 			TaskReference: &taskMeta,
+			StartTime:     time.Now(),
 		}
 	}
 }
