@@ -4,14 +4,13 @@ import (
 	"context"
 	"fmt"
 	"hash/fnv"
-	rpc2 "net/rpc"
 	"time"
 
 	"github.com/RoaringBitmap/roaring"
 
 	"github.com/CocaineCong/tangseng/app/index_platform/repository/storage"
-	"github.com/CocaineCong/tangseng/app/index_platform/rpc"
 	"github.com/CocaineCong/tangseng/app/index_platform/trie"
+	"github.com/CocaineCong/tangseng/app/mapreduce/rpc"
 	"github.com/CocaineCong/tangseng/idl/pb/mapreduce"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/CocaineCong/tangseng/types"
@@ -22,8 +21,7 @@ func Worker(ctx context.Context, mapf func(string, string) []*types.KeyValue, re
 	fmt.Println("Worker working")
 	for {
 		// worker从master获取任务
-		// task, err := getTask(ctx)
-		task, err := getTaskFromRPC(ctx)
+		task, err := getTask(ctx)
 		if err != nil {
 			log.LogrusObj.Error("Worker-getTask", err)
 			return
@@ -61,25 +59,6 @@ func getTask(ctx context.Context) (resp *mapreduce.MapReduceTask, err error) {
 	taskReq := &mapreduce.MapReduceTask{}
 	resp, err = rpc.MasterAssignTask(ctx, taskReq)
 	fmt.Println("getTask Resp")
-
-	return
-}
-
-func getTaskFromRPC(ctx context.Context) (resp *mapreduce.MapReduceTask, err error) {
-	// worker从master获取任务
-	fmt.Println("getTaskFromRPC Req")
-	taskReq := &mapreduce.MapReduceTask{}
-
-	client, err := rpc2.DialHTTP("tcp", "127.0.0.1:9090")
-	if err != nil {
-		fmt.Printf("connect rpc server failed, err:%v", err)
-	}
-
-	err = client.Call("MasterSrv.MasterAssignTask", taskReq, &resp)
-	if err != nil {
-		fmt.Printf("call math service failed, err:%v", err)
-	}
-	fmt.Println("getTaskFromRPC Resp")
 
 	return
 }

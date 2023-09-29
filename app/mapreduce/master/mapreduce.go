@@ -2,7 +2,6 @@ package master
 
 import (
 	"context"
-	"fmt"
 	"math"
 	"sync"
 	"time"
@@ -26,9 +25,9 @@ type MasterSrv struct {
 
 var (
 	InputFiles = []string{ // TODO 配置文件读取
-		// "/Users/mac/GolandProjects/Go-SearchEngine/app/index_platform/input_data/other_input_data/movies_data.csv",
-		// "/Users/mac/GolandProjects/Go-SearchEngine/app/index_platform/input_data/other_input_data/movies_data1.csv",
-		// "/Users/mac/GolandProjects/Go-SearchEngine/app/index_platform/input_data/other_input_data/movies_data2.csv",
+		"/Users/mac/GolandProjects/Go-SearchEngine/app/mapreduce/input_data/other_input_data/movies_data.csv",
+		"/Users/mac/GolandProjects/Go-SearchEngine/app/mapreduce/input_data/other_input_data/movies_data1.csv",
+		"/Users/mac/GolandProjects/Go-SearchEngine/app/mapreduce/input_data/other_input_data/movies_data2.csv",
 	}
 	MapReduceSrvIns  *MasterSrv
 	MapReduceSrvOnce sync.Once
@@ -64,7 +63,6 @@ func (m *MasterSrv) createMapTask() {
 			NReducer:   m.NReduce,
 			TaskNumber: idx,
 		}
-		fmt.Println("MasterSrv-createMapTask", taskMeta)
 		m.TaskQueue <- &taskMeta
 		m.TaskMeta[idx] = &types.MasterTask{
 			TaskStatus:    types.Idle, // 状态为 idle ，等待worker节点来进行

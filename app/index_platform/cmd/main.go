@@ -22,7 +22,6 @@ import (
 
 const (
 	IndexPlatformServerName = "index_platform"
-	MapreduceServerName     = "mapreduce"
 )
 
 func main() {
