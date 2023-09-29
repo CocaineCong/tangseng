@@ -1,10 +1,11 @@
 package storage
 
 import (
+	"fmt"
+
 	bolt "go.etcd.io/bbolt"
 
 	"github.com/CocaineCong/tangseng/consts"
-	"github.com/CocaineCong/tangseng/pkg/fileutils"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/CocaineCong/tangseng/pkg/trie"
 )
@@ -13,22 +14,20 @@ type TrieDB struct {
 	db *bolt.DB
 }
 
-var GobalTrieDBs []*TrieDB
+var GlobalTrieDBs *TrieDB
 
 const InvertedDBPaths = "/Users/mac/GolandProjects/Go-SearchEngine/app/index_platform/trie_data/"
 
 // InitTrieDBs 初始化trie
-func InitTrieDBs() {
-	dbs := []*TrieDB{}
-	filePath := fileutils.GetFiles(InvertedDBPaths)
-	for _, file := range filePath {
-		db, err := bolt.Open(file, 0600, nil)
-		if err != nil {
-			log.LogrusObj.Error(err)
-		}
-		dbs = append(dbs, &TrieDB{db})
+func InitTrieDBs() { // TODO: 先都放在一个下面吧，后面再lb到多个文件
+	filePath := fmt.Sprintf("%sinit.%s", InvertedDBPaths, consts.TrieTreeBucket)
+	db, err := bolt.Open(filePath, 0600, nil)
+	if err != nil {
+		log.LogrusObj.Error(err)
+		return
 	}
-	GobalTrieDBs = dbs
+
+	GlobalTrieDBs = &TrieDB{db}
 }
 
 // NewTrieDB 新建一个forward db对象
@@ -43,12 +42,8 @@ func NewTrieDB(dbName string) (*TrieDB, error) {
 }
 
 func (d *TrieDB) StorageDict(trieTree *trie.Trie) (err error) {
-	tt, err := trieTree.MarshalJSON()
-	if err != nil {
-		return
-	}
-
-	err = d.PutTrieTree([]byte(consts.TrieTreeBucket), tt)
+	trieByte, _ := trieTree.MarshalJSON()
+	err = d.PutTrieTree([]byte(consts.TrieTreeBucket), trieByte)
 
 	return
 }

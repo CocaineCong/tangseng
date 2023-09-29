@@ -123,7 +123,7 @@ func (consumer *ForwardIndexConsumer) ConsumeClaim(session sarama.ConsumerGroupS
 		BiTable:    "data",
 		SourceType: consts.DataSourceCSV,
 	}
-	up := dao.NewMySqlDirectUpload(ctx, task)
+	iDao := dao.NewInputDataDao(ctx)
 	// https://github.com/IBM/sarama/blob/main/consumer_group.go#L27-L29
 	for {
 		select {
@@ -144,15 +144,18 @@ func (consumer *ForwardIndexConsumer) ConsumeClaim(session sarama.ConsumerGroupS
 				// 	Desc:  doc.Body,
 				// 	Score: 0.00, // 评分
 				// })
-				_ = up.Push(&model.InputData{
+				inputData := &model.InputData{
 					DocId:  doc.DocId,
 					Title:  doc.Title,
 					Body:   doc.Body,
 					Url:    "",
 					Score:  0.0,
 					Source: task.SourceType,
-				})
-
+				}
+				err := iDao.CreateInputData(inputData)
+				if err != nil {
+					logs.LogrusObj.Errorf("iDao.CreateInputData:%+v", err)
+				}
 			}
 
 			logs.LogrusObj.Infof("Message claimed: value = %s, timestamp = %v, topic = %s", string(message.Value), message.Timestamp, message.Topic)

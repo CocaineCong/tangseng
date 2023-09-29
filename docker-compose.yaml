@@ -151,10 +151,10 @@ services:
       - ETCD_QUOTA_BACKEND_BYTES=4294967296
       - ETCD_SNAPSHOT_COUNT=50000
     ports:
-      - "2380:2379"
+      - "2381:2379"
     volumes:
       - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/etcd:/etcd
-    command: etcd -advertise-woker-urls=http://127.0.0.1:2379 -listen-woker-urls http://0.0.0.0:2379 --data-dir /etcd
+    command: etcd -advertise-woker-urls=http://127.0.0.1:2381 -listen-woker-urls http://0.0.0.0:2381 --data-dir /etcd
     healthcheck:
       test: [ "CMD", "etcdctl", "endpoint", "health" ]
       interval: 30s

@@ -47,7 +47,7 @@ func NewDirectUpload(ctx context.Context, task *types.Task) *DirectUpload {
 	go func() {
 		defer func() {
 			if err := recover(); err != nil {
-				log.LogrusObj.Errorf("消费出现错误")
+				log.LogrusObj.Errorf("NewDirectUpload2-消费出现错误 :%+v", err)
 			}
 		}()
 		directUpload.consume()

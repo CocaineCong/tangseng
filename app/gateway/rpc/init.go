@@ -13,6 +13,7 @@ import (
 
 	"github.com/CocaineCong/tangseng/config"
 	"github.com/CocaineCong/tangseng/idl/pb/favorite"
+	"github.com/CocaineCong/tangseng/idl/pb/index_platform"
 	"github.com/CocaineCong/tangseng/idl/pb/search_engine"
 	"github.com/CocaineCong/tangseng/idl/pb/user"
 	"github.com/CocaineCong/tangseng/pkg/discovery"
@@ -23,9 +24,10 @@ var (
 	ctx        context.Context
 	CancelFunc context.CancelFunc
 
-	UserClient         user.UserServiceClient
-	FavoriteClient     favorite.FavoritesServiceClient
-	SearchEngineClient search_engine.SearchEngineServiceClient
+	UserClient          user.UserServiceClient
+	FavoriteClient      favorite.FavoritesServiceClient
+	SearchEngineClient  search_engine.SearchEngineServiceClient
+	IndexPlatformClient index_platform.IndexPlatformServiceClient
 )
 
 func Init() {
@@ -37,6 +39,7 @@ func Init() {
 	initClient(config.Conf.Domain["user"].Name, &UserClient)
 	initClient(config.Conf.Domain["favorite"].Name, &FavoriteClient)
 	initClient(config.Conf.Domain["search_engine"].Name, &SearchEngineClient)
+	initClient(config.Conf.Domain["index_platform"].Name, &IndexPlatformClient)
 }
 
 func initClient(serviceName string, client interface{}) {
@@ -53,6 +56,8 @@ func initClient(serviceName string, client interface{}) {
 		*c = favorite.NewFavoritesServiceClient(conn)
 	case *search_engine.SearchEngineServiceClient:
 		*c = search_engine.NewSearchEngineServiceClient(conn)
+	case *index_platform.IndexPlatformServiceClient:
+		*c = index_platform.NewIndexPlatformServiceClient(conn)
 	default:
 		panic("unsupported woker type")
 	}

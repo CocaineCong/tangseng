@@ -1,7 +1,6 @@
 package kfk
 
 import (
-	"fmt"
 	_ "net/http/pprof"
 
 	"github.com/IBM/sarama"
@@ -17,11 +16,10 @@ func KafkaProducer(topic string, msg []byte) (err error) {
 		Topic: topic,
 		Value: sarama.StringEncoder(msg),
 	}
-	partition, offset, err := producer.SendMessage(message)
+	_, _, err = producer.SendMessage(message)
 	if err != nil {
 		return
 	}
-	fmt.Println(offset, partition)
 	return
 }
 

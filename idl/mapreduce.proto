@@ -1,5 +1,5 @@
 syntax="proto3";
-option go_package = "/index_platform;";
+option go_package = "/mapreduce;";
 
 message MapReduceTask{
 	// @inject_tag:form:"input" uri:"input"
@@ -18,9 +18,9 @@ message MapReduceTask{
 
 message MasterTaskCompletedResp {
 	// @inject_tag:form:"code" uri:"code"
-	int64 code=1;
+	int64 code = 1;
 	// @inject_tag:form:"message" uri:"message"
-	string message=2;
+	string message = 2;
 }
 
 service MapReduceService {

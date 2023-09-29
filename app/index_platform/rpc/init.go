@@ -30,7 +30,7 @@ func Init() {
 	ctx, CancelFunc = context.WithTimeout(context.Background(), 3*time.Second)
 
 	defer Register.Close()
-	initClient(config.Conf.Domain["index_platform"].Name, &MapReduceClient)
+	initClient(config.Conf.Domain["mapreduce"].Name, &MapReduceClient)
 }
 
 func initClient(serviceName string, client interface{}) {

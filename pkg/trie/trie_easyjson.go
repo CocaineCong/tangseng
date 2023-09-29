@@ -7,6 +7,7 @@ import (
 	easyjson "github.com/mailru/easyjson"
 	jlexer "github.com/mailru/easyjson/jlexer"
 	jwriter "github.com/mailru/easyjson/jwriter"
+	sync "sync"
 )
 
 // suppress unused package warning
@@ -41,26 +42,12 @@ func easyjson4298c6f8DecodeGithubComCocaineCongTangsengPkgTrie(in *jlexer.Lexer,
 		case "children":
 			if in.IsNull() {
 				in.Skip()
+				out.Children = nil
 			} else {
-				in.Delim('{')
-				out.Children = make(map[int32]*TrieNode)
-				for !in.IsDelim('}') {
-					key := int32(in.Int32Str())
-					in.WantColon()
-					var v1 *TrieNode
-					if in.IsNull() {
-						in.Skip()
-						v1 = nil
-					} else {
-						if v1 == nil {
-							v1 = new(TrieNode)
-						}
-						(*v1).UnmarshalEasyJSON(in)
-					}
-					(out.Children)[key] = v1
-					in.WantComma()
+				if out.Children == nil {
+					out.Children = new(sync.Map)
 				}
-				in.Delim('}')
+				easyjson4298c6f8DecodeSync(in, out.Children)
 			}
 		default:
 			in.SkipRecursive()
@@ -84,26 +71,10 @@ func easyjson4298c6f8EncodeGithubComCocaineCongTangsengPkgTrie(out *jwriter.Writ
 	{
 		const prefix string = ",\"children\":"
 		out.RawString(prefix)
-		if in.Children == nil && (out.Flags&jwriter.NilMapAsEmpty) == 0 {
-			out.RawString(`null`)
+		if in.Children == nil {
+			out.RawString("null")
 		} else {
-			out.RawByte('{')
-			v2First := true
-			for v2Name, v2Value := range in.Children {
-				if v2First {
-					v2First = false
-				} else {
-					out.RawByte(',')
-				}
-				out.Int32Str(int32(v2Name))
-				out.RawByte(':')
-				if v2Value == nil {
-					out.RawString("null")
-				} else {
-					(*v2Value).MarshalEasyJSON(out)
-				}
-			}
-			out.RawByte('}')
+			easyjson4298c6f8EncodeSync(out, *in.Children)
 		}
 	}
 	out.RawByte('}')
@@ -131,6 +102,41 @@ func (v *TrieNode) UnmarshalJSON(data []byte) error {
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *TrieNode) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson4298c6f8DecodeGithubComCocaineCongTangsengPkgTrie(l, v)
+}
+func easyjson4298c6f8DecodeSync(in *jlexer.Lexer, out *sync.Map) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson4298c6f8EncodeSync(out *jwriter.Writer, in sync.Map) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	out.RawByte('}')
 }
 func easyjson4298c6f8DecodeGithubComCocaineCongTangsengPkgTrie1(in *jlexer.Lexer, out *Trie) {
 	isTopLevel := in.IsStart()

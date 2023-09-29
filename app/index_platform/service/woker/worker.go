@@ -2,12 +2,15 @@ package woker
 
 import (
 	"context"
+	"fmt"
 	"hash/fnv"
 	"time"
 
 	"github.com/RoaringBitmap/roaring"
 
+	"github.com/CocaineCong/tangseng/app/index_platform/repository/storage"
 	"github.com/CocaineCong/tangseng/app/index_platform/rpc"
+	"github.com/CocaineCong/tangseng/app/index_platform/trie"
 	"github.com/CocaineCong/tangseng/idl/pb/mapreduce"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/CocaineCong/tangseng/types"
@@ -32,6 +35,9 @@ func Worker(ctx context.Context, mapf func(string, string) []*types.KeyValue, re
 		case int64(types.Wait):
 			time.Sleep(5 * time.Second)
 		case int64(types.Exit):
+			fmt.Println("start store trie")
+			_ = storage.GlobalTrieDBs.StorageDict(trie.GobalTrieTree)
+			fmt.Println("store trie finished")
 			return
 		default:
 			return
@@ -48,14 +54,13 @@ func ihash(key string) int64 {
 func getTask(ctx context.Context) (resp *mapreduce.MapReduceTask, err error) {
 	// worker从master获取任务
 	taskReq := &mapreduce.MapReduceTask{}
-	resp, err = rpc.MapReduceClient.MasterAssignTask(ctx, taskReq)
+	resp, err = rpc.MasterAssignTask(ctx, taskReq)
 
 	return
 }
 
 func TaskCompleted(ctx context.Context, task *mapreduce.MapReduceTask) (reply *mapreduce.MasterTaskCompletedResp, err error) {
-	// 通过RPC，把task信息发给master
-	reply, err = rpc.MapReduceClient.MasterTaskCompleted(ctx, task)
+	reply, err = rpc.MasterTaskCompleted(ctx, task)
 
 	return
 }

@@ -18,4 +18,7 @@ const (
 	DataSourceCrawl
 )
 
-const BatchCreateSize = 1000
+const (
+	BatchCreateSize = 1000
+	BatchSize       = 100
+)

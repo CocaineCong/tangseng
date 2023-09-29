@@ -1,0 +1,18 @@
+syntax="proto3";
+option go_package = "/index_platform;";
+
+message BuildIndexReq { // TODO: 后面改成流的形式
+	// @inject_tag:form:"file_path" uri:"file_path"
+	repeated string file_path = 1;
+}
+
+message BuildIndexResp {
+	// @inject_tag:form:"code" uri:"code"
+	int64 code = 1;
+	// @inject_tag:form:"message" uri:"message"
+	string message = 2;
+}
+
+service IndexPlatformService {
+	rpc BuildIndexService(BuildIndexReq) returns (BuildIndexResp);
+}

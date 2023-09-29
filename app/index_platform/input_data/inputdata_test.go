@@ -13,7 +13,3 @@ func TestInputDataDoc2Struct(t *testing.T) {
 	}
 	fmt.Println("r", r)
 }
-
-func TestData2Kfk(t *testing.T) {
-	DocData2Kfk()
-}

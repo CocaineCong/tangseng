@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/CocaineCong/tangseng/app/index_platform/consts"
 	"github.com/CocaineCong/tangseng/consts/e"
 	"github.com/CocaineCong/tangseng/idl/pb/mapreduce"
 	"github.com/CocaineCong/tangseng/types"
@@ -22,15 +23,11 @@ type MasterSrv struct {
 	mapreduce.UnimplementedMapReduceServiceServer
 }
 
-const (
-	ReduceDefaultNum = 5
-)
-
 var (
 	InputFiles = []string{ // TODO 配置文件读取
-		"/Users/mac/GolandProjects/Go-SearchEngine/app/index_platform/service/other_input_data/movies_data.csv",
-		"/Users/mac/GolandProjects/Go-SearchEngine/app/index_platform/service/other_input_data/movies_data1.csv",
-		"/Users/mac/GolandProjects/Go-SearchEngine/app/index_platform/service/other_input_data/movies_data2.csv",
+		// "/Users/mac/GolandProjects/Go-SearchEngine/app/index_platform/input_data/other_input_data/movies_data.csv",
+		// "/Users/mac/GolandProjects/Go-SearchEngine/app/index_platform/input_data/other_input_data/movies_data1.csv",
+		// "/Users/mac/GolandProjects/Go-SearchEngine/app/index_platform/input_data/other_input_data/movies_data2.csv",
 	}
 	MapReduceSrvIns  *MasterSrv
 	MapReduceSrvOnce sync.Once
@@ -39,7 +36,7 @@ var (
 
 func GetMapReduceSrv() *MasterSrv {
 	MapReduceSrvOnce.Do(func() {
-		MapReduceSrvIns = NewMaster(InputFiles, ReduceDefaultNum)
+		MapReduceSrvIns = NewMaster(InputFiles, consts.ReduceDefaultNum)
 	})
 	return MapReduceSrvIns
 }

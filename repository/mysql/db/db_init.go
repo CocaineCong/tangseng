@@ -67,6 +67,5 @@ func Database(connString string) error {
 }
 
 func NewDBClient(ctx context.Context) *gorm.DB {
-	db := _db
-	return db.WithContext(ctx)
+	return _db.WithContext(ctx)
 }

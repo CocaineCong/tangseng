@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.21.12
-// source: index_platform.proto
+// source: mapreduce.proto
 
 package mapreduce
 
@@ -18,7 +18,7 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// MapReduceServiceClient is the woker API for MapReduceService service.
+// MapReduceServiceClient is the client API for MapReduceService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MapReduceServiceClient interface {
@@ -137,5 +137,5 @@ var MapReduceService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "index_platform.proto",
+	Metadata: "mapreduce.proto",
 }
