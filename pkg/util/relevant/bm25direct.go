@@ -67,6 +67,10 @@ func getTopKDocumentIndices(scores []float64, k int) []int {
 	sort.SliceStable(docIndices, func(i, j int) bool {
 		return scores[docIndices[i]] > scores[docIndices[j]]
 	})
+	//边界检查，以确保k不超过分数数组长度
+	if k > len(scores) {
+		k = len(scores)
+	}
 
 	return docIndices[:k] // 返回前 k 个文档的索引
 }

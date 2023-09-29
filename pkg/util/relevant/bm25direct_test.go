@@ -45,15 +45,15 @@ func BM25T() {
 func TestBm25direct(t *testing.T) {
 	// 示例文档集合
 	documents := []string{
-		"This is the first document",
-		"This document is the second document",
+		"This is the first 火 document",
+		"This document is the 火　火　second document",
 		"And This is the third one",
 		"Is this the first document?",
-		"This This This",
+		"This This This　火",
 	}
 
 	// 查询文本和相关参数
-	query := "This"
+	query := "火"
 	k1 := 1.2
 	b := 0.75
 	avgdl := calculateAverageDocumentLength(documents) // 计算平均文档长度
