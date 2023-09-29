@@ -7,7 +7,7 @@ import (
 // GseCutForRecall 分词 召回专用
 func GseCutForRecall(content string) (token []string, err error) {
 	content = ignoredChar(content)
-	c := GobalSeg.CutSearch(content, true)
+	c := GlobalSega.CutSearch(content, true)
 	token = make([]string, 0)
 	for _, v := range c {
 		if v == " " {
