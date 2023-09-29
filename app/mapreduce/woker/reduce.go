@@ -55,8 +55,8 @@ func reducer(ctx context.Context, task *mapreduce.MapReduceTask, reducef func(st
 	}
 }
 
-func readFromLocalFile(files []string) *[]types.KeyValue {
-	kva := []types.KeyValue{}
+func readFromLocalFile(files []string) *[]*types.KeyValue {
+	kva := []*types.KeyValue{}
 	for _, filepath := range files {
 		file, err := os.Open(filepath)
 		if err != nil {
@@ -64,8 +64,8 @@ func readFromLocalFile(files []string) *[]types.KeyValue {
 		}
 		dec := json.NewDecoder(file)
 		for {
-			var kv types.KeyValue
-			if err := dec.Decode(&kv); err != nil {
+			var kv *types.KeyValue
+			if err = dec.Decode(&kv); err != nil {
 				break
 			}
 			kva = append(kva, kv)

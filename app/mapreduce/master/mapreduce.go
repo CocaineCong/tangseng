@@ -1,4 +1,4 @@
-package service
+package master
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/CocaineCong/tangseng/app/index_platform/consts"
+	"github.com/CocaineCong/tangseng/app/mapreduce/consts"
 	"github.com/CocaineCong/tangseng/consts/e"
 	"github.com/CocaineCong/tangseng/idl/pb/mapreduce"
 	"github.com/CocaineCong/tangseng/types"

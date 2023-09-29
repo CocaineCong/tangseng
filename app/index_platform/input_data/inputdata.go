@@ -9,8 +9,8 @@ import (
 	"github.com/CocaineCong/tangseng/types"
 )
 
-// doc2Struct 从csv读取数据
-func doc2Struct(docStr string) (*types.Document, error) {
+// Doc2Struct 从csv读取数据
+func Doc2Struct(docStr string) (*types.Document, error) {
 	docStr = strings.Replace(docStr, "\"", "", -1)
 	d := strings.Split(docStr, ",")
 	something2Str := make([]string, 0)

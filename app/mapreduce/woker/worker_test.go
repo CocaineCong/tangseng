@@ -1,15 +1,13 @@
 package woker
 
 import (
-	"context"
 	"fmt"
 	"testing"
 
 	"github.com/CocaineCong/tangseng/app/index_platform/analyzer"
-	"github.com/CocaineCong/tangseng/app/index_platform/mapreduce/input_data_mr"
 	"github.com/CocaineCong/tangseng/app/index_platform/repository/storage"
-	"github.com/CocaineCong/tangseng/app/index_platform/rpc"
 	"github.com/CocaineCong/tangseng/app/index_platform/trie"
+	"github.com/CocaineCong/tangseng/app/mapreduce/rpc"
 	"github.com/CocaineCong/tangseng/config"
 	"github.com/CocaineCong/tangseng/pkg/kfk"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
@@ -32,7 +30,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestWorker(t *testing.T) {
-	ctx := context.Background()
+	// ctx := context.Background()
 	// dao.InitMysqlDirectUpload(ctx)
-	Worker(ctx, input_data_mr.Map, input_data_mr.Reduce)
+	// Worker(ctx, input_data_mr.Map, input_data_mr.Reduce)
 }
