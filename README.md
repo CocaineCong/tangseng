@@ -3,11 +3,10 @@
 # 项目大体框架
 
 1、gin作为http框架，grpc作为rpc框架，etcd作为服务发现。\
-2、总体服务分成`用户模块`、`收藏夹模块`、`搜索引擎模块`。\
-3、用户模块和收藏夹模块使用共同的数据库。\
-4、分布式爬虫爬取数据，并发送到kafka集群中，再落库消费。 \
-5、搜索引擎模块的文本搜索单独设立使用boltdb存储index。\
-6、图片搜索待定...
+2、总体服务分成`用户模块`、`收藏夹模块`、`索引平台`、`搜索引擎(文字模块)`、`搜索引擎(图片模块)`。\
+3、分布式爬虫爬取数据，并发送到kafka集群中，再落库消费。 \
+4、搜索引擎模块的文本搜索单独设立使用boltdb存储index。\
+5、图片搜索待定...
 
 ![项目大体框架](doc/tangseng.png)
 
@@ -30,7 +29,7 @@
 ### 3.1 文本检索
 
 > * x.inverted 存储倒排索引文件
-> * x.dict 存储词典trie树
+> * x.trie_tree 存储词典trie树
 
 #### 正排库
 
@@ -51,7 +50,7 @@
 
 - [ ] 引入降级熔断
 - [ ] 引入jaeger进行链路追踪
-- [ ] 引入skywalking进行监控
+- [ ] 引入skywalking or prometheus进行监控
 - [ ] 抽离dao的init，用key来获取相关数据库实例
 
 #### 2.功能相关
@@ -59,6 +58,9 @@
 - [x] 构建索引的时候太慢了.后面加上并发，建立索引的地方加上并发
 - [ ] 索引压缩，inverted index，也就是倒排索引表，后续改成存offset,用mmap
 - [x] 相关性的计算要考虑一下，TFIDF，bm25
+- [x] 使用前缀树存储联想信息
+- [ ] 哈夫曼编码压缩前缀树
+- [ ] inverted 和 trie tree 的存储支持一致性hash分片存储
 - [ ] 词向量，pagerank
 - [x] 分词加入ik分词器
 - [x] 构建索引平台，计算存储分离，构建索引与召回分开
@@ -72,7 +74,7 @@
 - [ ] 实现TF类
 - [ ] 所有的输入数据都收口到starrocks，从starrocks读取来构建索引
 - [x] 搜索完一个接着搜索，没有清除缓存导致结果是和上一个产生并集
-- [ ] 排序器的排序不够(w1*tf+w2*bm25+other?)...
+- [x] 排序器优化
 
 ![文本搜索](doc/text2text.jpg)
 
@@ -99,7 +101,11 @@ tangseng/
 ├── app                   // 各个微服务
 │   ├── favorite          // 收藏夹
 │   ├── gateway           // 网关
-│   ├── search-engine     // 搜索微服务
+│   ├── index_platform    // 索引平台
+│   ├── mapreduce         // mapreduce 服务(已弃用)
+│   ├── gateway           // 网关
+│   ├── search_engine     // 搜索微服务(文本)
+│   ├── search_img        // 搜索微服务(图片)
 │   └── user              // 用户模块微服务
 ├── bin                   // 编译后的二进制文件模块
 ├── config                // 配置文件
@@ -110,12 +116,14 @@ tangseng/
 ├── loading               // 全局的loading，各个微服务都可以使用的工具
 ├── logs                  // 放置打印日志模块
 ├── pkg                   // 各种包
+│   ├── bloom_filter      // 布隆过滤器
 │   ├── ctl               // 用户信息相关
 │   ├── discovery         // etcd服务注册、keep-alive、获取服务信息等等
 │   ├── es                // es 模块
 │   ├── jwt               // jwt鉴权
 │   ├── kfk               // kafka 生产与消费
 │   ├── logger            // 日志
+│   ├── mapreduce         // mapreduce服务
 │   ├── res               // 统一response接口返回
 │   ├── retry             // 重试函数
 │   ├── trie              // 前缀树
@@ -157,21 +165,29 @@ seach-engine/
 ├── analyzer              // 分词器
 ├── cmd                   // 启动入口
 ├── data                  // 数据层
-├── engine                // 搜索引擎
-├── inputdata             // 处理各种数据源
-├── logic                 // 共有逻辑
 ├── ranking               // 排序器
-├── recall                // 召回层
 ├── respository           // 存储信息
 │   ├── spark             // spark 存储,后续支持...
 │   └── storage           // boltdb 存储(后续迁到spark)
-├── script                // 脚本
-│   ├── crwal             // 分布式爬虫(还没时间写)
-│   └── index             // 索引建立脚本
-├── segment               // 主数据分块
 ├── service               // 服务
 ├── test                  // 测试文件
 └── types                 // 定义的结构体
+```
+
+## 5. index platform索引平台
+
+```
+seach-engine/
+├── analyzer              // 分词器
+├── cmd                   // 启动入口
+├── consts                // 放置常量
+├── crawl                 // 分布式爬虫
+├── input_data            // csv文件(爬虫未实现)
+├── respository           // 存储信息
+│   ├── spark             // spark 存储,后续支持...
+│   └── storage           // boltdb 存储(后续迁到spark)
+├── service               // 服务
+└── trie                  // 存放trie树
 ```
 
 # 项目文件配置
