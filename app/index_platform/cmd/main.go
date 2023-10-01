@@ -10,9 +10,7 @@ import (
 
 	"github.com/CocaineCong/tangseng/app/index_platform/analyzer"
 	"github.com/CocaineCong/tangseng/app/index_platform/cmd/kfk_register"
-	"github.com/CocaineCong/tangseng/app/index_platform/repository/storage"
 	"github.com/CocaineCong/tangseng/app/index_platform/service"
-	"github.com/CocaineCong/tangseng/app/index_platform/trie"
 	"github.com/CocaineCong/tangseng/config"
 	"github.com/CocaineCong/tangseng/idl/pb/index_platform"
 	"github.com/CocaineCong/tangseng/loading"
@@ -29,8 +27,6 @@ func main() {
 	// 加载配置
 	loading.Loading()
 	analyzer.InitSeg()
-	trie.InitTrieTree()
-	storage.InitTrieDBs()
 	kfk_register.RegisterJob(ctx)
 
 	// 注册服务

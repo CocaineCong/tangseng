@@ -19,9 +19,11 @@ es:
 
 
 redis:
-  user_name: default
-  address: 127.0.0.1:6379
-  password:
+  redisDbName: 4
+  redisHost: 127.0.0.1
+  redisPort: 6379
+  redisPassword: 123456
+  redisNetwork: "tcp"
 
 etcd:
   address: 127.0.0.1:2379

@@ -40,3 +40,4 @@ output_data/
 mr-*
 wukong_100m*
 .trie_tree
+data/

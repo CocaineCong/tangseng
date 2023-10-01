@@ -7,7 +7,6 @@ import (
 
 	"github.com/CocaineCong/tangseng/app/index_platform/analyzer"
 	"github.com/CocaineCong/tangseng/app/index_platform/repository/db/dao"
-	"github.com/CocaineCong/tangseng/app/index_platform/repository/storage"
 	"github.com/CocaineCong/tangseng/app/index_platform/trie"
 	"github.com/CocaineCong/tangseng/app/mapreduce/mr/input_data_mr"
 	"github.com/CocaineCong/tangseng/app/mapreduce/rpc"
@@ -27,7 +26,6 @@ func TestMain(m *testing.M) {
 	analyzer.InitSeg()
 	rpc.Init()
 	kfk.InitKafka()
-	storage.InitTrieDBs()
 	fmt.Println("Write tests on values: ", config.Conf)
 	m.Run()
 }

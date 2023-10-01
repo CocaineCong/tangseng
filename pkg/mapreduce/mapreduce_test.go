@@ -24,10 +24,12 @@ func TestMain(m *testing.M) {
 
 func TestMapReduce(t *testing.T) {
 	invertedIndex := cmap.New[*roaring.Bitmap]()
-	path := "/Users/mac/GolandProjects/Go-SearchEngine/app/index_platform/input_data/other_input_data/movies_data1.csv"
+	filePaths := []string{"/Users/mac/GolandProjects/Go-SearchEngine/app/mapreduce/input_data/other_input_data/movies_data.csv"}
 	MapReduce(func(source chan<- []byte) {
-		content, _ := os.ReadFile(path)
-		source <- content
+		for _, path := range filePaths {
+			content, _ := os.ReadFile(path)
+			source <- content
+		}
 	}, func(item []byte, writer Writer[[]*types.KeyValue], cancel func(error)) {
 		res := make([]*types.KeyValue, 0, 1e3)
 		lines := strings.Split(string(item), "\r\n")

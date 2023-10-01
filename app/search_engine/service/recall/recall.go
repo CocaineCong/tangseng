@@ -1,15 +1,19 @@
 package recall
 
 import (
+	"bytes"
 	"context"
 
 	"github.com/RoaringBitmap/roaring"
+	"github.com/samber/lo"
 
 	"github.com/CocaineCong/tangseng/app/search_engine/analyzer"
 	"github.com/CocaineCong/tangseng/app/search_engine/ranking"
 	"github.com/CocaineCong/tangseng/app/search_engine/repository/db/dao"
 	"github.com/CocaineCong/tangseng/app/search_engine/repository/storage"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/CocaineCong/tangseng/pkg/trie"
+	"github.com/CocaineCong/tangseng/repository/redis"
 	"github.com/CocaineCong/tangseng/types"
 )
 
@@ -35,24 +39,54 @@ func (r *Recall) Search(ctx context.Context, query string) (res []*types.SearchI
 }
 
 // SearchQuery 入口
-func (r *Recall) SearchQuery(query string) ([]*types.DictTireTree, error) {
-	// return r.GetDict(query)
-	return nil, nil
-}
-
-func (r *Recall) searchDoc(ctx context.Context, tokens []string) (recalls []*types.SearchItem, err error) {
-	recalls = make([]*types.SearchItem, 0)
-	// exist := make(map[int64]struct{}) // TODO redis 存放已经搜索过的 token
-	allPostingsList := []*types.PostingsList{}
-	for _, token := range tokens {
-		postingsList, errx := fetchPostingsByToken(token)
+func (r *Recall) SearchQuery(query string) (resp []string, err error) {
+	dictTreeList := make([]string, 0, 1e3)
+	for _, trieTree := range storage.GlobalTrieDB {
+		tireByte, errx := trieTree.GetTrieTree([]byte(query))
 		if errx != nil {
 			log.LogrusObj.Errorln(errx)
 			continue
 		}
+		replaced := bytes.Replace(tireByte, []byte("children"), []byte("children_recall"), -1)
+		node, errx := trie.ParseTrieNode(string(replaced))
+		if errx != nil {
+			log.LogrusObj.Errorln(errx)
+			continue
+		}
+		trieT := trie.NewTrie()
+		trieT.Root = node
+		queryTrie := trieT.FindAllByPrefixForRecall(query)
+		dictTreeList = append(dictTreeList, queryTrie...)
+	}
+
+	resp = lo.Uniq(dictTreeList)
+	return
+}
+
+func (r *Recall) searchDoc(ctx context.Context, tokens []string) (recalls []*types.SearchItem, err error) {
+	recalls = make([]*types.SearchItem, 0)
+	allPostingsList := []*types.PostingsList{}
+	for _, token := range tokens {
+		docIds, _ := redis.GetInvertedIndexTokenDocIds(ctx, token)
+		var postingsList []*types.PostingsList
+		if docIds == nil {
+			// 如果缓存不存在，就去索引表里面读取
+			postingsList, err = fetchPostingsByToken(token)
+			if err != nil {
+				log.LogrusObj.Errorln(err)
+				continue
+			} else {
+				// 如果缓存存在，就直接读缓存，不用担心实时性问题，缓存10分钟清空一次，这延迟是能接受到
+				postingsList = append(postingsList, &types.PostingsList{
+					Term:   token,
+					DocIds: docIds,
+				})
+			}
+		}
 		allPostingsList = append(allPostingsList, postingsList...)
 	}
 
+	// 排序打分
 	iDao := dao.NewInputDataDao(ctx)
 	for _, p := range allPostingsList {
 		if p.DocIds.IsEmpty() {
@@ -60,7 +94,6 @@ func (r *Recall) searchDoc(ctx context.Context, tokens []string) (recalls []*typ
 		}
 		recallData, _ := iDao.ListInputDataByDocIds(p.DocIds.ToArray())
 		searchItems := ranking.CalculateScoreBm25(p.Term, recallData)
-
 		recalls = append(recalls, searchItems...)
 	}
 
@@ -74,7 +107,7 @@ func fetchPostingsByToken(token string) (postingsList []*types.PostingsList, err
 	// 遍历存储index的地方，token对应的doc Id 全部取出
 	output := roaring.New()
 	postingsList = make([]*types.PostingsList, 0, 1e6)
-	for _, inverted := range storage.GobalInvertedDB {
+	for _, inverted := range storage.GlobalInvertedDB {
 		docIds, errx := inverted.GetInverted([]byte(token))
 		if errx != nil {
 			log.LogrusObj.Errorln(errx)

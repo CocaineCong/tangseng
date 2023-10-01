@@ -7,7 +7,6 @@ import (
 	easyjson "github.com/mailru/easyjson"
 	jlexer "github.com/mailru/easyjson/jlexer"
 	jwriter "github.com/mailru/easyjson/jwriter"
-	sync "sync"
 )
 
 // suppress unused package warning
@@ -40,14 +39,8 @@ func easyjson4298c6f8DecodeGithubComCocaineCongTangsengPkgTrie(in *jlexer.Lexer,
 		case "is_end":
 			out.IsEnd = bool(in.Bool())
 		case "children":
-			if in.IsNull() {
-				in.Skip()
-				out.Children = nil
-			} else {
-				if out.Children == nil {
-					out.Children = new(sync.Map)
-				}
-				easyjson4298c6f8DecodeSync(in, out.Children)
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.Children).UnmarshalJSON(data))
 			}
 		default:
 			in.SkipRecursive()
@@ -71,11 +64,7 @@ func easyjson4298c6f8EncodeGithubComCocaineCongTangsengPkgTrie(out *jwriter.Writ
 	{
 		const prefix string = ",\"children\":"
 		out.RawString(prefix)
-		if in.Children == nil {
-			out.RawString("null")
-		} else {
-			easyjson4298c6f8EncodeSync(out, *in.Children)
-		}
+		out.Raw((in.Children).MarshalJSON())
 	}
 	out.RawByte('}')
 }
@@ -102,41 +91,6 @@ func (v *TrieNode) UnmarshalJSON(data []byte) error {
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *TrieNode) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson4298c6f8DecodeGithubComCocaineCongTangsengPkgTrie(l, v)
-}
-func easyjson4298c6f8DecodeSync(in *jlexer.Lexer, out *sync.Map) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeFieldName(false)
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjson4298c6f8EncodeSync(out *jwriter.Writer, in sync.Map) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	out.RawByte('}')
 }
 func easyjson4298c6f8DecodeGithubComCocaineCongTangsengPkgTrie1(in *jlexer.Lexer, out *Trie) {
 	isTopLevel := in.IsStart()

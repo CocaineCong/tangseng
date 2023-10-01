@@ -9,7 +9,6 @@ import (
 
 	"github.com/IBM/sarama"
 
-	"github.com/CocaineCong/tangseng/app/index_platform/repository/storage"
 	"github.com/CocaineCong/tangseng/app/index_platform/trie"
 	"github.com/CocaineCong/tangseng/config"
 	"github.com/CocaineCong/tangseng/pkg/kfk"
@@ -75,11 +74,6 @@ func (consumer *TrieTreeConsumer) ConsumeClaim(session sarama.ConsumerGroupSessi
 	gapTime := 2 * time.Minute
 	for {
 		select {
-		case <-time.After(gapTime):
-			logs.LogrusObj.Infof("ConsumeClaim starting store dict")
-			_ = storage.GlobalTrieDBs.StorageDict(trie.GobalTrieTree)
-			logs.LogrusObj.Infof("ConsumeClaim ending store dict")
-
 		case message, ok := <-claim.Messages():
 			if !ok {
 				logs.LogrusObj.Infof("message channel was closed")
@@ -90,6 +84,12 @@ func (consumer *TrieTreeConsumer) ConsumeClaim(session sarama.ConsumerGroupSessi
 			// logs.LogrusObj.Infof("TrieTreeConsumer Message claimed: value = %s, timestamp = %v, topic = %s", string(message.Value), message.Timestamp, message.Topic)
 			session.MarkMessage(message, "")
 		// https://github.com/IBM/sarama/issues/1192
+
+		case <-time.After(gapTime):
+			logs.LogrusObj.Infof("ConsumeClaim starting store dict")
+			// _ = storage.GlobalTrieDBs.StorageDict(trie.GobalTrieTree) // TODO:后续看看能不能实现一个全局的triedb，每次都先读取存量进行初始化，再插入增量...
+			logs.LogrusObj.Infof("ConsumeClaim ending store dict")
+
 		case <-session.Context().Done():
 			logs.LogrusObj.Infof("TrieTreeConsumer Done!")
 			return nil

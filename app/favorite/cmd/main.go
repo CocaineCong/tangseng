@@ -27,7 +27,7 @@ func main() {
 	etcdRegister := discovery.NewRegister(etcdAddress, logs.LogrusObj)
 	grpcAddress := config.Conf.Services[ServerName].Addr[0]
 	defer etcdRegister.Stop()
-	userNode := discovery.Server{
+	node := discovery.Server{
 		Name: config.Conf.Domain[ServerName].Name,
 		Addr: grpcAddress,
 	}
@@ -39,7 +39,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	if _, err := etcdRegister.Register(userNode, 10); err != nil {
+	if _, err := etcdRegister.Register(node, 10); err != nil {
 		panic(fmt.Sprintf("start service failed, err: %v", err))
 	}
 	logrus.Info("service started listen on ", grpcAddress)

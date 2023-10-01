@@ -10,13 +10,12 @@ import (
 	"testing"
 
 	"github.com/CocaineCong/tangseng/config"
-	"github.com/CocaineCong/tangseng/pkg/fileutils"
 	"github.com/CocaineCong/tangseng/pkg/trie"
 )
 
 func TestTrieDB_GetTrieTree(t *testing.T) {
 	aConfig := config.Conf.SeConfig.StoragePath + "0.Trie"
-	d, _ := NewTrieDB(aConfig)
+	d := NewTrieDB(aConfig)
 	trieTree := trie.NewTrie()
 	trieTree, err := d.GetTrieTreeInfo()
 	fmt.Println(err)
@@ -100,23 +99,4 @@ func TestBinaryCnStrTree(t *testing.T) {
 
 	// 打印解压后的二进制数据
 	tt2.Traverse()
-}
-
-func TestGetFiles(t *testing.T) {
-	filePath := fileutils.GetFiles(InvertedDBPaths)
-	fmt.Println(filePath)
-}
-
-func TestInitTrieDBs(t *testing.T) {
-	InitTrieDBs()
-	fmt.Println(GlobalTrieDBs)
-}
-
-func TestTrieDB_GetTrieTreeInfo(t *testing.T) {
-	InitTrieDBs()
-	tree, err := GlobalTrieDBs[0].GetTrieTreeInfo()
-	if err != nil {
-		fmt.Println(err)
-	}
-	tree.Traverse()
 }

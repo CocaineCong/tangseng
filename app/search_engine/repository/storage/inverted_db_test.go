@@ -7,30 +7,21 @@ import (
 	"github.com/CocaineCong/tangseng/config"
 )
 
-func TestInvertedDBRead(t *testing.T) {
-	query := "电影"
-	termName := config.Conf.SeConfig.StoragePath + "0.term"
-	postingsName := config.Conf.SeConfig.StoragePath + "0.inverted"
-	inverted := NewInvertedDB(termName, postingsName)
-	termValue, err := inverted.GetTermInfo(query)
-	if err != nil {
-		fmt.Println("Err", err)
-	}
-	fmt.Println("termValue", termValue)
-}
-
 func TestGetInvertedInfo(t *testing.T) {
 	query := "蜘蛛侠"
 	termName := config.Conf.SeConfig.StoragePath + "0.term"
 	postingsName := config.Conf.SeConfig.StoragePath + "0.inverted"
 	inverted := NewInvertedDB(termName, postingsName)
-	p, err := inverted.GetInvertedInfo(query)
+	p, err := inverted.GetInverted([]byte(query))
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(p.Token, p.PostingsList)
+	fmt.Println(p)
 }
 
 func TestInitInvertedDB(t *testing.T) {
 	InitInvertedDB()
+	for _, v := range GlobalInvertedDB {
+		fmt.Println(v)
+	}
 }
