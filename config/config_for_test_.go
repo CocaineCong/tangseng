@@ -1,8 +1,8 @@
 package config
 
 import (
-	"io/ioutil"
 	"log"
+	"os"
 
 	"gopkg.in/yaml.v3"
 )
@@ -20,7 +20,7 @@ type ConfigReader struct {
 // 'reader' implementing the Interface
 // Function to read from actual file
 func (r *ConfigReader) readConfig() ([]byte, error) {
-	file, err := ioutil.ReadFile(r.FileName)
+	file, err := os.ReadFile(r.FileName)
 
 	if err != nil {
 		log.Fatal(err)

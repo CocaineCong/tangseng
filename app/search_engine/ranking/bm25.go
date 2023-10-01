@@ -33,7 +33,7 @@ func CalculateScoreBm25(token string, searchItem []*types.SearchItem) (resp []*t
 	sort.Slice(searchItem, func(i, j int) bool {
 		return searchItem[i].Score > searchItem[j].Score
 	})
-	resp = make([]*types.SearchItem, 0)
+
 	resp = searchItem
 
 	return

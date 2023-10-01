@@ -9,7 +9,7 @@ func Cosine(a []float64, b []float64) float64 {
 		s     = 0.0
 		sa    = 0.0
 		sb    = 0.0
-		count = 0
+		count = 0 // nolint:golint,ineffassign
 	)
 	if aLen > bLen {
 		count = aLen

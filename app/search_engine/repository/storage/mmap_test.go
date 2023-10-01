@@ -39,7 +39,12 @@ func TestMmap(t *testing.T) {
 		fmt.Println("映射文件失败:", err)
 		return
 	}
-	defer syscall.Munmap(mmapData)
+	defer func(b []byte) {
+		err = syscall.Munmap(b)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}(mmapData)
 
 	// 使用 mmapData 可以直接读取文件内容
 	fmt.Printf("文件内容：%s\n", string(mmapData))

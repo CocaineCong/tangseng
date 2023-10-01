@@ -201,7 +201,8 @@ func storeDictTrieByHash(ctx context.Context, dict *trie.Trie) (err error) {
 	return
 }
 
-func iHash(key string) int64 {
+// iHash 哈希作用
+func iHash(key string) int64 { // nolint:golint,unused
 	h := fnv.New32a()
 	_, _ = h.Write([]byte(key))
 	return int64(h.Sum32() & 0x7fffffff)

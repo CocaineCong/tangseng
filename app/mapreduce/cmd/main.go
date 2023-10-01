@@ -48,6 +48,4 @@ func main() {
 	if err = server.Serve(lis); err != nil {
 		panic(err)
 	}
-
-	return
 }

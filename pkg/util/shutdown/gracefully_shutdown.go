@@ -28,5 +28,7 @@ func GracefullyShutdown(server *http.Server) {
 			log.LogrusObj.Infoln("service has stopped")
 			os.Exit(0)
 		}
+	default:
+		os.Exit(0)
 	}
 }

@@ -25,7 +25,6 @@ func reducer(ctx context.Context, task *mapreduce.MapReduceTask, reducef func(st
 	outName := fmt.Sprintf("%s/mr-tmp-%d.%s",
 		dir, task.TaskNumber, consts.InvertedBucket)
 	invertedDB := storage.NewInvertedDB(outName)
-	output := roaring.NewBitmap()
 	var outByte []byte
 
 	i := 0
@@ -40,7 +39,7 @@ func reducer(ctx context.Context, task *mapreduce.MapReduceTask, reducef func(st
 			values = append(values, intermediate[k].Value)
 		}
 		// 交给reducef，拿到结果
-		output = reducef(intermediate[i].Key, values)
+		output := reducef(intermediate[i].Key, values)
 		// 落倒排索引库
 		outByte, _ = output.MarshalBinary()
 		_ = invertedDB.StoragePostings(intermediate[i].Key, outByte)

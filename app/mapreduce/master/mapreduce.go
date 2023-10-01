@@ -78,7 +78,7 @@ func (m *MasterSrv) Done() bool {
 	return m.MasterPhase == types.Exit
 }
 
-func (m *MasterSrv) catchTimeout() {
+func (m *MasterSrv) catchTimeout() { // nolint:golint,unused
 	for {
 		time.Sleep(5 * time.Second)
 		mu.Lock()
@@ -88,7 +88,7 @@ func (m *MasterSrv) catchTimeout() {
 		}
 		for _, masterTask := range m.TaskMeta {
 			if masterTask.TaskStatus == types.InProgress &&
-				time.Now().Sub(masterTask.StartTime) > 10*time.Second {
+				time.Since(masterTask.StartTime) > 10*time.Second {
 				m.TaskQueue <- masterTask.TaskReference
 				masterTask.TaskStatus = types.Idle
 			}

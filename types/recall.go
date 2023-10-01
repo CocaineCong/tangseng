@@ -18,21 +18,21 @@ func (ds SearchItemList) Swap(i, j int) {
 	ds[i], ds[j] = ds[j], ds[i]
 }
 
-// 用于实现排序的map
-type queryTokenHash struct {
+// queryTokenHash 用于实现排序的map
+type queryTokenHash struct { // nolint:golint,unused
 	token         string
 	invertedIndex *InvertedIndexValue
 	fetchPostings *PostingsList
 }
 
-// token游标 标识当前位置
-type searchCursor struct {
+// searchCursor token游标 标识当前位置
+type searchCursor struct { // nolint:golint,unused
 	doc     *PostingsList // 文档编号的序列
 	current *PostingsList // 当前文档编号
 }
 
-// 短语游标
-type phraseCursor struct {
+// phraseCursor 短语游标
+type phraseCursor struct { // nolint:golint,unused
 	positions []int64 // 位置信息
 	base      int64   // 词元在查询中的位置
 	current   *int64  // 当前的位置信息

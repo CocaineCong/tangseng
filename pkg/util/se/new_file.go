@@ -15,7 +15,7 @@ type FileHandler struct {
 
 const FILEDIR = "/data/index/"
 
-// 一个字段一个文件
+// NewFileHandler 一个字段一个文件
 func NewFileHandler(field string) *FileHandler {
 	root := GetPath()
 	filePath := root + FILEDIR + field + ".bin"
@@ -38,7 +38,7 @@ func NewFileHandler(field string) *FileHandler {
 	return fileHandler
 }
 
-// 从指定的位置读取一个int64
+// ReadInt64 从指定的位置读取一个int64
 func (fh *FileHandler) ReadInt64(start int64) int64 {
 	buf := make([]byte, 8)
 	_, err := fh.file.ReadAt(buf, start)
@@ -47,15 +47,15 @@ func (fh *FileHandler) ReadInt64(start int64) int64 {
 			return -1
 		}
 	}
-	return bytetoint(buf) // 把读取的字节转为int64
+	return byte2int(buf) // 把读取的字节转为int64
 }
 
-// 指定的地方写入int64,不传就获取文件最后的下标
+// WriteInt64 指定的地方写入int64,不传就获取文件最后的下标
 func (fh *FileHandler) WriteInt64(value, start int64) int64 {
 	if start < 1 {
 		start, _ = fh.file.Seek(0, io.SeekEnd) // 表示0到文件end的偏移量
 	}
-	b := inttobyte(value)
+	b := int2byte(value)
 	_, err := fh.file.WriteAt(b, start) // n表示写入的字节数，data是int64,所以n=8, 使用writeAt不能使用追加模式
 	if err != nil {
 		fmt.Println(err)
@@ -63,8 +63,8 @@ func (fh *FileHandler) WriteInt64(value, start int64) int64 {
 	return start
 }
 
-// 从start下标读取len个int64
-func (fh *FileHandler) ReadDocIdsArry(start, len int64) []int64 {
+// ReadDocIdsArray 从start下标读取len个int64
+func (fh *FileHandler) ReadDocIdsArray(start, len int64) []int64 {
 	var i int64 = 0
 	res := make([]int64, 0, len)
 	for ; i < len; i++ {
@@ -89,21 +89,21 @@ func FileExist(filePath string) bool {
 }
 
 // []byte 转化 int64
-func bytetoint(by []byte) int64 {
+func byte2int(by []byte) int64 {
 	var num int64
-	b_buf := bytes.NewBuffer(by)
-	binary.Read(b_buf, binary.BigEndian, &num)
+	bBuf := bytes.NewBuffer(by)
+	_ = binary.Read(bBuf, binary.BigEndian, &num)
 	return num
 }
 
 // int64 转 []byte
-func inttobyte(num int64) []byte {
-	b_buf := new(bytes.Buffer)
-	binary.Write(b_buf, binary.BigEndian, &num) // num类型不能是int
-	return b_buf.Bytes()
+func int2byte(num int64) []byte {
+	bBuf := new(bytes.Buffer)
+	_ = binary.Write(bBuf, binary.BigEndian, &num) // num类型不能是int
+	return bBuf.Bytes()
 }
 
-// 获取当前程序目录
+// GetPath 获取当前程序目录
 func GetPath() string {
 	path, _ := os.Getwd()
 	return path

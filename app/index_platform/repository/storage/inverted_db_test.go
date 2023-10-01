@@ -21,13 +21,18 @@ func TestInvertedDBRead(t *testing.T) {
 	}
 	fmt.Println("v", string(v))
 	err = inverted.StoragePostings(query, []byte("100"))
+	if err != nil {
+		fmt.Println(err)
+	}
 	v2, err := inverted.GetInverted([]byte(query))
 	if err != nil {
 		fmt.Println(err)
 	}
 	fmt.Println("v2", string(v2))
-
-	inverted.PutInverted([]byte(query), []byte("11111"))
+	err = inverted.PutInverted([]byte(query), []byte("11111"))
+	if err != nil {
+		fmt.Println(err)
+	}
 	v3, err := inverted.GetInverted([]byte(query))
 	if err != nil {
 		fmt.Println(err)
@@ -61,7 +66,10 @@ func TestGetInvertedInfo(t *testing.T) {
 			fmt.Println(err)
 		}
 		output := roaring.New()
-		output.UnmarshalBinary(oByte)
+		err = output.UnmarshalBinary(oByte)
+		if err != nil {
+			fmt.Println(err)
+		}
 		fmt.Println(output)
 	}
 }

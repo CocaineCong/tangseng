@@ -23,7 +23,7 @@ func TestMain(m *testing.M) {
 
 func TestPushInvertedPath(t *testing.T) {
 	ctx := context.Background()
-	PushInvertedPath(ctx, InvertedIndexDbPathKey, []string{"a", "b", "c"})
+	_ = PushInvertedPath(ctx, InvertedIndexDbPathKey, []string{"a", "b", "c"})
 }
 
 func TestListInvertedPath(t *testing.T) {

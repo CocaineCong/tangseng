@@ -12,7 +12,7 @@ import (
 
 func Walk(dirPath string) []string {
 	var fileList []string
-	filepath.Walk(dirPath, func(path string, info fs.FileInfo, err error) error {
+	_ = filepath.Walk(dirPath, func(path string, info fs.FileInfo, err error) error {
 		if !info.IsDir() {
 			fileList = append(fileList, path)
 		}
@@ -25,15 +25,19 @@ func Walk(dirPath string) []string {
 
 func GetMd5(filePath string) string {
 	file, err := os.Open(filePath)
-	defer file.Close()
+	defer func(file *os.File) {
+		err = file.Close()
+		if err != nil {
+			return
+		}
+	}(file)
 	if err != nil {
 		panic(err)
 	}
 
 	md5h := md5.New()
-	io.Copy(md5h, file)
-	md5 := hex.EncodeToString(md5h.Sum(nil))
-	return md5
+	_, _ = io.Copy(md5h, file)
+	return hex.EncodeToString(md5h.Sum(nil))
 }
 
 func DirCHeckAndMk(dir string) {
@@ -50,8 +54,5 @@ func DirCHeckAndMk(dir string) {
 // ExistFile 判断所给的路径文件/文件夹是否存在
 func ExistFile(path string) bool {
 	_, err := os.Stat(path)
-	if os.IsNotExist(err) {
-		return false
-	}
-	return true
+	return !os.IsNotExist(err)
 }

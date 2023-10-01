@@ -18,8 +18,7 @@ func doSomethingFunc(ctx context.Context, req interface{}) (interface{}, bool, e
 
 func TestRetryOption_Retry(t *testing.T) {
 	ctx := context.Background()
-	var func_ DelayRetryFunc
-	func_ = func(ctx context.Context, req interface{}) (interface{}, bool, error) {
+	func_ := func(ctx context.Context, req interface{}) (interface{}, bool, error) {
 		return doSomethingFunc(ctx, req)
 	}
 	r := NewRetryOption(ctx, DefaultGapTime, DefaultRetryCount, func_)

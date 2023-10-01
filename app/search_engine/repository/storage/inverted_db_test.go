@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
@@ -20,7 +21,8 @@ func TestGetInvertedInfo(t *testing.T) {
 }
 
 func TestInitInvertedDB(t *testing.T) {
-	InitInvertedDB()
+	ctx := context.Background()
+	InitInvertedDB(ctx)
 	for _, v := range GlobalInvertedDB {
 		fmt.Println(v)
 	}

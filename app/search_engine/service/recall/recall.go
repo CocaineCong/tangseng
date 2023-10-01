@@ -95,7 +95,6 @@ func (r *Recall) searchDoc(ctx context.Context, tokens []string) (recalls []*typ
 // 获取 token 所有seg的倒排表数据
 func fetchPostingsByToken(token string) (postingsList []*types.PostingsList, err error) {
 	// 遍历存储index的地方，token对应的doc Id 全部取出
-	output := roaring.New()
 	postingsList = make([]*types.PostingsList, 0, 1e6)
 	for _, inverted := range storage.GlobalInvertedDB {
 		docIds, errx := inverted.GetInverted([]byte(token))
@@ -103,7 +102,7 @@ func fetchPostingsByToken(token string) (postingsList []*types.PostingsList, err
 			log.LogrusObj.Errorln(errx)
 			continue
 		}
-		output = roaring.New()
+		output := roaring.New()
 		_ = output.UnmarshalBinary(docIds)
 		// 存放到数组当中
 		postings := &types.PostingsList{

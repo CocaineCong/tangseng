@@ -14,16 +14,21 @@ import (
 
 func IntToBytes(n int) []byte {
 	data := int64(n)
-	bytebuf := bytes.NewBuffer([]byte{})
-	binary.Write(bytebuf, binary.BigEndian, data)
-	return bytebuf.Bytes()
+	byteBuf := bytes.NewBuffer([]byte{})
+	err := binary.Write(byteBuf, binary.BigEndian, data)
+	if err != nil {
+		return nil
+	}
+	return byteBuf.Bytes()
 }
 
 func StrToBytes(s string) []byte {
-	data := string(s)
-	bytebuf := bytes.NewBuffer([]byte{})
-	binary.Write(bytebuf, binary.BigEndian, data)
-	return bytebuf.Bytes()
+	byteBuf := bytes.NewBuffer([]byte{})
+	err := binary.Write(byteBuf, binary.BigEndian, &s) // nolint:golint,staticcheck
+	if err != nil {
+		return nil
+	}
+	return byteBuf.Bytes()
 }
 
 func Tmd5() string {
@@ -88,7 +93,7 @@ func ArrayUnique(arr []string) []string {
 	result := make([]string, 0, size)
 	temp := map[string]struct{}{}
 	for i := 0; i < size; i++ {
-		if _, ok := temp[arr[i]]; ok != true {
+		if _, ok := temp[arr[i]]; !ok {
 			temp[arr[i]] = struct{}{}
 			result = append(result, arr[i])
 		}

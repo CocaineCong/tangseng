@@ -41,7 +41,6 @@ func InitGlobalTrieDB(ctx context.Context) {
 		panic(errors.New("没有索引库...请先创建索引库"))
 	}
 	GlobalTrieDB = dbs
-	return
 }
 
 // NewTrieDB 初始化trie

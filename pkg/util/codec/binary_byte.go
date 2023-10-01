@@ -24,7 +24,10 @@ func BinaryWrite(buf *bytes.Buffer, v any) (err error) {
 		return
 	}
 
-	binary.Write(buf, binary.LittleEndian, v)
+	err = binary.Write(buf, binary.LittleEndian, v)
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	return
 }

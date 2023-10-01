@@ -8,8 +8,6 @@ import (
 
 	"github.com/RoaringBitmap/roaring"
 
-	"github.com/CocaineCong/tangseng/app/index_platform/repository/storage"
-	"github.com/CocaineCong/tangseng/app/index_platform/trie"
 	"github.com/CocaineCong/tangseng/app/mapreduce/rpc"
 	"github.com/CocaineCong/tangseng/idl/pb/mapreduce"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
@@ -37,9 +35,6 @@ func Worker(ctx context.Context, mapf func(string, string) []*types.KeyValue, re
 		case int64(types.Wait):
 			time.Sleep(5 * time.Second)
 		case int64(types.Exit):
-			fmt.Println("Worker start store trie")
-			_ = storage.GlobalTrieDBs.StorageDict(trie.GobalTrieTree)
-			fmt.Println("Worker store trie finished")
 			return
 		default:
 			return

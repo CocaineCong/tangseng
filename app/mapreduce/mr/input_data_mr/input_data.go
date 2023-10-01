@@ -26,10 +26,10 @@ func Map(filename string, contents string) (res []*types.KeyValue) {
 			logs.LogrusObj.Errorf("Map-GseCutForBuildIndex :%+v", err)
 			continue
 		}
-		msgTokens := make([]string, 0)
+		// msgTokens := make([]string, 0)
 		for _, v := range tokens {
 			res = append(res, &types.KeyValue{Key: v.Token, Value: cast.ToString(v.DocId)})
-			msgTokens = append(msgTokens, v.Token)
+			// msgTokens = append(msgTokens, v.Token)
 		}
 
 		// // 构建前缀树

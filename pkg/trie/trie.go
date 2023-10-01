@@ -65,7 +65,7 @@ func (trie *Trie) SearchForRecall(word string) bool {
 		if _, ok := node.ChildrenRecall[c]; !ok {
 			return false
 		}
-		node, _ = node.ChildrenRecall[c]
+		node, _ = node.ChildrenRecall[c] // nolint:golint,gosimple
 	}
 	return node.IsEnd
 }
@@ -106,7 +106,7 @@ func (trie *Trie) FindAllByPrefixForRecall(prefix string) []string {
 		if _, ok := node.ChildrenRecall[c]; !ok {
 			return nil
 		}
-		node, _ = node.ChildrenRecall[c]
+		node, _ = node.ChildrenRecall[c] // nolint:golint,gosimple
 	}
 	words := make([]string, 0)
 	trie.dfsForRecall(node, prefix, &words)

@@ -25,7 +25,7 @@ func TrieTreeKafkaConsume(ctx context.Context, topic, group, assignor string) (e
 	}
 
 	configK := kfk.GetDefaultConsumeConfig(assignor)
-	cancelCtx, _ := context.WithCancel(ctx)
+	cancelCtx, cancel := context.WithCancel(ctx)
 	client, err := sarama.NewConsumerGroup(config.Conf.Kafka.Address, group, configK)
 	if err != nil {
 		logs.LogrusObj.Errorf("Error creating consumer group woker: %v", err)
@@ -47,6 +47,7 @@ func TrieTreeKafkaConsume(ctx context.Context, topic, group, assignor string) (e
 	}()
 
 	<-consumer.Ready
+	cancel()
 
 	return
 }

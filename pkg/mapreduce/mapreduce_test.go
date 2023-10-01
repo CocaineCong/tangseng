@@ -25,7 +25,7 @@ func TestMain(m *testing.M) {
 func TestMapReduce(t *testing.T) {
 	invertedIndex := cmap.New[*roaring.Bitmap]()
 	filePaths := []string{"/Users/mac/GolandProjects/Go-SearchEngine/app/mapreduce/input_data/other_input_data/movies_data.csv"}
-	MapReduce(func(source chan<- []byte) {
+	_, _ = MapReduce(func(source chan<- []byte) {
 		for _, path := range filePaths {
 			content, _ := os.ReadFile(path)
 			source <- content
