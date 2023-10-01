@@ -51,9 +51,10 @@ func (s *IndexPlatformSrv) BuildIndexService(ctx context.Context, req *pb.BuildI
 	resp.Message = e.GetMsg(e.SUCCESS)
 	invertedIndex := cmap.New[*roaring.Bitmap]() // 倒排索引
 	dictTrie := trie.NewTrie()                   // 前缀树
+
 	logs.LogrusObj.Infof("BuildIndexService Start req: %v", req.FilePath)
 	// mapreduce 这个是用chan和goroutine来代替master和worker的rpc调用，避免了频繁的rpc调用
-	_, err = mapreduce.MapReduce(func(source chan<- []byte) {
+	_, _ = mapreduce.MapReduce(func(source chan<- []byte) {
 		for _, path := range req.FilePath {
 			content, _ := os.ReadFile(path)
 			source <- content
@@ -68,8 +69,7 @@ func (s *IndexPlatformSrv) BuildIndexService(ctx context.Context, req *pb.BuildI
 		for _, line := range lines[1:] {
 			ch <- struct{}{}
 			wg.Add(1)
-			// line 转 doc struct
-			docStruct, _ := input_data.Doc2Struct(line)
+			docStruct, _ := input_data.Doc2Struct(line) // line 转 doc struct
 			if docStruct.DocId == 0 {
 				continue
 			}
@@ -121,21 +121,21 @@ func (s *IndexPlatformSrv) BuildIndexService(ctx context.Context, req *pb.BuildI
 			}
 		}
 	})
-	if err != nil {
-		logs.LogrusObj.Error("mapreduce error", err)
-		return
-	}
 
-	err = storeInvertedIndexByHash(ctx, invertedIndex)
-	if err != nil {
-		logs.LogrusObj.Error("storeInvertedIndexByHash error ", err)
-	}
+	go func() {
+		err = storeInvertedIndexByHash(ctx, invertedIndex)
+		if err != nil {
+			logs.LogrusObj.Error("storeInvertedIndexByHash error ", err)
+		}
+	}()
+
 	logs.LogrusObj.Infoln("storeInvertedIndexByHash End")
-
-	err = storeDictTrieByHash(ctx, dictTrie)
-	if err != nil {
-		logs.LogrusObj.Error("storeDictTrieByHash error ", err)
-	}
+	go func() {
+		err = storeDictTrieByHash(ctx, dictTrie)
+		if err != nil {
+			logs.LogrusObj.Error("storeDictTrieByHash error ", err)
+		}
+	}()
 
 	return
 }
@@ -146,18 +146,13 @@ func storeInvertedIndexByHash(ctx context.Context, invertedIndex cmap.Concurrent
 	outName := fmt.Sprintf("%s/%s.%s", dir, timeutils.GetTodayDate(), cconsts.InvertedBucket)
 	invertedDB := storage.NewInvertedDB(outName)
 	// 找出所有的key进行存储
-	keys := invertedIndex.Keys()
-	for _, v := range keys {
-		val, ok := invertedIndex.Get(v)
-		if !ok {
-			continue
-		}
+	for k, val := range invertedIndex.Items() {
 		outByte, errx := val.MarshalBinary()
 		if errx != nil {
 			logs.LogrusObj.Error("storeInvertedIndexByHash-MarshalBinary", errx)
 			continue
 		}
-		err = invertedDB.StoragePostings(v, outByte)
+		err = invertedDB.StoragePostings(k, outByte)
 		if err != nil {
 			logs.LogrusObj.Error("storeInvertedIndexByHash-StoragePostings", err)
 			continue
