@@ -48,7 +48,7 @@ func (r *Resolver) Scheme() string {
 func (r *Resolver) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOptions) (resolver.Resolver, error) {
 	r.cc = cc
 
-	r.keyPrifix = BuildPrefix(Server{Name: target.Endpoint(), Version: target.Authority})
+	r.keyPrifix = BuildPrefix(Server{Name: target.Endpoint(), Version: target.URL.Host})
 	if _, err := r.start(); err != nil {
 		return nil, err
 	}
@@ -122,7 +122,7 @@ func (r *Resolver) update(events []*clientv3.Event) {
 			addr := resolver.Address{Addr: info.Addr, Metadata: info.Weight}
 			if !Exist(r.srvAddrsList, addr) {
 				r.srvAddrsList = append(r.srvAddrsList, addr)
-				r.cc.UpdateState(resolver.State{Addresses: r.srvAddrsList})
+				_ = r.cc.UpdateState(resolver.State{Addresses: r.srvAddrsList})
 			}
 		case clientv3.EventTypeDelete:
 			info, err = SplitPath(string(ev.Kv.Key))
@@ -132,7 +132,7 @@ func (r *Resolver) update(events []*clientv3.Event) {
 			addr := resolver.Address{Addr: info.Addr}
 			if s, ok := Remove(r.srvAddrsList, addr); ok {
 				r.srvAddrsList = s
-				r.cc.UpdateState(resolver.State{Addresses: r.srvAddrsList})
+				_ = r.cc.UpdateState(resolver.State{Addresses: r.srvAddrsList})
 			}
 		}
 	}
@@ -156,6 +156,5 @@ func (r *Resolver) sync() error {
 		addr := resolver.Address{Addr: info.Addr, Metadata: info.Weight}
 		r.srvAddrsList = append(r.srvAddrsList, addr)
 	}
-	r.cc.UpdateState(resolver.State{Addresses: r.srvAddrsList})
-	return nil
+	return r.cc.UpdateState(resolver.State{Addresses: r.srvAddrsList})
 }

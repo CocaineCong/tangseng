@@ -1,54 +1,39 @@
 package storage
 
 import (
+	"os"
+
 	bolt "go.etcd.io/bbolt"
 
 	"github.com/CocaineCong/tangseng/consts"
-	"github.com/CocaineCong/tangseng/pkg/fileutils"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/CocaineCong/tangseng/pkg/trie"
 )
 
 type TrieDB struct {
-	db *bolt.DB
+	file *os.File
+	db   *bolt.DB
 }
 
-var GobalTrieDBs []*TrieDB
-
-const InvertedDBPaths = "/Users/mac/GolandProjects/Go-SearchEngine/app/index_platform/trie_data/"
-
-// InitTrieDBs 初始化trie
-func InitTrieDBs() {
-	dbs := []*TrieDB{}
-	filePath := fileutils.GetFiles(InvertedDBPaths)
-	for _, file := range filePath {
-		db, err := bolt.Open(file, 0600, nil)
-		if err != nil {
-			log.LogrusObj.Error(err)
-		}
-		dbs = append(dbs, &TrieDB{db})
-	}
-	GobalTrieDBs = dbs
-}
-
-// NewTrieDB 新建一个forward db对象
-func NewTrieDB(dbName string) (*TrieDB, error) {
-	db, err := bolt.Open(dbName, 0600, nil)
+// NewTrieDB 初始化trie
+func NewTrieDB(filePath string) *TrieDB { // TODO: 先都放在一个下面吧，后面再lb到多个文件
+	f, err := os.OpenFile(filePath, os.O_CREATE|os.O_RDWR, 0644)
 	if err != nil {
-		log.LogrusObj.Errorf("NewTrieDB: %+v", err)
-		return nil, err
+		log.LogrusObj.Error(err)
 	}
 
-	return &TrieDB{db}, nil
+	db, err := bolt.Open(filePath, 0600, nil)
+	if err != nil {
+		log.LogrusObj.Error(err)
+		return nil
+	}
+
+	return &TrieDB{f, db}
 }
 
 func (d *TrieDB) StorageDict(trieTree *trie.Trie) (err error) {
-	tt, err := trieTree.MarshalJSON()
-	if err != nil {
-		return
-	}
-
-	err = d.PutTrieTree([]byte(consts.TrieTreeBucket), tt)
+	trieByte, _ := trieTree.Root.Children.MarshalJSON()
+	err = d.PutTrieTree([]byte(consts.TrieTreeBucket), trieByte)
 
 	return
 }

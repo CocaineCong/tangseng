@@ -39,3 +39,6 @@ output_data/
 *.txt
 mr-*
 wukong_100m*
+*.trie_tree
+data/
+*.inverted

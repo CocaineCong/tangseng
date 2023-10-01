@@ -63,9 +63,11 @@ type Es struct {
 }
 
 type Redis struct {
-	UserName string `yaml:"userName"`
-	Address  string `yaml:"address"`
-	Password string `yaml:"password"`
+	RedisHost     string `yaml:"redisHost"`
+	RedisPort     string `yaml:"redisPort"`
+	RedisUsername string `yaml:"redisUsername"`
+	RedisPassword string `yaml:"redisPassword"`
+	RedisDbName   int    `yaml:"redisDbName"`
 }
 
 type Etcd struct {

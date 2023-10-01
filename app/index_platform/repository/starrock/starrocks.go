@@ -47,7 +47,7 @@ func NewDirectUpload(ctx context.Context, task *types.Task) *DirectUpload {
 	go func() {
 		defer func() {
 			if err := recover(); err != nil {
-				log.LogrusObj.Errorf("消费出现错误")
+				log.LogrusObj.Errorf("NewDirectUpload-消费出现错误 :%+v", err)
 			}
 		}()
 		directUpload.consume()
@@ -57,15 +57,14 @@ func NewDirectUpload(ctx context.Context, task *types.Task) *DirectUpload {
 }
 
 func (d *DirectUpload) consume() {
-	// gapTime := 5 * time.Minute
-	gapTime := 2 * time.Second
+	gapTime := 5 * time.Minute
 	for {
 		select {
 		case <-time.After(gapTime):
 			log.LogrusObj.Infof("direct upload")
-			d.StreamUpload()
-			// case <-d.Finish():
-			// d.StreamUpload()
+			_, _ = d.StreamUpload()
+		case <-d.doneCtx.Done():
+			_, _ = d.StreamUpload()
 		}
 	}
 

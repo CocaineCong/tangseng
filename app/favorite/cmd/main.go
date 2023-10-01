@@ -16,6 +16,8 @@ import (
 	logs "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
+const ServerName = "favorite"
+
 func main() {
 	loading.Loading()
 	rpc.Init()
@@ -23,10 +25,10 @@ func main() {
 	etcdAddress := []string{config.Conf.Etcd.Address}
 	// 服务注册
 	etcdRegister := discovery.NewRegister(etcdAddress, logs.LogrusObj)
-	grpcAddress := config.Conf.Services["favorite"].Addr[0]
+	grpcAddress := config.Conf.Services[ServerName].Addr[0]
 	defer etcdRegister.Stop()
-	userNode := discovery.Server{
-		Name: config.Conf.Domain["favorite"].Name,
+	node := discovery.Server{
+		Name: config.Conf.Domain[ServerName].Name,
 		Addr: grpcAddress,
 	}
 	server := grpc.NewServer()
@@ -37,7 +39,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	if _, err := etcdRegister.Register(userNode, 10); err != nil {
+	if _, err := etcdRegister.Register(node, 10); err != nil {
 		panic(fmt.Sprintf("start service failed, err: %v", err))
 	}
 	logrus.Info("service started listen on ", grpcAddress)

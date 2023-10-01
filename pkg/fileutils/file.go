@@ -8,11 +8,12 @@ import (
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
+// ReadFiles 读取所有的文件
 func ReadFiles(fileName []string) []string {
 	docList := make([]string, 0)
 	for _, sourceName := range fileName {
 		docs := readFile(sourceName)
-		if docs != nil && len(docs) > 0 {
+		if len(docs) > 0 {
 			docList = append(docList, docs...)
 		}
 	}

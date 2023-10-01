@@ -1,14 +1,16 @@
 package storage
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"os"
 
 	bolt "go.etcd.io/bbolt"
 
 	"github.com/CocaineCong/tangseng/consts"
-	"github.com/CocaineCong/tangseng/pkg/fileutils"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/CocaineCong/tangseng/repository/redis"
 )
 
 type KvInfo struct {
@@ -16,7 +18,7 @@ type KvInfo struct {
 	Value []byte
 }
 
-var GobalInvertedDB []*InvertedDB
+var GlobalInvertedDB []*InvertedDB
 
 type InvertedDB struct {
 	file   *os.File
@@ -24,13 +26,10 @@ type InvertedDB struct {
 	offset int64
 }
 
-// const InvertedDBPaths = "../../../index_platform/index_data/"
-const InvertedDBPaths = "/Users/mac/GolandProjects/Go-SearchEngine/app/index_platform/index_data/"
-
 // InitInvertedDB 初始化倒排索引库
-func InitInvertedDB() []*InvertedDB {
+func InitInvertedDB(ctx context.Context) []*InvertedDB {
 	dbs := make([]*InvertedDB, 0)
-	filePath := fileutils.GetFiles(InvertedDBPaths)
+	filePath, _ := redis.ListInvertedPath(ctx, redis.InvertedIndexDbPathKey)
 	for _, file := range filePath {
 		f, err := os.OpenFile(file, os.O_CREATE|os.O_RDWR, 0644)
 		if err != nil {
@@ -46,7 +45,10 @@ func InitInvertedDB() []*InvertedDB {
 		}
 		dbs = append(dbs, &InvertedDB{f, db, stat.Size()})
 	}
-	GobalInvertedDB = dbs
+	if len(filePath) == 0 {
+		panic(errors.New("没有索引库...请先创建索引库"))
+	}
+	GlobalInvertedDB = dbs
 	return nil
 }
 

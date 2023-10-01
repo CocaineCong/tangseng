@@ -10,7 +10,6 @@ import (
 
 	"github.com/CocaineCong/tangseng/config"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
-	"github.com/CocaineCong/tangseng/types"
 )
 
 func TestMain(m *testing.M) {
@@ -19,23 +18,6 @@ func TestMain(m *testing.M) {
 	log.InitLog()
 	fmt.Println("Write tests on values: ", config.Conf)
 	m.Run()
-}
-
-func TestIntToBytes(t *testing.T) {
-	p := new(types.PostingsList)
-	buf := bytes.NewBuffer([]byte{})
-	p.DocId = 100
-	err := BinaryWrite(buf, p.DocId)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(buf)
-	var c int64
-	err = binary.Read(buf, binary.LittleEndian, &c)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(c)
 }
 
 func TestBinarySize(t *testing.T) {
@@ -66,28 +48,6 @@ func TestBinaryByteRead(t *testing.T) {
 	}
 
 	fmt.Printf("Name: %s, Age: %d\n", p.Name, p.Age)
-}
-
-func TestBinaryByteWrite(t *testing.T) {
-	// 创建一个字节流，表示一个 Person 结构体的二进制数据
-	buf := bytes.NewBuffer([]byte{})
-
-	var p = Person{
-		Name: "FanOne",
-		Age:  22,
-	}
-
-	err := binary.Write(buf, binary.LittleEndian, p)
-	if err != nil {
-		fmt.Println("解析错误:", err)
-		return
-	}
-	var p2 = Person{}
-	err = binary.Write(buf, binary.LittleEndian, p2)
-	if err != nil {
-		fmt.Println("err", err)
-	}
-	fmt.Printf("Name: %s, Age: %d\n", p2.Name, p2.Age)
 }
 
 func TestGobEncoding(t *testing.T) {

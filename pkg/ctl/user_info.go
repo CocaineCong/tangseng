@@ -21,7 +21,7 @@ func GetUserInfo(ctx context.Context) (*UserInfo, error) {
 }
 
 func NewContext(ctx context.Context, u *UserInfo) context.Context {
-	return context.WithValue(ctx, consts.UserInfoKey, u)
+	return context.WithValue(ctx, consts.UserInfoKey, u) // nolint:golint,staticcheck
 }
 
 func FromContext(ctx context.Context) (*UserInfo, bool) {

@@ -5,13 +5,9 @@ import (
 	"errors"
 	"log"
 	"os"
-	"os/signal"
-	"sync"
-	"syscall"
+	"time"
 
 	"github.com/IBM/sarama"
-
-	"github.com/CocaineCong/tangseng/app/index_platform/repository/storage"
 
 	"github.com/CocaineCong/tangseng/app/index_platform/trie"
 	"github.com/CocaineCong/tangseng/config"
@@ -21,14 +17,13 @@ import (
 
 // TrieTreeKafkaConsume token词的消费建立
 func TrieTreeKafkaConsume(ctx context.Context, topic, group, assignor string) (err error) {
-	keepRunning := true
 	logs.LogrusObj.Infof("Starting a new Sarama consumer")
 	sarama.Logger = log.New(os.Stdout, "[sarama] ", log.LstdFlags)
-
 	// 设置一个消费组
 	consumer := TrieTreeConsumer{
 		Ready: make(chan bool),
 	}
+
 	configK := kfk.GetDefaultConsumeConfig(assignor)
 	cancelCtx, cancel := context.WithCancel(ctx)
 	client, err := sarama.NewConsumerGroup(config.Conf.Kafka.Address, group, configK)
@@ -36,11 +31,7 @@ func TrieTreeKafkaConsume(ctx context.Context, topic, group, assignor string) (e
 		logs.LogrusObj.Errorf("Error creating consumer group woker: %v", err)
 	}
 
-	consumptionIsPaused := false
-	wg := &sync.WaitGroup{}
-	wg.Add(1)
 	go func() {
-		defer wg.Done()
 		for {
 			if err = client.Consume(cancelCtx, []string{topic}, &consumer); err != nil {
 				if errors.Is(err, sarama.ErrClosedConsumerGroup) {
@@ -56,31 +47,7 @@ func TrieTreeKafkaConsume(ctx context.Context, topic, group, assignor string) (e
 	}()
 
 	<-consumer.Ready
-	logs.LogrusObj.Infof("Sarama consumer up and running!...")
-
-	sigusr1 := make(chan os.Signal, 1)
-	signal.Notify(sigusr1, syscall.SIGUSR1)
-
-	sigterm := make(chan os.Signal, 1)
-	signal.Notify(sigterm, syscall.SIGINT, syscall.SIGTERM)
-
-	for keepRunning {
-		select {
-		case <-cancelCtx.Done():
-			logs.LogrusObj.Infof("terminating: context cancelled")
-			keepRunning = false
-		case <-sigterm:
-			logs.LogrusObj.Infof("terminating: via signal")
-			keepRunning = false
-		case <-sigusr1:
-			toggleConsumptionFlow(client, &consumptionIsPaused)
-		}
-	}
 	cancel()
-	wg.Wait()
-	if err = client.Close(); err != nil {
-		logs.LogrusObj.Errorf("Error closing woker: %v", err)
-	}
 
 	return
 }
@@ -105,6 +72,7 @@ func (consumer *TrieTreeConsumer) Cleanup(sarama.ConsumerGroupSession) error {
 // 一旦 Messages() 通道关闭，处理程序必须完成其处理循环并退出。
 func (consumer *TrieTreeConsumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
 	// ctx := context.Background()
+	gapTime := 2 * time.Minute
 	for {
 		select {
 		case message, ok := <-claim.Messages():
@@ -114,16 +82,29 @@ func (consumer *TrieTreeConsumer) ConsumeClaim(session sarama.ConsumerGroupSessi
 			}
 			// 构建trie tree树
 			trie.GobalTrieTree.Insert(string(message.Value))
-
-			logs.LogrusObj.Infof("Message claimed: value = %s, timestamp = %v, topic = %s", string(message.Value), message.Timestamp, message.Topic)
+			// logs.LogrusObj.Infof("TrieTreeConsumer Message claimed: value = %s, timestamp = %v, topic = %s", string(message.Value), message.Timestamp, message.Topic)
 			session.MarkMessage(message, "")
 		// https://github.com/IBM/sarama/issues/1192
+
+		case <-time.After(gapTime):
+			logs.LogrusObj.Infof("ConsumeClaim starting store dict")
+			// _ = storage.GlobalTrieDBs.StorageDict(trie.GobalTrieTree) // TODO:后续看看能不能实现一个全局的triedb，每次都先读取存量进行初始化，再插入增量...
+			logs.LogrusObj.Infof("ConsumeClaim ending store dict")
+
 		case <-session.Context().Done():
-			// 存储trie树
-			for _, v := range storage.GobalTrieDBs {
-				_ = v.StorageDict(trie.GobalTrieTree) // TODO: lb一下？
-			}
+			logs.LogrusObj.Infof("TrieTreeConsumer Done!")
 			return nil
 		}
 	}
 }
+
+// func mergeTrieTree(node string) {
+// 	trie.GobalTrieTree.Insert(node)
+// 	gapTime := 2 * time.Minute
+// 	for {
+// 		select {
+// 		case <-time.After(gapTime):
+// 			_ = storage.GlobalTrieDBs.StorageDict(trie.GobalTrieTree)
+// 		}
+// 	}
+// }

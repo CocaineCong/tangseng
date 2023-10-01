@@ -1,15 +1,16 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net"
 
 	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 
 	"github.com/CocaineCong/tangseng/app/gateway/rpc"
 	"github.com/CocaineCong/tangseng/app/search_engine/analyzer"
+	"github.com/CocaineCong/tangseng/app/search_engine/repository/storage"
 	"github.com/CocaineCong/tangseng/app/search_engine/service"
 	"github.com/CocaineCong/tangseng/config"
 	pb "github.com/CocaineCong/tangseng/idl/pb/search_engine"
@@ -17,20 +18,24 @@ import (
 	"github.com/CocaineCong/tangseng/pkg/discovery"
 )
 
+const SearchEngineService = "search_engine"
+
 func main() {
+	ctx := context.Background()
 	loading.Loading()
 	rpc.Init()
 	// bi_dao.InitDB() // TODO starrocks完善才开启
 	analyzer.InitSeg()
+	storage.InitStorageDB(ctx)
 
 	// etcd 地址
-	etcdAddress := []string{viper.GetString("etcd.address")}
+	etcdAddress := []string{config.Conf.Etcd.Address}
 	// 服务注册
 	etcdRegister := discovery.NewRegister(etcdAddress, logrus.New())
-	grpcAddress := config.Conf.Services["search_engine"].Addr[0]
+	grpcAddress := config.Conf.Services[SearchEngineService].Addr[0]
 	defer etcdRegister.Stop()
-	userNode := discovery.Server{
-		Name: config.Conf.Domain["search_engine"].Name,
+	node := discovery.Server{
+		Name: config.Conf.Domain[SearchEngineService].Name,
 		Addr: grpcAddress,
 	}
 	server := grpc.NewServer()
@@ -41,7 +46,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	if _, err := etcdRegister.Register(userNode, 10); err != nil {
+	if _, err := etcdRegister.Register(node, 10); err != nil {
 		panic(fmt.Sprintf("start service failed, err: %v", err))
 	}
 	logrus.Info("service started listen on ", grpcAddress)

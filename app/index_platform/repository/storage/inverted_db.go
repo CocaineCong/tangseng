@@ -87,16 +87,13 @@ func (t *InvertedDB) GetInvertedDoc(offset int64, size int64) ([]byte, error) {
 	return b[offset : offset+size], nil
 }
 
-func (t *InvertedDB) storagePostings(postings []byte) (size int64, err error) {
-	s, err := t.file.WriteAt(postings, t.offset)
+func (t *InvertedDB) Close() {
+	err := t.file.Close()
 	if err != nil {
 		return
 	}
-
-	return int64(s), nil
-}
-
-func (t *InvertedDB) Close() {
-	t.file.Close()
-	t.db.Close()
+	err = t.db.Close()
+	if err != nil {
+		return
+	}
 }

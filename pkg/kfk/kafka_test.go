@@ -38,11 +38,3 @@ func TestKafkaProducer(t *testing.T) {
 	}
 	fmt.Println("Produce Message Finish")
 }
-
-func TestKafkaConsumer(t *testing.T) {
-	err := KafkaConsume(consts.KafkaCSVLoaderTopic, consts.KafkaCSVLoaderGroupId, consts.KafkaAssignorRoundRobin)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println("Consume Finish")
-}

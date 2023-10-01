@@ -14,6 +14,7 @@ const (
 
 const (
 	KafkaCSVLoaderGroupId = "kafka-csv-loader-group-id"
+	KafkaTrieTreeGroupId  = "kafka-trie-tree-group-id"
 )
 
 const KafkaBatchProduceCount = 200

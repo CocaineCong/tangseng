@@ -41,8 +41,6 @@ func mapper(ctx context.Context, task *mapreduce.MapReduceTask, mapf func(string
 	if err != nil {
 		fmt.Println("mapper-TaskCompleted", err)
 	}
-
-	return
 }
 
 func writeToLocalFile(x int, y int, kvs *[]*types.KeyValue) string {
@@ -57,8 +55,8 @@ func writeToLocalFile(x int, y int, kvs *[]*types.KeyValue) string {
 			fmt.Println(err)
 		}
 	}
-	tempFile.Close()
+	_ = tempFile.Close()
 	outputName := fmt.Sprintf("mr-%d-%d", x, y)
-	os.Rename(tempFile.Name(), outputName)
+	_ = os.Rename(tempFile.Name(), outputName)
 	return filepath.Join(dir, outputName)
 }

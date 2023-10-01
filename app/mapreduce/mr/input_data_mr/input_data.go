@@ -7,7 +7,6 @@ import (
 	"github.com/spf13/cast"
 
 	"github.com/CocaineCong/tangseng/app/index_platform/analyzer"
-	"github.com/CocaineCong/tangseng/app/index_platform/input_data"
 	logs "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/CocaineCong/tangseng/pkg/util/stringutils"
 	"github.com/CocaineCong/tangseng/types"
@@ -27,28 +26,34 @@ func Map(filename string, contents string) (res []*types.KeyValue) {
 			logs.LogrusObj.Errorf("Map-GseCutForBuildIndex :%+v", err)
 			continue
 		}
-
+		// msgTokens := make([]string, 0)
 		for _, v := range tokens {
 			res = append(res, &types.KeyValue{Key: v.Token, Value: cast.ToString(v.DocId)})
-			go func(token string) {
-				input_data.DocTrie2Kfk(token)
-			}(v.Token)
+			// msgTokens = append(msgTokens, v.Token)
 		}
 
-		// 存正排索引库中
-		// inputData = &model.InputData{
-		// 	DocId:   docStruct.DocId,
-		// 	Title:   docStruct.Title,
-		// 	Body:    docStruct.Body,
-		// 	Url:     "",
-		// 	Score:   float64(len(docStruct.Body)),
-		// 	Source:  consts.DataSourceCSV,
-		// 	IsIndex: true,
-		// }
-		// 建立正排索引
-		go func(docStruct *types.Document) {
-			input_data.DocData2Kfk(docStruct)
-		}(docStruct)
+		// // 构建前缀树
+		// go func(msgTokens []string) {
+		// 	err = input_data.DocTrie2Kfk(msgTokens)
+		// 	if err != nil {
+		// 		return
+		// 	}
+		// 	defer func() {
+		// 		if err := recover(); err != nil {
+		// 			logs.LogrusObj.Errorf("input_data.DocTrie2Kfk 消费出现错误 ：%+v", err)
+		// 		}
+		// 	}()
+		// }(msgTokens)
+
+		// // 建立正排索引
+		// go func(docStruct *types.Document) {
+		// 	err = input_data.DocData2Kfk(docStruct)
+		// 	defer func() {
+		// 		if err := recover(); err != nil {
+		// 			logs.LogrusObj.Errorf("input_data-DocData2Kfk-消费出现错误 :%+v", err)
+		// 		}
+		// 	}()
+		// }(docStruct)
 	}
 
 	return

@@ -132,13 +132,11 @@ func BuildFavoriteDetails(item []*model.Favorite) (fList []*pb.FavoriteResp) {
 }
 
 func BuildFavoriteDetail(item *model.Favorite) *pb.FavoriteResp {
-	var urlInfo []*pb.UrlModel
-	urlInfo = BuildUrlInfos(item.FavoriteDetail)
 	return &pb.FavoriteResp{
 		FavoriteId:   item.FavoriteID,
 		FavoriteName: item.FavoriteName,
 		UserId:       item.UserID,
-		UrlInfo:      urlInfo,
+		UrlInfo:      BuildUrlInfos(item.FavoriteDetail),
 	}
 }
 

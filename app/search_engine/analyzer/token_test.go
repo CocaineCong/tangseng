@@ -58,8 +58,7 @@ func TestGseCut(t *testing.T) {
 		// tokens, _ := GseCut(v)
 		tm := strings.Split(v, ",")
 		if len(tm) >= 2 {
-			tokens, _ := GseCutForBuildIndex(tm[1])
-			fmt.Println(tokens)
+			fmt.Println(tm)
 		}
 	}
 }

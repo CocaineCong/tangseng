@@ -39,28 +39,8 @@ func easyjson4298c6f8DecodeGithubComCocaineCongTangsengPkgTrie(in *jlexer.Lexer,
 		case "is_end":
 			out.IsEnd = bool(in.Bool())
 		case "children":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				in.Delim('{')
-				out.Children = make(map[int32]*TrieNode)
-				for !in.IsDelim('}') {
-					key := int32(in.Int32Str())
-					in.WantColon()
-					var v1 *TrieNode
-					if in.IsNull() {
-						in.Skip()
-						v1 = nil
-					} else {
-						if v1 == nil {
-							v1 = new(TrieNode)
-						}
-						(*v1).UnmarshalEasyJSON(in)
-					}
-					(out.Children)[key] = v1
-					in.WantComma()
-				}
-				in.Delim('}')
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.Children).UnmarshalJSON(data))
 			}
 		default:
 			in.SkipRecursive()
@@ -84,27 +64,7 @@ func easyjson4298c6f8EncodeGithubComCocaineCongTangsengPkgTrie(out *jwriter.Writ
 	{
 		const prefix string = ",\"children\":"
 		out.RawString(prefix)
-		if in.Children == nil && (out.Flags&jwriter.NilMapAsEmpty) == 0 {
-			out.RawString(`null`)
-		} else {
-			out.RawByte('{')
-			v2First := true
-			for v2Name, v2Value := range in.Children {
-				if v2First {
-					v2First = false
-				} else {
-					out.RawByte(',')
-				}
-				out.Int32Str(int32(v2Name))
-				out.RawByte(':')
-				if v2Value == nil {
-					out.RawString("null")
-				} else {
-					(*v2Value).MarshalEasyJSON(out)
-				}
-			}
-			out.RawByte('}')
-		}
+		out.Raw((in.Children).MarshalJSON())
 	}
 	out.RawByte('}')
 }

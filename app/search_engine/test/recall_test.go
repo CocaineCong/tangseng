@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/CocaineCong/tangseng/app/search_engine/analyzer"
-	"github.com/CocaineCong/tangseng/app/search_engine/repository/storage"
 	"github.com/CocaineCong/tangseng/app/search_engine/service/recall"
 	"github.com/CocaineCong/tangseng/config"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
@@ -20,7 +19,6 @@ func TestMain(m *testing.M) {
 	analyzer.InitSeg()
 	log.InitLog()
 	db.InitDB()
-	storage.InitInvertedDB()
 	fmt.Println("Write tests on values: ", config.Conf)
 	m.Run()
 }

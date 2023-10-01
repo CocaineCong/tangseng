@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net"
 
@@ -8,45 +9,56 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/CocaineCong/tangseng/app/index_platform/analyzer"
-	"github.com/CocaineCong/tangseng/app/index_platform/rpc"
+	"github.com/CocaineCong/tangseng/app/index_platform/cmd/kfk_register"
 	"github.com/CocaineCong/tangseng/app/index_platform/service"
 	"github.com/CocaineCong/tangseng/config"
-	"github.com/CocaineCong/tangseng/idl/pb/mapreduce"
+	"github.com/CocaineCong/tangseng/idl/pb/index_platform"
+	"github.com/CocaineCong/tangseng/loading"
 	"github.com/CocaineCong/tangseng/pkg/discovery"
 	logs "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
-const ServerName = "index_platform"
+const (
+	IndexPlatformServerName = "index_platform"
+)
 
 func main() {
-	// loading.Loading()
-	config.InitConfig()
-	logs.InitLog()
+	ctx := context.Background()
+	// 加载配置
+	loading.Loading()
 	analyzer.InitSeg()
-	rpc.Init()
-	// etcd 地址
+	kfk_register.RegisterJob(ctx)
+
+	// 注册服务
+	_ = registerIndexPlatform()
+}
+
+// registerIndexPlatform 注册索引平台服务
+func registerIndexPlatform() (err error) {
 	etcdAddress := []string{config.Conf.Etcd.Address}
-	// 服务注册
 	etcdRegister := discovery.NewRegister(etcdAddress, logs.LogrusObj)
-	grpcAddress := config.Conf.Services[ServerName].Addr[0]
 	defer etcdRegister.Stop()
+
+	grpcAddress := config.Conf.Services[IndexPlatformServerName].Addr[0]
 	node := discovery.Server{
-		Name: config.Conf.Domain[ServerName].Name,
+		Name: config.Conf.Domain[IndexPlatformServerName].Name,
 		Addr: grpcAddress,
 	}
 	server := grpc.NewServer()
 	defer server.Stop()
-	// 绑定service
-	mapreduce.RegisterMapReduceServiceServer(server, service.GetMapReduceSrv())
+
+	index_platform.RegisterIndexPlatformServiceServer(server, service.GetIndexPlatformSrv())
 	lis, err := net.Listen("tcp", grpcAddress)
 	if err != nil {
 		panic(err)
 	}
-	if _, err := etcdRegister.Register(node, 10); err != nil {
+	if _, err = etcdRegister.Register(node, 10); err != nil {
 		panic(fmt.Sprintf("start service failed, err: %v", err))
 	}
 	logrus.Info("service started listen on ", grpcAddress)
-	if err := server.Serve(lis); err != nil {
+	if err = server.Serve(lis); err != nil {
 		panic(err)
 	}
+
+	return
 }

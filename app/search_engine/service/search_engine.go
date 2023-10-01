@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"sync"
 
 	"github.com/CocaineCong/tangseng/app/search_engine/service/recall"
@@ -56,14 +55,14 @@ func (s *SearchEngineSrv) WordAssociation(ctx context.Context, req *pb.SearchEng
 	resp = new(pb.WordAssociationResponse)
 	resp.Code = e.SUCCESS
 	query := req.Query
-	sResult, err := recall.SearchQuery(query)
-	wordAssociationList := make([]string, 0)
-	for _, v := range sResult {
-		if v != nil {
-			wordAssociationList = append(wordAssociationList, v.Value)
-		}
+	associationList, err := recall.SearchQuery(query)
+	if err != nil {
+		resp.Code = e.ERROR
+		resp.Msg = err.Error()
+		log.LogrusObj.Error("SearchEngineSearch-WordAssociation", err)
+		return
 	}
-	resp.WordAssociationList = wordAssociationList
+	resp.WordAssociationList = associationList
 
 	return
 }
@@ -76,8 +75,6 @@ func BuildSearchEngineResp(item []*types.SearchItem) (resp []*pb.SearchEngineLis
 			Desc:  v.Content,
 			Score: float32(v.Score),
 		})
-		fmt.Println("*******")
-		fmt.Println(v.DocId, v.Score)
 	}
 
 	return

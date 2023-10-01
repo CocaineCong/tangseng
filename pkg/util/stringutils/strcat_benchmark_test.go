@@ -10,7 +10,7 @@ import (
 
 // 1. 直接拼接
 func BenchmarkString(b *testing.B) {
-	elems := make([]string, 100000, 100000)
+	elems := make([]string, 100000)
 	for i := 0; i < len(elems); i++ {
 		elems[i] = strconv.Itoa(i)
 	}
@@ -27,16 +27,16 @@ func BenchmarkString(b *testing.B) {
 
 // 2. fmt.Sprintf("%s",xxxxx)
 func BenchmarkFmtSprintfString(b *testing.B) {
-	elems := make([]string, 100000, 100000)
+	elems := make([]int, 100000)
 	for i := 0; i < len(elems); i++ {
-		elems[i] = strconv.Itoa(i)
+		elems[i] = i
 	}
 	length := len(elems)
 	sum := ""
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		for j := 0; j < length; j++ {
-			sum += fmt.Sprintf("%s", elems[j])
+			sum += fmt.Sprintf("%d", elems[j])
 		}
 	}
 	b.StopTimer()
@@ -44,7 +44,7 @@ func BenchmarkFmtSprintfString(b *testing.B) {
 
 // 3. string.Builder
 func BenchmarkBuilderString(b *testing.B) {
-	elems := make([]string, 100000, 100000)
+	elems := make([]string, 100000)
 	for i := 0; i < len(elems); i++ {
 		elems[i] = strconv.Itoa(i)
 	}
@@ -61,7 +61,7 @@ func BenchmarkBuilderString(b *testing.B) {
 
 // 4. bytes.Builder
 func BenchmarkByteBufferString(b *testing.B) {
-	elems := make([]string, 100000, 100000)
+	elems := make([]string, 100000)
 	for i := 0; i < len(elems); i++ {
 		elems[i] = strconv.Itoa(i)
 	}
@@ -78,7 +78,7 @@ func BenchmarkByteBufferString(b *testing.B) {
 
 // 5. byte 拼接
 func BenchmarkByteConcatString(b *testing.B) {
-	elems := make([]string, 100000, 100000)
+	elems := make([]string, 100000)
 	for i := 0; i < len(elems); i++ {
 		elems[i] = strconv.Itoa(i)
 	}
@@ -90,12 +90,13 @@ func BenchmarkByteConcatString(b *testing.B) {
 			buf = append(buf, elems[j]...)
 		}
 	}
+	fmt.Println(string(buf))
 	b.StopTimer()
 }
 
 // 6. 官方包 strings.join()
 func BenchmarkConcatStringJoins(b *testing.B) {
-	elems := make([]string, 100000, 100000)
+	elems := make([]string, 100000)
 	for i := 0; i < len(elems); i++ {
 		elems[i] = strconv.Itoa(i)
 	}

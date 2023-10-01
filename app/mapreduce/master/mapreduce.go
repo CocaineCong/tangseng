@@ -1,4 +1,4 @@
-package service
+package master
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/CocaineCong/tangseng/app/mapreduce/consts"
 	"github.com/CocaineCong/tangseng/consts/e"
 	"github.com/CocaineCong/tangseng/idl/pb/mapreduce"
 	"github.com/CocaineCong/tangseng/types"
@@ -22,15 +23,11 @@ type MasterSrv struct {
 	mapreduce.UnimplementedMapReduceServiceServer
 }
 
-const (
-	ReduceDefaultNum = 5
-)
-
 var (
 	InputFiles = []string{ // TODO 配置文件读取
-		"/Users/mac/GolandProjects/Go-SearchEngine/app/index_platform/service/other_input_data/movies_data.csv",
-		"/Users/mac/GolandProjects/Go-SearchEngine/app/index_platform/service/other_input_data/movies_data1.csv",
-		"/Users/mac/GolandProjects/Go-SearchEngine/app/index_platform/service/other_input_data/movies_data2.csv",
+		"/Users/mac/GolandProjects/Go-SearchEngine/app/mapreduce/input_data/other_input_data/movies_data.csv",
+		"/Users/mac/GolandProjects/Go-SearchEngine/app/mapreduce/input_data/other_input_data/movies_data1.csv",
+		"/Users/mac/GolandProjects/Go-SearchEngine/app/mapreduce/input_data/other_input_data/movies_data2.csv",
 	}
 	MapReduceSrvIns  *MasterSrv
 	MapReduceSrvOnce sync.Once
@@ -39,7 +36,7 @@ var (
 
 func GetMapReduceSrv() *MasterSrv {
 	MapReduceSrvOnce.Do(func() {
-		MapReduceSrvIns = NewMaster(InputFiles, ReduceDefaultNum)
+		MapReduceSrvIns = NewMaster(InputFiles, consts.ReduceDefaultNum)
 	})
 	return MapReduceSrvIns
 }
@@ -70,6 +67,7 @@ func (m *MasterSrv) createMapTask() {
 		m.TaskMeta[idx] = &types.MasterTask{
 			TaskStatus:    types.Idle, // 状态为 idle ，等待worker节点来进行
 			TaskReference: &taskMeta,
+			StartTime:     time.Now(),
 		}
 	}
 }
@@ -80,7 +78,7 @@ func (m *MasterSrv) Done() bool {
 	return m.MasterPhase == types.Exit
 }
 
-func (m *MasterSrv) catchTimeout() {
+func (m *MasterSrv) catchTimeout() { // nolint:golint,unused
 	for {
 		time.Sleep(5 * time.Second)
 		mu.Lock()
@@ -90,7 +88,7 @@ func (m *MasterSrv) catchTimeout() {
 		}
 		for _, masterTask := range m.TaskMeta {
 			if masterTask.TaskStatus == types.InProgress &&
-				time.Now().Sub(masterTask.StartTime) > 10*time.Second {
+				time.Since(masterTask.StartTime) > 10*time.Second {
 				m.TaskQueue <- masterTask.TaskReference
 				masterTask.TaskStatus = types.Idle
 			}

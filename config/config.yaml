@@ -19,9 +19,11 @@ es:
 
 
 redis:
-  user_name: default
-  address: 127.0.0.1:6379
-  password:
+  redisDbName: 4
+  redisHost: 127.0.0.1
+  redisPort: 6379
+  redisPassword: 123456
+  redisNetwork: "tcp"
 
 etcd:
   address: 127.0.0.1:2379
@@ -31,41 +33,47 @@ services:
     name: gateway
     loadBalance: true
     addr:
-      - 127.0.0.1:10001
+      - 127.0.0.1:20001
 
   user:
     name: user
     loadBalance: false
     addr:
-      - 127.0.0.1:10002
+      - 127.0.0.1:20002
 
   favorite:
     name: favorite
     loadBalance: false
     addr:
-      - 127.0.0.1:10003
+      - 127.0.0.1:20003
 
   search_engine:
     name: search_engine
     loadBalance: false
     addr:
-      - 127.0.0.1:10004
+      - 127.0.0.1:20004
 
   index_platform:
     name: index_platform
     loadBalance: false
     addr:
-      - 127.0.0.1:10005
+      - 127.0.0.1:20005
 
-SeConfig: # 改造一下，csv放到starrocks里，然后从starrock收口数据来源（读取、csv）
-  Version: "1.0.0"
-  StoragePath: "/Users/mac/GolandProjects/Go-SearchEngine/app/search_engine/data/db/"
-  SourceWuKoFile: "./data/movies_data.csv"
-  MetaPath: "/Users/mac/GolandProjects/Go-SearchEngine/app/search_engine/data/db/segments.json"
-  SourceFiles:
-    - "./source"
-    - "./"
-  MergeChannelSize:
+  mapreduce:
+    name: mapreduce
+    loadBalance: false
+    addr:
+      - 127.0.0.1:20006
+
+#SeConfig: # 改造一下，csv放到starrocks里，然后从starrock收口数据来源（读取、csv）
+#  Version: "1.0.0"
+#  StoragePath: "/Users/mac/GolandProjects/Go-SearchEngine/app/search_engine/data/db/"
+#  SourceWuKoFile: "./data/movies_data.csv"
+#  MetaPath: "/Users/mac/GolandProjects/Go-SearchEngine/app/search_engine/data/db/segments.json"
+#  SourceFiles:
+#    - "./source"
+#    - "./"
+#  MergeChannelSize:
 
 starrocks:
   username: root
@@ -91,3 +99,5 @@ domain:
     name: search_engine
   index_platform:
     name: index_platform
+  mapreduce:
+    name: mapreduce
