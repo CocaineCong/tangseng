@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"sync"
 
 	"github.com/CocaineCong/tangseng/app/search_engine/service/recall"
@@ -76,8 +75,6 @@ func BuildSearchEngineResp(item []*types.SearchItem) (resp []*pb.SearchEngineLis
 			Desc:  v.Content,
 			Score: float32(v.Score),
 		})
-		fmt.Println("*******")
-		fmt.Println(v.DocId, v.Score)
 	}
 
 	return

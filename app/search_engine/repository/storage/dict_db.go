@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"os"
@@ -21,7 +22,7 @@ type TrieDB struct {
 }
 
 // InitGlobalTrieDB 初始化trie tree树
-func InitGlobalTrieDB(ctx context.Context) []*TrieDB {
+func InitGlobalTrieDB(ctx context.Context) {
 	dbs := make([]*TrieDB, 0)
 	filePath, _ := redis.ListInvertedPath(ctx, redis.TireTreeDbPathKey)
 	for _, file := range filePath {
@@ -40,7 +41,7 @@ func InitGlobalTrieDB(ctx context.Context) []*TrieDB {
 		panic(errors.New("没有索引库...请先创建索引库"))
 	}
 	GlobalTrieDB = dbs
-	return nil
+	return
 }
 
 // NewTrieDB 初始化trie
@@ -76,9 +77,14 @@ func (d *TrieDB) GetTrieTreeDict() (trieTree *trie.Trie, err error) {
 	if err != nil {
 		return
 	}
+	replaced := bytes.Replace(v, []byte("children"), []byte("children_recall"), -1)
+	node, err := trie.ParseTrieNode(string(replaced))
+	if err != nil {
+		return
+	}
 
 	trieTree = trie.NewTrie()
-	err = trieTree.UnmarshalJSON(v)
+	trieTree.Root = node
 
 	return
 }

@@ -1,7 +1,6 @@
 package recall
 
 import (
-	"bytes"
 	"context"
 
 	"github.com/RoaringBitmap/roaring"
@@ -12,7 +11,6 @@ import (
 	"github.com/CocaineCong/tangseng/app/search_engine/repository/db/dao"
 	"github.com/CocaineCong/tangseng/app/search_engine/repository/storage"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
-	"github.com/CocaineCong/tangseng/pkg/trie"
 	"github.com/CocaineCong/tangseng/repository/redis"
 	"github.com/CocaineCong/tangseng/types"
 )
@@ -41,21 +39,13 @@ func (r *Recall) Search(ctx context.Context, query string) (res []*types.SearchI
 // SearchQuery 入口
 func (r *Recall) SearchQuery(query string) (resp []string, err error) {
 	dictTreeList := make([]string, 0, 1e3)
-	for _, trieTree := range storage.GlobalTrieDB {
-		tireByte, errx := trieTree.GetTrieTree([]byte(query))
+	for _, trieDb := range storage.GlobalTrieDB {
+		trie, errx := trieDb.GetTrieTreeDict()
 		if errx != nil {
 			log.LogrusObj.Errorln(errx)
 			continue
 		}
-		replaced := bytes.Replace(tireByte, []byte("children"), []byte("children_recall"), -1)
-		node, errx := trie.ParseTrieNode(string(replaced))
-		if errx != nil {
-			log.LogrusObj.Errorln(errx)
-			continue
-		}
-		trieT := trie.NewTrie()
-		trieT.Root = node
-		queryTrie := trieT.FindAllByPrefixForRecall(query)
+		queryTrie := trie.FindAllByPrefixForRecall(query)
 		dictTreeList = append(dictTreeList, queryTrie...)
 	}
 
@@ -67,9 +57,9 @@ func (r *Recall) searchDoc(ctx context.Context, tokens []string) (recalls []*typ
 	recalls = make([]*types.SearchItem, 0)
 	allPostingsList := []*types.PostingsList{}
 	for _, token := range tokens {
-		docIds, _ := redis.GetInvertedIndexTokenDocIds(ctx, token)
+		docIds, errx := redis.GetInvertedIndexTokenDocIds(ctx, token)
 		var postingsList []*types.PostingsList
-		if docIds == nil {
+		if errx != nil || docIds == nil {
 			// 如果缓存不存在，就去索引表里面读取
 			postingsList, err = fetchPostingsByToken(token)
 			if err != nil {
@@ -89,7 +79,7 @@ func (r *Recall) searchDoc(ctx context.Context, tokens []string) (recalls []*typ
 	// 排序打分
 	iDao := dao.NewInputDataDao(ctx)
 	for _, p := range allPostingsList {
-		if p.DocIds.IsEmpty() {
+		if p == nil || p.DocIds == nil || p.DocIds.IsEmpty() {
 			continue
 		}
 		recallData, _ := iDao.ListInputDataByDocIds(p.DocIds.ToArray())
