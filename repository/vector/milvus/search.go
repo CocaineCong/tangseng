@@ -38,11 +38,11 @@ type MilvusSearchParams struct {
 }
 
 func (msp *MilvusSearchParams) AddRadius(radius float64) {
-	return
+
 }
 
 func (msp *MilvusSearchParams) AddRangeFilter(rangeFilter float64) {
-	return
+
 }
 
 func (msp *MilvusSearchParams) Params() map[string]interface{} {
