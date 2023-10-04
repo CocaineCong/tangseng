@@ -1,0 +1,20 @@
+syntax="proto3";
+option go_package = "/vector_retrieval;";
+
+
+message VectorReq{
+	// @inject_tag:form:"k" uri:"k"
+	int64 k = 1;
+	// @inject_tag:form:"vector" uri:"vector"
+	repeated float vector = 2 [packed = true];
+}
+
+message VectorResp{
+	repeated int64 retval = 1 [packed = true];
+	repeated float scores = 2 [packed = true];
+	repeated string labels = 3;
+}
+
+service VectorRetrieval {
+	rpc Search (VectorReq) returns (VectorResp);
+}

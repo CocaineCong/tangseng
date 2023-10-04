@@ -19,6 +19,18 @@ type Config struct {
 	SeConfig  *SeConfig           `yaml:"SeConfig"`
 	Kafka     *Kafka              `yaml:"kafka"`
 	StarRocks *StarRocks          `yaml:"starrock"`
+	Vector    VectorConfig        `yaml:"vector"`
+	Milvus    MilvusConfig        `yaml:"milvus"`
+}
+
+type VectorConfig struct {
+	ServerAddress string `yaml:"server_address"`
+	Timeout       int64  `yaml:"timeout"`
+}
+
+type MilvusConfig struct {
+	ServerAddress string
+	Timeout       int64
 }
 
 type StarRocks struct {

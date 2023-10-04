@@ -17,6 +17,13 @@ es:
   EsPort: 9200
   EsIndex: mylog
 
+vector:
+  server_address:
+  timeout: 3
+
+milvus:
+  server_address:
+  timeout: 3
 
 redis:
   redisDbName: 4
