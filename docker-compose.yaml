@@ -126,7 +126,7 @@ services:
       - search_engine
 
 #  starrocks: # TODO 后面加上starrocks
-#    image: starrock.docker.scarf.sh/starrock/allin1-ubuntu
+#    images: starrock.docker.scarf.sh/starrock/allin1-ubuntu
 #    restart: on-failure
 #    container_name: "starrock"
 #    ports:

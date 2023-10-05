@@ -138,10 +138,10 @@ func (consumer *ForwardIndexConsumer) ConsumeClaim(session sarama.ConsumerGroupS
 				_ = doc.UnmarshalJSON(message.Value)
 				// TODO: 后续再开发starrocks
 				// up.Push(&types.Data2Starrocks{
-				// 	DocId: doc.DocId,
+				// 	DocId: docs.DocId,
 				// 	Url:   "",
-				// 	Title: doc.Title,
-				// 	Desc:  doc.Body,
+				// 	Title: docs.Title,
+				// 	Desc:  docs.Body,
 				// 	Score: 0.00, // 评分
 				// })
 				inputData := &model.InputData{

@@ -48,7 +48,7 @@ func GetInvertedIndexTokenDocIds(ctx context.Context, token string) (docIds *roa
 	return
 }
 
-// PushInvertedIndexToken 存储用户搜索的历史记录 doc ids // TODO:后面嵌入LRU
+// PushInvertedIndexToken 存储用户搜索的历史记录 docs ids // TODO:后面嵌入LRU
 func PushInvertedIndexToken(ctx context.Context, userId int64, token string) (err error) {
 	return RedisClient.LPush(ctx, getUserQueryTokenKey(userId), token).Err()
 }

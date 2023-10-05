@@ -8,7 +8,7 @@
 4、搜索引擎模块的文本搜索单独设立使用boltdb存储index。\
 5、图片搜索待定...
 
-![项目大体框架](doc/tangseng.png)
+![项目大体框架](docs/images/tangseng.png)
 
 # 🧑🏻‍💻 前端地址
 
@@ -76,7 +76,7 @@
 - [x] 搜索完一个接着搜索，没有清除缓存导致结果是和上一个产生并集
 - [x] 排序器优化
 
-![文本搜索](doc/text2text.jpg)
+![文本搜索](docs/images/text2text.jpg)
 
 
 ### 3.2 图片搜索
@@ -288,13 +288,13 @@ go run main.go
 
 打开postman，点击导入
 
-![postman导入](doc/1.点击import导入.png)
+![postman导入](docs/images/1.点击import导入.png)
 
 选择导入文件
-![选择导入接口文件](doc/2.选择文件.png)
+![选择导入接口文件](docs/images/2.选择文件.png)
 
-![导入](doc/3.导入.png)
+![导入](docs/images/3.导入.png)
 
 效果
 
-![postman](doc/4.效果.png)
+![postman](docs/images/4.效果.png)

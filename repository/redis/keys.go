@@ -11,7 +11,7 @@ const (
 	// TireTreeDbPathKey 存放tire tree树的路径
 	TireTreeDbPathKey = "index_platform:tire_tree"
 
-	// QueryTokenDocIds 搜索过的token的doc ids query:term --> doc ids
+	// QueryTokenDocIds 搜索过的token的doc ids query:term --> docs ids
 	QueryTokenDocIds = "query_doc_id:%s"
 	// UserQueryToken 用户搜索过的token query:user_id --> term
 	UserQueryToken = "query_token:%d"
