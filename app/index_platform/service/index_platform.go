@@ -69,7 +69,7 @@ func (s *IndexPlatformSrv) BuildIndexService(ctx context.Context, req *pb.BuildI
 		for _, line := range lines[1:] {
 			ch <- struct{}{}
 			wg.Add(1)
-			docStruct, _ := input_data.Doc2Struct(line) // line 转 doc struct
+			docStruct, _ := input_data.Doc2Struct(line) // line 转 docs struct
 			if docStruct.DocId == 0 {
 				continue
 			}

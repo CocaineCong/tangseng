@@ -36,7 +36,7 @@ func BM25(tf *TFIDF, query Document, docs []Document, k1, b float64) DocScores {
 
 	scores := make([]float64, 0, len(docs))
 	for _, doc := range docs {
-		// TF := tfidf.TF(doc)
+		// TF := tfidf.TF(docs)
 		d := BOW(doc)
 		w = append(w, d...)
 		size := set.Inter(sort.IntSlice(w), len(q))
