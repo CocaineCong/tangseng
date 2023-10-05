@@ -28,7 +28,7 @@ type InvertedDB struct {
 // InitInvertedDB 初始化倒排索引库
 func InitInvertedDB(ctx context.Context) []*InvertedDB {
 	dbs := make([]*InvertedDB, 0)
-	filePath, _ := redis.ListInvertedPath(ctx, redis.InvertedIndexDbPathKey)
+	filePath, _ := redis.ListInvertedPath(ctx, redis.InvertedIndexDbPathKeys)
 	for _, file := range filePath {
 		f, err := os.OpenFile(file, os.O_CREATE|os.O_RDWR, 0644)
 		if err != nil {

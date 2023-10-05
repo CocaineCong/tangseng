@@ -163,8 +163,9 @@ func storeInvertedIndexByHash(ctx context.Context, invertedIndex cmap.Concurrent
 			continue
 		}
 	}
+	invertedDB.Close()
 
-	err = redis.PushInvertedPath(ctx, redis.InvertedIndexDbPathKey, []string{outName})
+	err = redis.PushInvertedPath(ctx, redis.InvertedIndexDbPathDayKey, []string{outName})
 	if err != nil {
 		logs.LogrusObj.Error(err)
 		return
@@ -196,8 +197,9 @@ func storeDictTrieByHash(ctx context.Context, dict *trie.Trie) (err error) {
 		logs.LogrusObj.Error(err)
 		return
 	}
+	_ = trieDB.Close()
 
-	err = redis.PushInvertedPath(ctx, redis.TireTreeDbPathKey, []string{outName})
+	err = redis.PushInvertedPath(ctx, redis.TireTreeDbPathDayKey, []string{outName})
 	if err != nil {
 		logs.LogrusObj.Error(err)
 		return

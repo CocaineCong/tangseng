@@ -26,7 +26,7 @@ type InvertedDB struct { // 后续做mmap(这个好难)
 
 // NewInvertedDB 新建一个inverted
 func NewInvertedDB(invertedName string) *InvertedDB {
-	f, err := os.OpenFile(invertedName, os.O_CREATE|os.O_RDWR, 0644)
+	f, err := os.OpenFile(invertedName, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
 	if err != nil {
 		log.LogrusObj.Error(err)
 	}
@@ -55,6 +55,10 @@ func (t *InvertedDB) PutInverted(key, value []byte) error {
 // GetInverted 通过term获取value
 func (t *InvertedDB) GetInverted(key []byte) (value []byte, err error) {
 	return Get(t.db, consts.InvertedBucket, key)
+}
+
+func (t *InvertedDB) GetAllInverted() (p []*types.InvertedInfo, err error) {
+	return
 }
 
 // GetInvertedInfo 获取倒排地址
