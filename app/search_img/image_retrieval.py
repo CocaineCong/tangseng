@@ -17,7 +17,7 @@ from cirtorch.datasets.datahelpers import imresize
 from cirtorch.networks.imageretrievalnet import init_network
 
 app = Flask(__name__)
-
+app.logger.info(conf)
 
 # the entrance of the flask
 @app.route("/image", methods=['POST'])
@@ -155,7 +155,7 @@ def init_model(network):
 
 
 def init():
-    with open('config.yaml', 'r') as f:
+    with open('config/config.yaml', 'r') as f:
         conf = yaml.load(f, Loader=Loader)
 
     app.logger.info(conf)
