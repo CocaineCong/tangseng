@@ -10,7 +10,9 @@ import (
 func PushInvertedPath(ctx context.Context, key string, paths []string) (err error) {
 	for _, v := range paths {
 		err = RedisClient.LPush(ctx, key, v).Err()
-		return err
+		if err != nil {
+			return err
+		}
 	}
 
 	return

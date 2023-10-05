@@ -8,7 +8,6 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/CocaineCong/tangseng/app/favorite/internal/service"
-	"github.com/CocaineCong/tangseng/app/gateway/rpc"
 	"github.com/CocaineCong/tangseng/config"
 	favoritePb "github.com/CocaineCong/tangseng/idl/pb/favorite"
 	"github.com/CocaineCong/tangseng/loading"
@@ -20,7 +19,6 @@ const ServerName = "favorite"
 
 func main() {
 	loading.Loading()
-	rpc.Init()
 	// etcd 地址
 	etcdAddress := []string{config.Conf.Etcd.Address}
 	// 服务注册

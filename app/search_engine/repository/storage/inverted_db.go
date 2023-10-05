@@ -2,7 +2,6 @@ package storage
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"os"
 
@@ -46,7 +45,7 @@ func InitInvertedDB(ctx context.Context) []*InvertedDB {
 		dbs = append(dbs, &InvertedDB{f, db, stat.Size()})
 	}
 	if len(filePath) == 0 {
-		panic(errors.New("没有索引库...请先创建索引库"))
+		return nil
 	}
 	GlobalInvertedDB = dbs
 	return nil

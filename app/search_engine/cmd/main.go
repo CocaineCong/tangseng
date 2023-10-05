@@ -8,7 +8,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 
-	"github.com/CocaineCong/tangseng/app/gateway/rpc"
 	"github.com/CocaineCong/tangseng/app/search_engine/analyzer"
 	"github.com/CocaineCong/tangseng/app/search_engine/repository/storage"
 	"github.com/CocaineCong/tangseng/app/search_engine/service"
@@ -23,7 +22,6 @@ const SearchEngineService = "search_engine"
 func main() {
 	ctx := context.Background()
 	loading.Loading()
-	rpc.Init()
 	// bi_dao.InitDB() // TODO starrocks完善才开启
 	analyzer.InitSeg()
 	storage.InitStorageDB(ctx)

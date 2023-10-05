@@ -3,7 +3,6 @@ package storage
 import (
 	"bytes"
 	"context"
-	"errors"
 	"os"
 
 	bolt "go.etcd.io/bbolt"
@@ -38,7 +37,7 @@ func InitGlobalTrieDB(ctx context.Context) {
 		dbs = append(dbs, &TrieDB{f, db})
 	}
 	if len(filePath) == 0 {
-		panic(errors.New("没有索引库...请先创建索引库"))
+		return
 	}
 	GlobalTrieDB = dbs
 }
