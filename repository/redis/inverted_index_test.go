@@ -64,9 +64,9 @@ func TestGetInvertedIndexToken(t *testing.T) {
 func TestSetInvertedIndexByKey(t *testing.T) {
 	ctx := context.Background()
 	key := GetInvertedIndexDbPathMonthKey("10")
-	SetInvertedPath(ctx, key, "a1")
+	_ = SetInvertedPath(ctx, key, "a1")
 	key2 := GetInvertedIndexDbPathMonthKey("11")
-	SetInvertedPath(ctx, key2, "b")
+	_ = SetInvertedPath(ctx, key2, "b")
 }
 
 func TestListInvertedIndexByPrefixKey(t *testing.T) {

@@ -27,4 +27,6 @@ func (cmd *Command) Run() {
 			return
 		}
 	}()
+
+	defer cmd.done()
 }

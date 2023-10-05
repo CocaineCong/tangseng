@@ -30,7 +30,7 @@ func main() {
 	go startListen() // 转载路由
 	{
 		osSignals := make(chan os.Signal, 1)
-		signal.Notify(osSignals, os.Interrupt, os.Kill, syscall.SIGTERM, syscall.SIGINT, syscall.SIGKILL)
+		signal.Notify(osSignals, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 		s := <-osSignals
 		fmt.Println("exit! ", s)
 	}
