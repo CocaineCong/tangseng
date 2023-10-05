@@ -12,7 +12,7 @@ Tangseng是一个基于Go语言的分布式搜索引擎
 6、图片搜索使用ResNet50来进行向量化查询 + Milvus or Faiss 向量数据库的查询 (开始做了...)。
 
 
-![项目大体框架](../docs/images/tangseng.png)
+![项目大体框架](/docs/images/tangseng.png)
 
 ## 🧑🏻‍💻 前端地址
 
@@ -125,7 +125,7 @@ query向量化，并从milvus或者faiss中查询获取
 - [x] 搜索完一个接着搜索，没有清除缓存导致结果是和上一个产生并集
 - [x] 排序器优化
 
-![文本搜索](../docs/images/text2text.jpg)
+![文本搜索](/docs/images/text2text.jpg)
 
 
 # ✨ 项目结构
@@ -233,7 +233,7 @@ seach-engine/
 server:
   port: :4000
   version: 1.0
-  jwtSecret: 38324-search-engine
+  jwtSecret: "38324-search-engine"
 
 mysql:
   driverName: mysql
@@ -244,10 +244,25 @@ mysql:
   password: search_engine
   charset: utf8mb4
 
+es:
+  EsHost: 127.0.0.1
+  EsPort: 9200
+  EsIndex: mylog
+
+vector:
+  server_address:
+  timeout: 3
+
+milvus:
+  server_address:
+  timeout: 3
+
 redis:
-  user_name: default
-  address: 127.0.0.1:6379
-  password:
+  redisDbName: 4
+  redisHost: 127.0.0.1
+  redisPort: 6379
+  redisPassword: 123456
+  redisNetwork: "tcp"
 
 etcd:
   address: 127.0.0.1:2379
@@ -257,33 +272,64 @@ services:
     name: gateway
     loadBalance: true
     addr:
-      - 127.0.0.1:10001 
+      - 127.0.0.1:20001
 
   user:
     name: user
     loadBalance: false
     addr:
-      - 127.0.0.1:10002 # 监听地址
+      - 127.0.0.1:20002
 
   favorite:
     name: favorite
     loadBalance: false
     addr:
-      - 127.0.0.1:10003 # 监听地址
+      - 127.0.0.1:20003
 
-  searchEngine:
-    name: favorite
+  search_engine:
+    name: search_engine
     loadBalance: false
     addr:
-      - 127.0.0.1:10004 # 监听地址
+      - 127.0.0.1:20004
+
+  index_platform:
+    name: index_platform
+    loadBalance: false
+    addr:
+      - 127.0.0.1:20005
+
+  mapreduce:
+    name: mapreduce
+    loadBalance: false
+    addr:
+      - 127.0.0.1:20006
+
+starrocks:
+  username: root
+  password:
+  database: test
+  load_url: localhost:8083
+  host: localhost
+  port: 9030
+  charset: utf8mb4
+
+kafka:
+  address:
+    - 127.0.0.1:10000
+    - 127.0.0.1:10001
+    - 127.0.0.1:10002
 
 domain:
   user:
     name: user
   favorite:
     name: favorite
-  searchEngine:
-    name: searchEngine
+  search_engine:
+    name: search_engine
+  index_platform:
+    name: index_platform
+  mapreduce:
+    name: mapreduce
 ```
 
 
@@ -302,7 +348,7 @@ make env-down       # 关闭并删除容器环境
 
 其他命令
 ```shell
-make run           # 启动所有模块
+make run   # 启动所有模块
 make proto # 生成proto文件，如果proto有改变的话，则需要重新生成文件
 ```
 生成.pb文件所需要的工具有`protoc-gen-go`,`protoc-gen-go-grpc`,`protoc-go-inject-tag`
@@ -311,10 +357,13 @@ make proto # 生成proto文件，如果proto有改变的话，则需要重新生
 ## 手动启动
 
 1. 利用compose快速构建环境
+
 ```shell
 docker-compose up -d
 ```
+
 2. 保证mysql,etcd活跃, 在 app 文件夹下的各个模块的 cmd 下执行
+
 ```go
 go run main.go
 ```
@@ -323,13 +372,14 @@ go run main.go
 
 打开postman，点击导入
 
-![postman导入](../docs/images/1.点击import导入.png)
+![postman导入](/docs/images/1.点击import导入.png)
 
 选择导入文件
-![选择导入接口文件](../docs/images/2.选择文件.png)
 
-![导入](../docs/images/3.导入.png)
+![选择导入接口文件](/docs/images/2.选择文件.png)
+
+![导入](/docs/images/3.导入.png)
 
 效果
 
-![postman](../docs/images/4.效果.png)
+![postman](/docs/images/4.效果.png)
