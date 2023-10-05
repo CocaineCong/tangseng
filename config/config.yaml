@@ -72,16 +72,6 @@ services:
     addr:
       - 127.0.0.1:20006
 
-#SeConfig: # 改造一下，csv放到starrocks里，然后从starrock收口数据来源（读取、csv）
-#  Version: "1.0.0"
-#  StoragePath: "/Users/mac/GolandProjects/Go-SearchEngine/app/search_engine/data/db/"
-#  SourceWuKoFile: "./data/movies_data.csv"
-#  MetaPath: "/Users/mac/GolandProjects/Go-SearchEngine/app/search_engine/data/db/segments.json"
-#  SourceFiles:
-#    - "./source"
-#    - "./"
-#  MergeChannelSize:
-
 starrocks:
   username: root
   password:
