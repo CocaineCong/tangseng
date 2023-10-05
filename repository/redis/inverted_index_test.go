@@ -23,12 +23,12 @@ func TestMain(m *testing.M) {
 
 func TestPushInvertedPath(t *testing.T) {
 	ctx := context.Background()
-	_ = PushInvertedPath(ctx, InvertedIndexDbPathKey, []string{"a", "b", "c"})
+	_ = PushInvertedPath(ctx, InvertedIndexDbPathDayKey, []string{"a", "b", "c"})
 }
 
 func TestListInvertedPath(t *testing.T) {
 	ctx := context.Background()
-	paths, _ := ListInvertedPath(ctx, InvertedIndexDbPathKey)
+	paths, _ := ListInvertedPath(ctx, []string{InvertedIndexDbPathDayKey})
 	fmt.Println(paths)
 }
 
@@ -59,4 +59,19 @@ func TestGetInvertedIndexToken(t *testing.T) {
 	tokens, err := ListInvertedIndexToken(ctx, 1)
 	fmt.Println(err)
 	fmt.Println(tokens)
+}
+
+func TestSetInvertedIndexByKey(t *testing.T) {
+	ctx := context.Background()
+	key := GetInvertedIndexDbPathMonthKey("10")
+	_ = SetInvertedPath(ctx, key, "a1")
+	key2 := GetInvertedIndexDbPathMonthKey("11")
+	_ = SetInvertedPath(ctx, key2, "b")
+}
+
+func TestListInvertedIndexByPrefixKey(t *testing.T) {
+	ctx := context.Background()
+	key := GetInvertedIndexDbPathMonthKey("*")
+	result, _ := ListInvertedIndexByPrefixKey(ctx, key)
+	fmt.Println(result)
 }

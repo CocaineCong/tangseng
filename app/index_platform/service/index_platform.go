@@ -19,6 +19,7 @@ import (
 	cconsts "github.com/CocaineCong/tangseng/consts"
 	"github.com/CocaineCong/tangseng/consts/e"
 	pb "github.com/CocaineCong/tangseng/idl/pb/index_platform"
+	"github.com/CocaineCong/tangseng/pkg/clone"
 	logs "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/CocaineCong/tangseng/pkg/mapreduce"
 	"github.com/CocaineCong/tangseng/pkg/timeutils"
@@ -123,7 +124,9 @@ func (s *IndexPlatformSrv) BuildIndexService(ctx context.Context, req *pb.BuildI
 	})
 
 	go func() {
-		err = storeInvertedIndexByHash(ctx, invertedIndex)
+		newCtx := clone.NewContextWithoutDeadline()
+		newCtx.Clone(ctx)
+		err = storeInvertedIndexByHash(newCtx, invertedIndex)
 		if err != nil {
 			logs.LogrusObj.Error("storeInvertedIndexByHash error ", err)
 		}
@@ -131,7 +134,9 @@ func (s *IndexPlatformSrv) BuildIndexService(ctx context.Context, req *pb.BuildI
 
 	logs.LogrusObj.Infoln("storeInvertedIndexByHash End")
 	go func() {
-		err = storeDictTrieByHash(ctx, dictTrie)
+		newCtx := clone.NewContextWithoutDeadline()
+		newCtx.Clone(ctx)
+		err = storeDictTrieByHash(newCtx, dictTrie)
 		if err != nil {
 			logs.LogrusObj.Error("storeDictTrieByHash error ", err)
 		}
@@ -158,8 +163,9 @@ func storeInvertedIndexByHash(ctx context.Context, invertedIndex cmap.Concurrent
 			continue
 		}
 	}
+	invertedDB.Close()
 
-	err = redis.PushInvertedPath(ctx, redis.InvertedIndexDbPathKey, []string{outName})
+	err = redis.PushInvertedPath(ctx, redis.InvertedIndexDbPathDayKey, []string{outName})
 	if err != nil {
 		logs.LogrusObj.Error(err)
 		return
@@ -191,8 +197,9 @@ func storeDictTrieByHash(ctx context.Context, dict *trie.Trie) (err error) {
 		logs.LogrusObj.Error(err)
 		return
 	}
+	_ = trieDB.Close()
 
-	err = redis.PushInvertedPath(ctx, redis.TireTreeDbPathKey, []string{outName})
+	err = redis.PushInvertedPath(ctx, redis.TireTreeDbPathDayKey, []string{outName})
 	if err != nil {
 		logs.LogrusObj.Error(err)
 		return

@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/CocaineCong/tangseng/app/index_platform/analyzer"
+	"github.com/CocaineCong/tangseng/app/index_platform/cmd/job"
 	"github.com/CocaineCong/tangseng/app/index_platform/cmd/kfk_register"
 	"github.com/CocaineCong/tangseng/app/index_platform/service"
 	"github.com/CocaineCong/tangseng/config"
@@ -28,6 +29,7 @@ func main() {
 	loading.Loading()
 	analyzer.InitSeg()
 	kfk_register.RegisterJob(ctx)
+	job.RegisterJob(ctx)
 
 	// 注册服务
 	_ = registerIndexPlatform()

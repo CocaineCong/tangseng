@@ -3,6 +3,9 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -13,24 +16,24 @@ import (
 	"github.com/CocaineCong/tangseng/config"
 	"github.com/CocaineCong/tangseng/loading"
 	"github.com/CocaineCong/tangseng/pkg/discovery"
+	"github.com/CocaineCong/tangseng/pkg/util/shutdown"
 )
 
 func main() {
 	loading.Loading()
 	rpc.Init()
-	loading.Loading()
 	// etcd注册
 	etcdAddress := []string{config.Conf.Etcd.Address}
 	etcdRegister := discovery.NewResolver(etcdAddress, logrus.New())
 	defer etcdRegister.Close()
 	resolver.Register(etcdRegister)
 	go startListen() // 转载路由
-	// {
-	// 	osSignals := make(chan os.Signal, 1)
-	// 	signal.Notify(osSignals, os.Interrupt, os.Kill, syscall.SIGTERM, syscall.SIGINT, syscall.SIGKILL)
-	// 	s := <-osSignals
-	// 	fmt.Println("exit! ", s)
-	// }
+	{
+		osSignals := make(chan os.Signal, 1)
+		signal.Notify(osSignals, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
+		s := <-osSignals
+		fmt.Println("exit! ", s)
+	}
 }
 
 func startListen() {
@@ -48,8 +51,8 @@ func startListen() {
 		return
 	}
 	fmt.Printf("gateway listen on :%v \n", config.Conf.Server.Port)
-	// go func() {
-	// 	// TODO 优雅关闭 有点问题，后续优化一下
-	// 	shutdown.GracefullyShutdown(service)
-	// }()
+	go func() {
+		// TODO 优雅关闭 有点问题，后续优化一下
+		shutdown.GracefullyShutdown(server)
+	}()
 }
