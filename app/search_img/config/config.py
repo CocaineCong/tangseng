@@ -1,25 +1,39 @@
 import yaml
 from yaml import Loader
-from image_retrieval import init_model
-
-VECTOR_DIMENSION = 3
-MILVUS_HOTS = "localhost"
-MILVUS_PORT = "19530"
-DEFAULT_MILVUS_TABLE_NAME = "milvus_table_name"
 
 
-def init_config():
-    with open('./config.yaml', 'r') as f:
+def load_website():
+    with open('config/config.yaml', 'r') as f:
         conf = yaml.load(f, Loader=Loader)
 
-    host = conf['websites']['host']
-    port = conf['websites']['port']
-    network = conf['model']['network']
+    websites_conf = conf['websites']
+    return websites_conf['host'], websites_conf['port']
 
-    MILVUS_HOTS = conf['milvus']['host']
-    MILVUS_PORT = conf['milvus']['port']
 
-    net, lsh, transforms = init_model(network)
+def load_milvus():
+    with open('config/config.yaml', 'r') as f:
+        conf = yaml.load(f, Loader=Loader)
+    milvus_conf = conf['milvus']
+    return milvus_conf['host'], milvus_conf['port'], milvus_conf['default_milvus_table_name'], milvus_conf[
+        'vector_dimension']
 
-    return host, port, net, lsh, transforms
 
+def load_model():
+    with open('config/config.yaml', 'r') as f:
+        conf = yaml.load(f, Loader=Loader)
+    model_conf = conf['model']
+    return model_conf['sentence_transformer'], model_conf['network']
+
+
+MILVUS_HOST, MILVUS_PORT, DEFAULT_MILVUS_TABLE_NAME, VECTOR_DIMENSION = load_milvus()
+WEBSITE_HOST, WEBSITE_PORT = load_website()
+TRANSFORMER_MODEL_NAME, NETWORK_MODEL_NAME = load_model()
+
+
+def init_config_test():
+    conf = load_website()
+    print(conf)
+
+
+if __name__ == '__main__':
+    init_config_test()

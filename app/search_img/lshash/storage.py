@@ -84,6 +84,7 @@ class InMemoryStorage(BaseStorage):
 
 class RedisStorage(BaseStorage):
     def __init__(self, config):
+        super().__init__(config)
         if not redis:
             raise ImportError("redis-py is required to use Redis as storage.")
         self.name = 'redis'

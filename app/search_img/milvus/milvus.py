@@ -1,12 +1,12 @@
 import sys
 from pymilvus import connections, Collection, utility, FieldSchema, DataType, CollectionSchema
-from config.config import VECTOR_DIMENSION, MILVUS_HOTS, MILVUS_PORT
+from config.config import VECTOR_DIMENSION, MILVUS_HOST, MILVUS_PORT
 from utils.logs import LOGGER
 
 
 class Milvus:
 
-    def __init__(self, host=MILVUS_HOTS, port=MILVUS_PORT):
+    def __init__(self, host=MILVUS_HOST, port=MILVUS_PORT):
         try:
             self.collection = None
             connections.connect(host=host, port=port)

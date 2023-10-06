@@ -4,7 +4,10 @@ websites:
 
 model:
     network: weights/gl18-tl-resnet50-gem-w-83fdc30.pth
+    sentence_transformer: uer/sbert-base-chinese-nli
 
 milvus:
     host: 127.0.0.1
     port: 19530
+    vector_dimension: 4
+    default_milvus_table_name: milvus_table_name

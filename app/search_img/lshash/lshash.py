@@ -6,8 +6,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function, unicode_literals, division, absolute_import
 from builtins import int, round, str,  object  # noqa
-from future import standard_library
-standard_library.install_aliases()  # noqa: Counter, OrderedDict, 
+# from future import standard_library
+# standard_library.install_aliases()  # noqa: Counter, OrderedDict,
 from past.builtins import basestring   # noqa:
 
 import future        # noqa
@@ -30,10 +30,6 @@ except ImportError:
     bitarray = None
 
 
-try:
-    xrange  # py2
-except NameError:
-    xrange = range  # py3
 
 
 class LSHash(object):
@@ -112,7 +108,7 @@ class LSHash(object):
                     self.uniform_planes = [t[1] for t in npzfiles]
             else:
                 self.uniform_planes = [self._generate_uniform_planes()
-                                       for _ in xrange(self.num_hashtables)]
+                                       for _ in range(self.num_hashtables)]
                 try:
                     np.savez_compressed(self.matrices_filename,
                                         *self.uniform_planes)
@@ -121,14 +117,14 @@ class LSHash(object):
                     raise
         else:
             self.uniform_planes = [self._generate_uniform_planes()
-                                   for _ in xrange(self.num_hashtables)]
+                                   for _ in range(self.num_hashtables)]
 
     def _init_hashtables(self):
         """ Initialize the hash tables such that each record will be in the
         form of "[storage1, storage2, ...]" """
 
         self.hash_tables = [storage(self.storage_config, i)
-                            for i in xrange(self.num_hashtables)]
+                            for i in range(self.num_hashtables)]
 
     def _generate_uniform_planes(self):
         """ Generate uniformly distributed hyperplanes and return it as a 2D
