@@ -1,6 +1,9 @@
 import os
 import numpy as np
 
+from utils.logs import LOGGER
+
+
 def whitenapply(X, m, P, dimensions=None):
     
     if not dimensions:
@@ -47,6 +50,7 @@ def whitenlearn(X, qidxs, pidxs):
 
     return m, P
 
+
 def cholesky(S):
     # Cholesky decomposition
     # with adding a small value on the diagonal
@@ -56,7 +60,8 @@ def cholesky(S):
         try:
             L = np.linalg.cholesky(S + alpha*np.eye(*S.shape))
             return L
-        except:
+        except Exception as e:
+            LOGGER.error(f"cholesky error {e}")
             if alpha == 0:
                 alpha = 1e-10
             else:

@@ -10,11 +10,13 @@ import torch
 import yaml
 from PIL import Image
 from flask import Flask, request
-from torchvision import transforms
 from yaml import Loader
+from torchvision import transforms
 
 from cirtorch.datasets.datahelpers import imresize
 from cirtorch.networks.imageretrievalnet import init_network
+from config.config import WEBSITE_HOST, WEBSITE_PORT, NETWORK_MODEL_NAME
+from utils.logs import LOGGER
 
 app = Flask(__name__)
 
@@ -23,18 +25,18 @@ app = Flask(__name__)
 @app.route("/image", methods=['POST'])
 def accInsurance():
     try:
-        app.logger.debug("print headers------")
+        LOGGER.debug("print headers------")
         headers = request.headers
         headers_info = ""
         for k, v in headers.items():
             headers_info += "{}: {}\n".format(k, v)
-        app.logger.debug(headers_info)
+        LOGGER.debug(headers_info)
 
-        app.logger.debug("print forms------")
+        LOGGER.debug("print forms------")
         forms_info = ""
         for k, v in request.form.items():
             forms_info += "{}: {}\n".format(k, v)
-        app.logger.debug(forms_info)
+        LOGGER.debug(forms_info)
 
         if 'query' not in request.files:
             return json.dumps({'err': 2, 'msg': 'query image is empty'})
@@ -54,7 +56,7 @@ def accInsurance():
 
         return json.dumps({'err': 0, 'msg': 'success', 'data': data})
     except Exception as e:
-        app.logger.exception(sys.exc_info())
+        LOGGER.exception(sys.exc_info())
         return json.dumps({'err': 1, 'msg': e})
 
 
@@ -114,7 +116,8 @@ def retrieval(img):
     return results
 
 
-def init_model(network):
+def init_model():
+    network = NETWORK_MODEL_NAME
     print(">> Loading network:\n>>>> '{}'".format(network))
     state = torch.load(network)
     # parsing net params from meta
@@ -154,21 +157,8 @@ def init_model(network):
     return net, lsh, transform
 
 
-def init():
-    with open('config.yaml', 'r') as f:
-        conf = yaml.load(f, Loader=Loader)
-
-    app.logger.info(conf)
-    host = conf['websites']['host']
-    port = conf['websites']['port']
-    network = conf['model']['network']
-
-    net, lsh, transforms = init_model(network)
-
-    return host, port, net, lsh, transforms
-
+net, lsh, transform = init_model()
 
 if __name__ == "__main__":
-    host, port, net, lsh, transforms = init()
-    app.run(host=host, port=port, debug=True)
-    print("start server {}:{}".format(host, port))
+    app.run(host=WEBSITE_HOST, port=WEBSITE_PORT, debug=True)
+    print("start server {}:{}".format(WEBSITE_HOST, WEBSITE_PORT))

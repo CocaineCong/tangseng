@@ -231,7 +231,7 @@ class TuplesDataset(data.Dataset):
                 while len(nidxs) < self.nnum:
                     potential = idxs2images[ranks[r, q]]
                     # take at most one image from the same cluster
-                    if not self.clusters[potential] in clusters:
+                    if self.clusters[potential] not in clusters:
                         nidxs.append(potential)
                         clusters.append(self.clusters[potential])
                         avg_ndist += torch.pow(qvecs[:,q]-poolvecs[:,ranks[r, q]]+1e-6, 2).sum(dim=0).sqrt()

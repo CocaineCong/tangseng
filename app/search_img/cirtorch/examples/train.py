@@ -1,38 +1,34 @@
 import argparse
+import math
 import os
+import pickle
 import shutil
 import time
-import math
-import pickle
-import pdb
 
 import numpy as np
-
 import torch
-import torch.nn as nn
 import torch.optim
 import torch.utils.data
-
-import torchvision.transforms as transforms
 import torchvision.models as models
+import torchvision.transforms as transforms
 
-from cirtorch.networks.imageretrievalnet import init_network, extract_vectors
-from cirtorch.layers.loss import ContrastiveLoss, TripletLoss
 from cirtorch.datasets.datahelpers import collate_tuples, cid2filename
-from cirtorch.datasets.traindataset import TuplesDataset
 from cirtorch.datasets.testdataset import configdataset
+from cirtorch.datasets.traindataset import TuplesDataset
+from cirtorch.layers.loss import ContrastiveLoss, TripletLoss
+from cirtorch.networks.imageretrievalnet import init_network, extract_vectors
 from cirtorch.utils.download import download_train, download_test
-from cirtorch.utils.whiten import whitenlearn, whitenapply
 from cirtorch.utils.evaluate import compute_map_and_print
 from cirtorch.utils.general import get_data_root, htime
+from cirtorch.utils.whiten import whitenlearn, whitenapply
 
 training_dataset_names = ['retrieval-SfM-120k']
 test_datasets_names = ['oxford5k', 'paris6k', 'roxford5k', 'rparis6k']
 test_whiten_names = ['retrieval-SfM-30k', 'retrieval-SfM-120k']
 
 model_names = sorted(name for name in models.__dict__
-    if name.islower() and not name.startswith("__")
-    and callable(models.__dict__[name]))
+                     if name.islower() and not name.startswith("__")
+                     and callable(models.__dict__[name]))
 pool_names = ['mac', 'spoc', 'gem', 'gemmp']
 loss_names = ['contrastive', 'triplet']
 optimizer_names = ['sgd', 'adam']
@@ -42,32 +38,33 @@ parser = argparse.ArgumentParser(description='PyTorch CNN Image Retrieval Traini
 # export directory, training and val datasets, test datasets
 parser.add_argument('directory', metavar='EXPORT_DIR',
                     help='destination where trained network should be saved')
-parser.add_argument('--training-dataset', '-d', metavar='DATASET', default='retrieval-SfM-120k', choices=training_dataset_names,
-                    help='training dataset: ' + 
-                        ' | '.join(training_dataset_names) +
-                        ' (default: retrieval-SfM-120k)')
+parser.add_argument('--training-dataset', '-d', metavar='DATASET', default='retrieval-SfM-120k',
+                    choices=training_dataset_names,
+                    help='training dataset: ' +
+                         ' | '.join(training_dataset_names) +
+                         ' (default: retrieval-SfM-120k)')
 parser.add_argument('--no-val', dest='val', action='store_false',
                     help='do not run validation')
 parser.add_argument('--test-datasets', '-td', metavar='DATASETS', default='roxford5k,rparis6k',
-                    help='comma separated list of test datasets: ' + 
-                        ' | '.join(test_datasets_names) + 
-                        ' (default: roxford5k,rparis6k)')
+                    help='comma separated list of test datasets: ' +
+                         ' | '.join(test_datasets_names) +
+                         ' (default: roxford5k,rparis6k)')
 parser.add_argument('--test-whiten', metavar='DATASET', default='', choices=test_whiten_names,
-                    help='dataset used to learn whitening for testing: ' + 
-                        ' | '.join(test_whiten_names) + 
-                        ' (default: None)')
-parser.add_argument('--test-freq', default=1, type=int, metavar='N', 
+                    help='dataset used to learn whitening for testing: ' +
+                         ' | '.join(test_whiten_names) +
+                         ' (default: None)')
+parser.add_argument('--test-freq', default=1, type=int, metavar='N',
                     help='run test evaluation every N epochs (default: 1)')
 
 # network architecture and initialization options
 parser.add_argument('--arch', '-a', metavar='ARCH', default='resnet101', choices=model_names,
                     help='model architecture: ' +
-                        ' | '.join(model_names) +
-                        ' (default: resnet101)')
+                         ' | '.join(model_names) +
+                         ' (default: resnet101)')
 parser.add_argument('--pool', '-p', metavar='POOL', default='gem', choices=pool_names,
                     help='pooling options: ' +
-                        ' | '.join(pool_names) +
-                        ' (default: gem)')
+                         ' | '.join(pool_names) +
+                         ' (default: gem)')
 parser.add_argument('--local-whitening', '-lw', dest='local_whitening', action='store_true',
                     help='train model with learnable local whitening (linear layer) before the pooling')
 parser.add_argument('--regional', '-r', dest='regional', action='store_true',
@@ -79,8 +76,8 @@ parser.add_argument('--not-pretrained', dest='pretrained', action='store_false',
 parser.add_argument('--loss', '-l', metavar='LOSS', default='contrastive',
                     choices=loss_names,
                     help='training loss options: ' +
-                        ' | '.join(loss_names) +
-                        ' (default: contrastive)')
+                         ' | '.join(loss_names) +
+                         ' (default: contrastive)')
 parser.add_argument('--loss-margin', '-lm', metavar='LM', default=0.7, type=float,
                     help='loss margin: (default: 0.7)')
 
@@ -101,16 +98,16 @@ parser.add_argument('--workers', '-j', default=8, type=int, metavar='N',
                     help='number of data loading workers (default: 8)')
 parser.add_argument('--epochs', default=100, type=int, metavar='N',
                     help='number of total epochs to run (default: 100)')
-parser.add_argument('--batch-size', '-b', default=5, type=int, metavar='N', 
+parser.add_argument('--batch-size', '-b', default=5, type=int, metavar='N',
                     help='number of (q,p,n1,...,nN) tuples in a mini-batch (default: 5)')
 parser.add_argument('--update-every', '-u', default=1, type=int, metavar='N',
-                    help='update model weights every N batches, used to handle really large batches, ' + 
-                        'batch_size effectively becomes update_every x batch_size (default: 1)')
+                    help='update model weights every N batches, used to handle really large batches, ' +
+                         'batch_size effectively becomes update_every x batch_size (default: 1)')
 parser.add_argument('--optimizer', '-o', metavar='OPTIMIZER', default='adam',
                     choices=optimizer_names,
                     help='optimizer options: ' +
-                        ' | '.join(optimizer_names) +
-                        ' (default: adam)')
+                         ' | '.join(optimizer_names) +
+                         ' (default: adam)')
 parser.add_argument('--lr', '--learning-rate', default=1e-6, type=float,
                     metavar='LR', help='initial learning rate (default: 1e-6)')
 parser.add_argument('--momentum', default=0.9, type=float, metavar='M',
@@ -123,6 +120,7 @@ parser.add_argument('--resume', default='', type=str, metavar='FILENAME',
                     help='name of the latest checkpoint (default: None)')
 
 min_loss = float('inf')
+
 
 def main():
     global args, min_loss
@@ -162,7 +160,7 @@ def main():
 
     # set cuda visible device
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu_id
-    
+
     # set random seeds
     # TODO: maybe pass as argument in future implementation?
     torch.manual_seed(0)
@@ -194,7 +192,7 @@ def main():
     elif args.loss == 'triplet':
         criterion = TripletLoss(margin=args.loss_margin).cuda()
     else:
-        raise(RuntimeError("Loss {} not available!".format(args.loss)))
+        raise (RuntimeError("Loss {} not available!".format(args.loss)))
 
     # parameters split into features, pool, whitening 
     # IMPORTANT: no weight decay for pooling parameter p in GeM or regional-GeM
@@ -208,16 +206,16 @@ def main():
     if not args.regional:
         # global, only pooling parameter p weight decay should be 0
         if args.pool == 'gem':
-            parameters.append({'params': model.pool.parameters(), 'lr': args.lr*10, 'weight_decay': 0})
+            parameters.append({'params': model.pool.parameters(), 'lr': args.lr * 10, 'weight_decay': 0})
         elif args.pool == 'gemmp':
-            parameters.append({'params': model.pool.parameters(), 'lr': args.lr*100, 'weight_decay': 0})
+            parameters.append({'params': model.pool.parameters(), 'lr': args.lr * 100, 'weight_decay': 0})
     else:
         # regional, pooling parameter p weight decay should be 0, 
         # and we want to add regional whitening if it is there
         if args.pool == 'gem':
-            parameters.append({'params': model.pool.rpool.parameters(), 'lr': args.lr*10, 'weight_decay': 0})
+            parameters.append({'params': model.pool.rpool.parameters(), 'lr': args.lr * 10, 'weight_decay': 0})
         elif args.pool == 'gemmp':
-            parameters.append({'params': model.pool.rpool.parameters(), 'lr': args.lr*100, 'weight_decay': 0})
+            parameters.append({'params': model.pool.rpool.parameters(), 'lr': args.lr * 100, 'weight_decay': 0})
         if model.pool.whiten is not None:
             parameters.append({'params': model.pool.whiten.parameters()})
     # add final whitening if exists
@@ -250,7 +248,8 @@ def main():
             print(">>>> loaded checkpoint:\n>>>> '{}' (epoch {})"
                   .format(args.resume, checkpoint['epoch']))
             # important not to forget scheduler updating
-            scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=exp_decay, last_epoch=checkpoint['epoch']-1)
+            scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=exp_decay,
+                                                               last_epoch=checkpoint['epoch'] - 1)
         else:
             print(">> No checkpoint found at '{}'".format(args.resume))
 
@@ -330,8 +329,9 @@ def main():
             'meta': model.meta,
             'state_dict': model.state_dict(),
             'min_loss': min_loss,
-            'optimizer' : optimizer.state_dict(),
+            'optimizer': optimizer.state_dict(),
         }, is_best, args.directory)
+
 
 def train(train_loader, model, criterion, optimizer, epoch):
     batch_time = AverageMeter()
@@ -339,11 +339,11 @@ def train(train_loader, model, criterion, optimizer, epoch):
     losses = AverageMeter()
 
     # create tuples for training
-    avg_neg_distance = train_loader.dataset.create_epoch_tuples(model)
+    # avg_neg_distance = train_loader.dataset.create_epoch_tuples(model)
 
     # switch to train mode
     model.train()
-    model.apply(set_batchnorm_eval)
+    model.apply(set_batch_norm_eval)
 
     # zero out gradients
     optimizer.zero_grad()
@@ -353,14 +353,12 @@ def train(train_loader, model, criterion, optimizer, epoch):
         # measure data loading time
         data_time.update(time.time() - end)
 
-
-        nq = len(input) # number of training tuples
-        ni = len(input[0]) # number of images per tuple
+        nq = len(input)  # number of training tuples
+        ni = len(input[0])  # number of images per tuple
 
         for q in range(nq):
             output = torch.zeros(model.meta['outputdim'], ni).cuda()
             for imi in range(ni):
-
                 # compute index vector for image imi
                 output[:, imi] = model(input[q][imi].cuda()).squeeze()
 
@@ -388,13 +386,13 @@ def train(train_loader, model, criterion, optimizer, epoch):
         batch_time.update(time.time() - end)
         end = time.time()
 
-        if (i+1) % args.print_freq == 0 or i == 0 or (i+1) == len(train_loader):
+        if (i + 1) % args.print_freq == 0 or i == 0 or (i + 1) == len(train_loader):
             print('>> Train: [{0}][{1}/{2}]\t'
                   'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
                   'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
                   'Loss {loss.val:.4f} ({loss.avg:.4f})'.format(
-                   epoch+1, i+1, len(train_loader), batch_time=batch_time,
-                   data_time=data_time, loss=losses))
+                epoch + 1, i + 1, len(train_loader), batch_time=batch_time,
+                data_time=data_time, loss=losses))
 
     return losses.avg
 
@@ -404,7 +402,7 @@ def validate(val_loader, model, criterion, epoch):
     losses = AverageMeter()
 
     # create tuples for validation
-    avg_neg_distance = val_loader.dataset.create_epoch_tuples(model)
+    # avg_neg_distance = val_loader.dataset.create_epoch_tuples(model)
 
     # switch to evaluate mode
     model.eval()
@@ -412,37 +410,36 @@ def validate(val_loader, model, criterion, epoch):
     end = time.time()
     for i, (input, target) in enumerate(val_loader):
 
-        nq = len(input) # number of training tuples
-        ni = len(input[0]) # number of images per tuple
-        output = torch.zeros(model.meta['outputdim'], nq*ni).cuda()
+        nq = len(input)  # number of training tuples
+        ni = len(input[0])  # number of images per tuple
+        output = torch.zeros(model.meta['outputdim'], nq * ni).cuda()
 
         for q in range(nq):
             for imi in range(ni):
-
                 # compute index vector for image imi of query q
-                output[:, q*ni + imi] = model(input[q][imi].cuda()).squeeze()
+                output[:, q * ni + imi] = model(input[q][imi].cuda()).squeeze()
 
         # no need to reduce memory consumption (no backward pass):
         # compute loss for the full batch
         loss = criterion(output, torch.cat(target).cuda())
 
         # record loss
-        losses.update(loss.item()/nq, nq)
+        losses.update(loss.item() / nq, nq)
 
         # measure elapsed time
         batch_time.update(time.time() - end)
         end = time.time()
 
-        if (i+1) % args.print_freq == 0 or i == 0 or (i+1) == len(val_loader):
+        if (i + 1) % args.print_freq == 0 or i == 0 or (i + 1) == len(val_loader):
             print('>> Val: [{0}][{1}/{2}]\t'
                   'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
                   'Loss {loss.val:.4f} ({loss.avg:.4f})'.format(
-                   epoch+1, i+1, len(val_loader), batch_time=batch_time, loss=losses))
+                epoch + 1, i + 1, len(val_loader), batch_time=batch_time, loss=losses))
 
     return losses.avg
 
-def test(datasets, net):
 
+def test(datasets, net):
     print('>> Evaluating network on test datasets...')
 
     # for testing we use image size of max 1024
@@ -478,36 +475,35 @@ def test(datasets, net):
         # extract whitening vectors
         print('>> {}: Extracting...'.format(args.test_whiten))
         wvecs = extract_vectors(net, images, image_size, transform)  # implemented with torch.no_grad
-        
+
         # learning whitening 
         print('>> {}: Learning...'.format(args.test_whiten))
         wvecs = wvecs.numpy()
         m, P = whitenlearn(wvecs, db['qidxs'], db['pidxs'])
         Lw = {'m': m, 'P': P}
 
-        print('>> {}: elapsed time: {}'.format(args.test_whiten, htime(time.time()-start)))
+        print('>> {}: elapsed time: {}'.format(args.test_whiten, htime(time.time() - start)))
     else:
         Lw = None
 
     # evaluate on test datasets
     datasets = args.test_datasets.split(',')
-    for dataset in datasets: 
+    for dataset in datasets:
         start = time.time()
 
         print('>> {}: Extracting...'.format(dataset))
 
         # prepare config structure for the test dataset
         cfg = configdataset(dataset, os.path.join(get_data_root(), 'test'))
-        images = [cfg['im_fname'](cfg,i) for i in range(cfg['n'])]
-        qimages = [cfg['qim_fname'](cfg,i) for i in range(cfg['nq'])]
+        images = [cfg['im_fname'](cfg, i) for i in range(cfg['n'])]
+        qimages = [cfg['qim_fname'](cfg, i) for i in range(cfg['nq'])]
         bbxs = [tuple(cfg['gnd'][i]['bbx']) for i in range(cfg['nq'])]
-        
+
         # extract database and query vectors
         print('>> {}: database images...'.format(dataset))
         vecs = extract_vectors(net, images, image_size, transform)  # implemented with torch.no_grad
         print('>> {}: query images...'.format(dataset))
         qvecs = extract_vectors(net, qimages, image_size, transform, bbxs)  # implemented with torch.no_grad
-        
         print('>> {}: Evaluating...'.format(dataset))
 
         # convert to numpy
@@ -518,18 +514,18 @@ def test(datasets, net):
         scores = np.dot(vecs.T, qvecs)
         ranks = np.argsort(-scores, axis=0)
         compute_map_and_print(dataset, ranks, cfg['gnd'])
-    
+
         if Lw is not None:
             # whiten the vectors
-            vecs_lw  = whitenapply(vecs, Lw['m'], Lw['P'])
+            vecs_lw = whitenapply(vecs, Lw['m'], Lw['P'])
             qvecs_lw = whitenapply(qvecs, Lw['m'], Lw['P'])
 
             # search, rank, and print
             scores = np.dot(vecs_lw.T, qvecs_lw)
             ranks = np.argsort(-scores, axis=0)
             compute_map_and_print(dataset + ' + whiten', ranks, cfg['gnd'])
-        
-        print('>> {}: elapsed time: {}'.format(dataset, htime(time.time()-start)))
+
+        print('>> {}: elapsed time: {}'.format(dataset, htime(time.time() - start)))
 
 
 def save_checkpoint(state, is_best, directory):
@@ -542,7 +538,12 @@ def save_checkpoint(state, is_best, directory):
 
 class AverageMeter(object):
     """Computes and stores the average and current value"""
+
     def __init__(self):
+        self.val = None
+        self.count = None
+        self.sum = None
+        self.avg = None
         self.reset()
 
     def reset(self):
@@ -558,7 +559,7 @@ class AverageMeter(object):
         self.avg = self.sum / self.count
 
 
-def set_batchnorm_eval(m):
+def set_batch_norm_eval(m):
     classname = m.__class__.__name__
     if classname.find('BatchNorm') != -1:
         # freeze running mean and std:
@@ -571,7 +572,7 @@ def set_batchnorm_eval(m):
         # # they can be learned
         # # that is why next two lines are commented
         # for p in m.parameters():
-            # p.requires_grad = False
+        # p.requires_grad = False
 
 
 if __name__ == '__main__':

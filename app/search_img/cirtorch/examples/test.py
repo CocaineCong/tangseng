@@ -2,7 +2,6 @@ import argparse
 import os
 import time
 import pickle
-import pdb
 
 import numpy as np
 
@@ -17,6 +16,7 @@ from cirtorch.utils.download import download_train, download_test
 from cirtorch.utils.whiten import whitenlearn, whitenapply
 from cirtorch.utils.evaluate import compute_map_and_print
 from cirtorch.utils.general import get_data_root, htime
+from utils.logs import LOGGER
 
 PRETRAINED = {
     'retrievalSfM120k-vgg16-gem'        : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/retrieval-SfM-120k/retrievalSfM120k-vgg16-gem-b4dcdc6.pth',
@@ -229,7 +229,8 @@ def main():
         qimages = [cfg['qim_fname'](cfg,i) for i in range(cfg['nq'])]
         try:
             bbxs = [tuple(cfg['gnd'][i]['bbx']) for i in range(cfg['nq'])]
-        except:
+        except Exception as e:
+            LOGGER.error(f"error {e}")
             bbxs = None  # for holidaysmanrot and copydays
         
         # extract database and query vectors

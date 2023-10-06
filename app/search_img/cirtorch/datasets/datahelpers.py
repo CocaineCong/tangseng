@@ -3,6 +3,7 @@ from PIL import Image
 
 import torch
 
+
 def cid2filename(cid, prefix):
     """
     Creates a training image path out of its CID name
@@ -18,11 +19,13 @@ def cid2filename(cid, prefix):
     """
     return os.path.join(prefix, cid[-2:], cid[-4:-2], cid[-6:-4], cid)
 
+
 def pil_loader(path):
     # open path as file to avoid ResourceWarning (https://github.com/python-pillow/Pillow/issues/835)
     with open(path, 'rb') as f:
         img = Image.open(f)
         return img.convert('RGB')
+
 
 def accimage_loader(path):
     import accimage
@@ -32,6 +35,7 @@ def accimage_loader(path):
         # Potentially a decoding problem, fall back to PIL.Image
         return pil_loader(path)
 
+
 def default_loader(path):
     from torchvision import get_image_backend
     if get_image_backend() == 'accimage':
@@ -39,16 +43,20 @@ def default_loader(path):
     else:
         return pil_loader(path)
 
+
 def imresize(img, imsize):
     img.thumbnail((imsize, imsize), Image.ANTIALIAS)
     return img
+
 
 def flip(x, dim):
     xsize = x.size()
     dim = x.dim() + dim if dim < 0 else dim
     x = x.view(-1, *xsize[dim:])
-    x = x.view(x.size(0), x.size(1), -1)[:, getattr(torch.arange(x.size(1)-1, -1, -1), ('cpu','cuda')[x.is_cuda])().long(), :]
+    x = x.view(x.size(0), x.size(1), -1)[:,
+        getattr(torch.arange(x.size(1) - 1, -1, -1), ('cpu', 'cuda')[x.is_cuda])().long(), :]
     return x.view(xsize)
+
 
 def collate_tuples(batch):
     if len(batch) == 1:

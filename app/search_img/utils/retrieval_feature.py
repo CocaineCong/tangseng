@@ -18,7 +18,7 @@ class ImageProcess:
 
     def process(self):
         imgs = list()
-        for root, dirs, files in os.walk(self.img_dir):
+        for root, _, files in os.walk(self.img_dir):
             for file in files:
                 img_path = os.path.join(root + os.sep, file)
                 try:
@@ -27,8 +27,8 @@ class ImageProcess:
                         imgs.append(img_path)
                     else:
                         continue
-                except:
-                    print("image height/width ratio is small")
+                except Exception as e:
+                    print(f"image height/width ratio is small {e}")
 
         return imgs
 

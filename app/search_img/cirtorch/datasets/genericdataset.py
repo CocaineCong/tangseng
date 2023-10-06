@@ -1,7 +1,4 @@
 import os
-import pdb
-
-import torch
 import torch.utils.data as data
 
 from cirtorch.datasets.datahelpers import default_loader, imresize
@@ -72,6 +69,7 @@ class ImagesFromList(data.Dataset):
         tmp = '    Transforms (if any): '
         fmt_str += '{0}{1}\n'.format(tmp, self.transform.__repr__().replace('\n', '\n' + ' ' * len(tmp)))
         return fmt_str
+
 
 class ImagesFromDataList(data.Dataset):
     """A generic data loader that loads images given as an array of pytorch tensors

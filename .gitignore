@@ -42,3 +42,5 @@ wukong_100m*
 *.trie_tree
 data/
 *.inverted
+weights/
+index/
