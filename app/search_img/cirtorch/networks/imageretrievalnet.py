@@ -1,5 +1,4 @@
 import os
-import pdb
 
 import torch
 import torch.nn as nn
@@ -11,11 +10,9 @@ from cirtorch.layers.pooling import MAC, SPoC, GeM, GeMmp, RMAC, Rpool
 from cirtorch.layers.normalization import L2N, PowerLaw
 from cirtorch.datasets.genericdataset import ImagesFromList
 from cirtorch.utils.general import get_data_root
-from PIL import Image
-# from ModelHelper.Common.CommonUtils.ImageAugmentation import Padding
-import cv2
 
-# for some models, we have imported features (convolutions) from caffe because the image retrieval performance is higher for them
+# for some models, we have imported features (convolutions) from caffe because the image retrieval performance is
+# higher for them
 FEATURES = {
     'vgg16': 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/imagenet/imagenet-caffe-vgg16-features-d369c8e.pth',
     'resnet50': 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/imagenet/imagenet-caffe-resnet50-features-ac468af.pth',
@@ -288,8 +285,10 @@ def init_network(params):
 #     return img
 
 
-def extract_vectors(net, images, image_size, transform, bbxs=None, ms=[1], msp=1, print_freq=10):
+def extract_vectors(net, images, image_size, transform, bbxs=None, ms=None, msp=1, print_freq=10):
     # moving network to gpu and eval mode
+    if ms is None:
+        ms = [1]
     if torch.cuda.is_available():
         net.cuda()
     net.eval()
@@ -359,8 +358,10 @@ def extract_ms(net, input, ms, msp):
     return v
 
 
-def extract_regional_vectors(net, images, image_size, transform, bbxs=None, ms=[1], msp=1, print_freq=10):
+def extract_regional_vectors(net, images, image_size, transform, bbxs=None, ms=None, msp=1, print_freq=10):
     # moving network to gpu and eval mode
+    if ms is None:
+        ms = [1]
     net.cuda()
     net.eval()
 
@@ -394,8 +395,10 @@ def extract_ssr(net, input):
     return net.pool(net.features(input), aggregate=False).squeeze(0).squeeze(-1).squeeze(-1).permute(1, 0).cpu().data
 
 
-def extract_local_vectors(net, images, image_size, transform, bbxs=None, ms=[1], msp=1, print_freq=10):
+def extract_local_vectors(net, images, image_size, transform, bbxs=None, ms=None, msp=1, print_freq=10):
     # moving network to gpu and eval mode
+    if ms is None:
+        ms = [1]
     net.cuda()
     net.eval()
 

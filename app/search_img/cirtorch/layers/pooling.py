@@ -86,7 +86,7 @@ class Rpool(nn.Module):
 
     def forward(self, x, aggregate=True):
         # features -> roipool
-        o = LF.roipool(x, self.rpool, self.L, self.eps) # size: #im, #reg, D, 1, 1
+        o = LF.roi_pool(x, self.rpool, self.L, self.eps) # size: #im, #reg, D, 1, 1
 
         # concatenate regions from all images in the batch
         s = o.size()

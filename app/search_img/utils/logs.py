@@ -89,15 +89,16 @@ class MultiprocessHandler(logging.FileHandler):
             logging.FileHandler.emit(self, record)
         except (KeyboardInterrupt, SystemExit):
             raise
-        except:
+        except Exception as e:
+            LOGGER.error(f"emit error {e}")
             self.handleError(record)
 
 
 def write_log():
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
-    fmt = logging.Formatter(
-        '%(asctime)s ｜ %(levelname)s ｜ %(filename)s ｜ %(funcName)s ｜ %(lineno)s ｜ %(message)s')
+    fmt = logging.Formatter('%(asctime)s ｜ %(levelname)s ｜ %(filename)s '
+                            '｜ %(funcName)s ｜ %(lineno)s ｜ %(message)s')
 
     stream_handler = logging.StreamHandler(sys.stdout)
     stream_handler.setLevel(logging.INFO)

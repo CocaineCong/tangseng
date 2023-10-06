@@ -148,8 +148,7 @@ class LSHash(object):
             input_point = np.array(input_point)  # for faster dot product
             projections = np.dot(planes, input_point)
         except TypeError as e:
-            print("""The input point needs to be an array-like object with
-                  numbers only elements""")
+            print(f"The input point needs to be an array-like object with numbers only elements error{e}")
             raise
         except ValueError as e:
             print("""The input point needs to be of the same dimension as

@@ -1,5 +1,8 @@
 import numpy as np
 
+from utils.logs import LOGGER
+
+
 def compute_ap(ranks, nres):
     """
     Computes average precision for given ranked indexes.
@@ -36,7 +39,8 @@ def compute_ap(ranks, nres):
 
     return ap
 
-def compute_map(ranks, gnd, kappas=[]):
+
+def compute_map(ranks, gnd, kappas=None):
     """
     Computes the mAP for a given set of returned results.
 
@@ -54,8 +58,10 @@ def compute_map(ranks, gnd, kappas=[]):
          3) If there are no positive images for some query, that query is excluded from the evaluation
     """
 
+    if kappas is None:
+        kappas = []
     map = 0.
-    nq = len(gnd) # number of queries
+    nq = len(gnd)  # number of queries
     aps = np.zeros(nq)
     pr = np.zeros(len(kappas))
     prs = np.zeros((nq, len(kappas)))
@@ -73,21 +79,22 @@ def compute_map(ranks, gnd, kappas=[]):
 
         try:
             qgndj = np.array(gnd[i]['junk'])
-        except:
+        except Exception as e:
+            LOGGER.error(f"compute_map {e}")
             qgndj = np.empty(0)
 
         # sorted positions of positive and junk images (0 based)
-        pos  = np.arange(ranks.shape[0])[np.in1d(ranks[:,i], qgnd)]
-        junk = np.arange(ranks.shape[0])[np.in1d(ranks[:,i], qgndj)]
+        pos = np.arange(ranks.shape[0])[np.in1d(ranks[:, i], qgnd)]
+        junk = np.arange(ranks.shape[0])[np.in1d(ranks[:, i], qgndj)]
 
-        k = 0;
-        ij = 0;
+        k = 0
+        ij = 0
         if len(junk):
             # decrease positions of positives based on the number of
             # junk images appearing before them
             ip = 0
-            while (ip < len(pos)):
-                while (ij < len(junk) and pos[ip] > junk[ij]):
+            while ip < len(pos):
+                while ij < len(junk) and pos[ip] > junk[ij]:
                     k += 1
                     ij += 1
                 pos[ip] = pos[ip] - k
@@ -99,28 +106,29 @@ def compute_map(ranks, gnd, kappas=[]):
         aps[i] = ap
 
         # compute precision @ k
-        pos += 1 # get it to 1-based
+        pos += 1  # get it to 1-based
         for j in np.arange(len(kappas)):
-            kq = min(max(pos), kappas[j]); 
+            kq = min(max(pos), kappas[j])
             prs[i, j] = (pos <= kq).sum() / kq
         pr = pr + prs[i, :]
 
-    map = map / (nq - nempty)
+    n_map = map / (nq - nempty)
     pr = pr / (nq - nempty)
 
-    return map, aps, pr, prs
+    return n_map, aps, pr, prs
 
 
-def compute_map_and_print(dataset, ranks, gnd, kappas=[1, 5, 10]):
-    
+def compute_map_and_print(dataset, ranks, gnd, kappas=None):
     # old evaluation protocol
+    if kappas is None:
+        kappas = [1, 5, 10]
     if dataset.startswith('oxford5k') or dataset.startswith('paris6k'):
-        map, aps, _, _ = compute_map(ranks, gnd)
-        print('>> {}: mAP {:.2f}'.format(dataset, np.around(map*100, decimals=2)))
+        c_map, aps, _, _ = compute_map(ranks, gnd)
+        print('>> {}: mAP {:.2f}'.format(dataset, np.around(c_map * 100, decimals=2)))
 
     # new evaluation protocol
     elif dataset.startswith('roxford5k') or dataset.startswith('rparis6k'):
-        
+
         gnd_t = []
         for i in range(len(gnd)):
             g = {}
@@ -145,5 +153,9 @@ def compute_map_and_print(dataset, ranks, gnd, kappas=[1, 5, 10]):
             gnd_t.append(g)
         mapH, apsH, mprH, prsH = compute_map(ranks, gnd_t, kappas)
 
-        print('>> {}: mAP E: {}, M: {}, H: {}'.format(dataset, np.around(mapE*100, decimals=2), np.around(mapM*100, decimals=2), np.around(mapH*100, decimals=2)))
-        print('>> {}: mP@k{} E: {}, M: {}, H: {}'.format(dataset, kappas, np.around(mprE*100, decimals=2), np.around(mprM*100, decimals=2), np.around(mprH*100, decimals=2)))
+        print('>> {}: mAP E: {}, M: {}, H: {}'.format(dataset, np.around(mapE * 100, decimals=2),
+                                                      np.around(mapM * 100, decimals=2),
+                                                      np.around(mapH * 100, decimals=2)))
+        print('>> {}: mP@k{} E: {}, M: {}, H: {}'.format(dataset, kappas, np.around(mprE * 100, decimals=2),
+                                                         np.around(mprM * 100, decimals=2),
+                                                         np.around(mprH * 100, decimals=2)))

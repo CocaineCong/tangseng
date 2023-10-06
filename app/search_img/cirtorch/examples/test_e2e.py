@@ -15,6 +15,7 @@ from cirtorch.datasets.testdataset import configdataset
 from cirtorch.utils.download import download_train, download_test
 from cirtorch.utils.evaluate import compute_map_and_print
 from cirtorch.utils.general import get_data_root, htime
+from utils.logs import LOGGER
 
 PRETRAINED = {
     'rSfM120k-tl-resnet50-gem-w'        : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/retrieval-SfM-120k/rSfM120k-tl-resnet50-gem-w-97bf910.pth',
@@ -46,6 +47,7 @@ parser.add_argument('--multiscale', '-ms', metavar='MULTISCALE', default='[1]',
 # GPU ID
 parser.add_argument('--gpu-id', '-g', default='0', metavar='N',
                     help="gpu id used for testing (default: '0')")
+
 
 def main():
     args = parser.parse_args()
@@ -118,7 +120,8 @@ def main():
         qimages = [cfg['qim_fname'](cfg,i) for i in range(cfg['nq'])]
         try:
             bbxs = [tuple(cfg['gnd'][i]['bbx']) for i in range(cfg['nq'])]
-        except:
+        except Exception as e:
+            LOGGER.error(f"error {e}")
             bbxs = None  # for holidaysmanrot and copydays
         
         # extract database and query vectors

@@ -1,5 +1,6 @@
 import sys
-from pymilvus import connections, Collection, utility, FieldSchema, DataType, CollectionSchema
+from pymilvus import (connections, Collection, utility,
+                      FieldSchema, DataType, CollectionSchema)
 from config.config import VECTOR_DIMENSION, MILVUS_HOST, MILVUS_PORT
 from utils.logs import LOGGER
 
@@ -31,8 +32,9 @@ class Milvus:
     def create_collection(self, collection_name):
         try:
             if not self.has_collection(collection_name):
-                doc_id = FieldSchema(name='doc_id', dtype=DataType.INT64, description='doc_id',
-                                     max_length=500, is_primary=True, auto_id=False)
+                doc_id = FieldSchema(name='doc_id', dtype=DataType.INT64,
+                                     description='doc_id', max_length=500,
+                                     is_primary=True, auto_id=False)
                 title_vec = FieldSchema(name='title_vec', dtype=DataType.FLOAT_VECTOR,
                                         description='title embedding vectors',
                                         dim=VECTOR_DIMENSION, is_primary=False)
