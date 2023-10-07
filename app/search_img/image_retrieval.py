@@ -7,18 +7,38 @@ from base64 import encodebytes
 
 import numpy as np
 import torch
-import yaml
 from PIL import Image
 from flask import Flask, request
-from yaml import Loader
 from torchvision import transforms
 
 from cirtorch.datasets.datahelpers import imresize
 from cirtorch.networks.imageretrievalnet import init_network
-from config.config import WEBSITE_HOST, WEBSITE_PORT, NETWORK_MODEL_NAME
+from config.config import WEBSITE_HOST, WEBSITE_PORT, NETWORK_MODEL_NAME, DEFAULT_MILVUS_TABLE_NAME
+from milvus.milvus import Milvus
+from milvus.operators import do_upload, do_search
 from utils.logs import LOGGER
 
 app = Flask(__name__)
+
+
+@app.route("/test_insert", methods=['GET'])
+def test_insert_something():
+    client = Milvus()
+    ids = do_upload(DEFAULT_MILVUS_TABLE_NAME, 1, "title_test",
+                    "test something like test", client)
+    print(ids)
+    return json.dumps({'err': 0, 'msg': 'ok', 'data': 'ok'})
+
+
+@app.route("/test_search", methods=['POST'])
+def test_search_something():
+    query = request.form.get('query')
+    print(query)
+    client = Milvus()
+    ids, distance = do_search(DEFAULT_MILVUS_TABLE_NAME, query, 1, client)
+    print(ids)
+    print(distance)
+    return json.dumps({'err': 0, 'msg': 'ok', 'data': 'ok'})
 
 
 # the entrance of the flask
