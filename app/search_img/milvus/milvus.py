@@ -112,3 +112,6 @@ class Milvus:
         except Exception as e:
             LOGGER.error(f"failed to count vectors in milvus:{e}")
             sys.exit(1)
+
+
+milvus_client = Milvus()

@@ -1,4 +1,5 @@
 import yaml
+from sentence_transformers import SentenceTransformer
 from yaml import Loader
 
 
@@ -28,6 +29,7 @@ def load_model():
 MILVUS_HOST, MILVUS_PORT, DEFAULT_MILVUS_TABLE_NAME, VECTOR_DIMENSION, METRIC_TYPE = load_milvus()
 WEBSITE_HOST, WEBSITE_PORT = load_website()
 TRANSFORMER_MODEL_NAME, NETWORK_MODEL_NAME = load_model()
+TRANSFORMER_MODEL = SentenceTransformer(TRANSFORMER_MODEL_NAME)
 
 
 def init_config_test():
