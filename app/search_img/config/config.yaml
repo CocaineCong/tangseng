@@ -9,5 +9,6 @@ model:
 milvus:
     host: 127.0.0.1
     port: 19530
-    vector_dimension: 4
+    vector_dimension: 768
     default_milvus_table_name: milvus_table_name
+    metric_type: L2
