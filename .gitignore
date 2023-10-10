@@ -44,3 +44,5 @@ data/
 *.inverted
 weights/
 index/
+venv/
+.ruff_cache/

@@ -51,26 +51,25 @@ services:
     restart: on-failure
     privileged: true
     ports:
-      - "2379:2379"
+      - "2380:2379"
     environment:
-      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
-      - ETCD_ADVERTISE_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2380
+      - ETCD_ADVERTISE_CLIENT_URLS=http://0.0.0.0:2380
       - "ALLOW_NONE_AUTHENTICATION=yes"
       - ETCD_API=3
       - ETCD_CERT_FILE="/path/to/service.crt"
       - ETCD_KEY_FILE="/path/to/service.key"
       - ETCD_AUTH="simple"
-      - ETCD_AUTH_USER="todolist"
-      - ETCD_AUTH_PASSWORD="todolist"
-    networks:
+      - ETCD_AUTH_USER="tangseng"
+      - ETCD_AUTH_PASSWORD="tangseng"
       - search_engine
 
   etcd-keeper:
     image: "evildecay/etcdkeeper:latest"
     container_name: etcd-keeper
     environment:
-      - ETCD_HOSTS=http://etcd:2379
-      - SW_STORAGE_ETCD_CLUSTER_NODES=etcd:2379
+      - ETCD_HOSTS=http://etcd:2380
+      - SW_STORAGE_ETCD_CLUSTER_NODES=etcd:2380
       - HOST=127.0.0.1
       - HOSTNAME=etcd-keeper
     links:
@@ -141,68 +140,3 @@ services:
 #      - ./initdb.d:/docker-entrypoint-initdb.d/
 #    networks:
 #      - search_engine
-
-  milvus-etcd:
-    container_name: milvus-etcd
-    image: quay.io/coreos/etcd:v3.5.5
-    environment:
-      - ETCD_AUTO_COMPACTION_MODE=revision
-      - ETCD_AUTO_COMPACTION_RETENTION=1000
-      - ETCD_QUOTA_BACKEND_BYTES=4294967296
-      - ETCD_SNAPSHOT_COUNT=50000
-    ports:
-      - "2381:2379"
-    volumes:
-      - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/etcd:/etcd
-    command: etcd -advertise-woker-urls=http://127.0.0.1:2381 -listen-woker-urls http://0.0.0.0:2381 --data-dir /etcd
-    healthcheck:
-      test: [ "CMD", "etcdctl", "endpoint", "health" ]
-      interval: 30s
-      timeout: 20s
-      retries: 3
-    networks:
-      - search_engine
-
-  minio:
-    container_name: milvus-minio
-    image: minio/minio:RELEASE.2023-03-20T20-16-18Z
-    environment:
-      MINIO_ACCESS_KEY: minioadmin
-      MINIO_SECRET_KEY: minioadmin
-    ports:
-      - "9001:9001"
-      - "9000:9000"
-    volumes:
-      - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/minio:/minio_data
-    command: minio service /minio_data --console-address ":9001"
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
-      interval: 30s
-      timeout: 20s
-      retries: 3
-    networks:
-      - search_engine
-
-  standalone:
-    container_name: milvus-standalone
-    image: milvusdb/milvus:v2.3.0
-    command: [ "milvus", "run", "standalone" ]
-    environment:
-      ETCD_ENDPOINTS: etcd:2380
-      MINIO_ADDRESS: minio:9000
-    volumes:
-      - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/milvus:/var/lib/milvus
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:9091/healthz" ]
-      interval: 30s
-      start_period: 90s
-      timeout: 20s
-      retries: 3
-    ports:
-      - "19530:19530"
-      - "9091:9091"
-    depends_on:
-      - "etcd"
-      - "minio"
-    networks:
-      - search_engine
