@@ -3,11 +3,13 @@ certifi==2023.7.22
 charset-normalizer==3.2.0
 click==8.1.7
 colorama==0.4.6
+dnspython==2.4.2
 environs==9.5.0
 filelock==3.12.3
 Flask==2.3.3
 fsspec==2023.9.2
-grpcio==1.58.0
+grpcio==1.59.0
+grpcio-tools==1.59.0
 huggingface-hub==0.16.4
 idna==3.4
 importlib-metadata==6.8.0
@@ -31,6 +33,7 @@ protobuf==4.24.4
 pymilvus==2.3.1
 python-dateutil==2.8.2
 python-dotenv==1.0.0
+python-etcd==0.4.5
 pytz==2023.3.post1
 PyYAML==6.0.1
 regex==2023.10.3

@@ -26,17 +26,17 @@ type MapReduceTask struct {
 	unknownFields protoimpl.UnknownFields
 
 	// @inject_tag:form:"input" uri:"input"
-	Input string `protobuf:"bytes,1,opt,name=input,proto3" json:"input,omitempty" form:"input" uri:"input"`
+	Input string `protobuf:"bytes,1,opt,name=input,proto3" json:"input,omitempty"`
 	// @inject_tag:form:"task_state" uri:"task_state"
-	TaskState int64 `protobuf:"varint,2,opt,name=task_state,json=taskState,proto3" json:"task_state,omitempty" form:"task_state" uri:"task_state"`
+	TaskState int64 `protobuf:"varint,2,opt,name=task_state,json=taskState,proto3" json:"task_state,omitempty"`
 	// @inject_tag:form:"n_reducer" uri:"n_reducer"
-	NReducer int64 `protobuf:"varint,3,opt,name=n_reducer,json=nReducer,proto3" json:"n_reducer,omitempty" form:"n_reducer" uri:"n_reducer"`
+	NReducer int64 `protobuf:"varint,3,opt,name=n_reducer,json=nReducer,proto3" json:"n_reducer,omitempty"`
 	// @inject_tag:form:"task_number" uri:"task_number"
-	TaskNumber int64 `protobuf:"varint,4,opt,name=task_number,json=taskNumber,proto3" json:"task_number,omitempty" form:"task_number" uri:"task_number"`
+	TaskNumber int64 `protobuf:"varint,4,opt,name=task_number,json=taskNumber,proto3" json:"task_number,omitempty"`
 	// @inject_tag:form:"intermediates" uri:"intermediates"
-	Intermediates []string `protobuf:"bytes,5,rep,name=intermediates,proto3" json:"intermediates,omitempty" form:"intermediates" uri:"intermediates"`
+	Intermediates []string `protobuf:"bytes,5,rep,name=intermediates,proto3" json:"intermediates,omitempty"`
 	// @inject_tag:form:"output" uri:"output"
-	Output string `protobuf:"bytes,6,opt,name=output,proto3" json:"output,omitempty" form:"output" uri:"output"`
+	Output string `protobuf:"bytes,6,opt,name=output,proto3" json:"output,omitempty"`
 }
 
 func (x *MapReduceTask) Reset() {
@@ -119,9 +119,9 @@ type MasterTaskCompletedResp struct {
 	unknownFields protoimpl.UnknownFields
 
 	// @inject_tag:form:"code" uri:"code"
-	Code int64 `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty" form:"code" uri:"code"`
+	Code int64 `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
 	// @inject_tag:form:"message" uri:"message"
-	Message string `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty" form:"message" uri:"message"`
+	Message string `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
 }
 
 func (x *MasterTaskCompletedResp) Reset() {

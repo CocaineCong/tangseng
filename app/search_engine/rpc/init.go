@@ -12,11 +12,7 @@ import (
 	"google.golang.org/grpc/resolver"
 
 	"github.com/CocaineCong/tangseng/config"
-	"github.com/CocaineCong/tangseng/idl/pb/favorite"
-	"github.com/CocaineCong/tangseng/idl/pb/index_platform"
-	"github.com/CocaineCong/tangseng/idl/pb/search_engine"
 	"github.com/CocaineCong/tangseng/idl/pb/search_vector"
-	"github.com/CocaineCong/tangseng/idl/pb/user"
 	"github.com/CocaineCong/tangseng/pkg/discovery"
 )
 
@@ -25,11 +21,7 @@ var (
 	ctx        context.Context
 	CancelFunc context.CancelFunc
 
-	UserClient          user.UserServiceClient
-	FavoriteClient      favorite.FavoritesServiceClient
-	SearchEngineClient  search_engine.SearchEngineServiceClient
-	IndexPlatformClient index_platform.IndexPlatformServiceClient
-	SearchVectorClient  search_vector.SearchVectorServiceClient
+	SearchVectorClient search_vector.SearchVectorServiceClient
 )
 
 // Init 初始化所有的rpc请求
@@ -39,10 +31,6 @@ func Init() {
 	ctx, CancelFunc = context.WithTimeout(context.Background(), 3*time.Second)
 
 	defer Register.Close()
-	initClient(config.Conf.Domain["user"].Name, &UserClient)
-	initClient(config.Conf.Domain["favorite"].Name, &FavoriteClient)
-	initClient(config.Conf.Domain["search_engine"].Name, &SearchEngineClient)
-	initClient(config.Conf.Domain["index_platform"].Name, &IndexPlatformClient)
 	initClient(config.Conf.Domain["search_vector"].Name, &SearchVectorClient)
 }
 
@@ -55,14 +43,6 @@ func initClient(serviceName string, client interface{}) {
 	}
 
 	switch c := client.(type) {
-	case *user.UserServiceClient:
-		*c = user.NewUserServiceClient(conn)
-	case *favorite.FavoritesServiceClient:
-		*c = favorite.NewFavoritesServiceClient(conn)
-	case *search_engine.SearchEngineServiceClient:
-		*c = search_engine.NewSearchEngineServiceClient(conn)
-	case *index_platform.IndexPlatformServiceClient:
-		*c = index_platform.NewIndexPlatformServiceClient(conn)
 	case *search_vector.SearchVectorServiceClient:
 		*c = search_vector.NewSearchVectorServiceClient(conn)
 	default:

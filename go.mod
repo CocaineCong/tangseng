@@ -20,6 +20,7 @@ require (
 	github.com/milvus-io/milvus-sdk-go/v2 v2.3.1
 	github.com/orcaman/concurrent-map/v2 v2.0.1
 	github.com/redis/go-redis/v9 v9.2.1
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/samber/lo v1.38.1
 	github.com/sirupsen/logrus v1.9.2
 	github.com/spf13/cast v1.5.0
@@ -27,6 +28,8 @@ require (
 	github.com/xtgo/set v1.0.0
 	go.etcd.io/bbolt v1.3.7
 	go.etcd.io/etcd/client/v3 v3.5.9
+	go.opentelemetry.io/otel v1.19.0
+	go.opentelemetry.io/otel/trace v1.19.0
 	golang.org/x/crypto v0.12.0
 	google.golang.org/grpc v1.55.0
 	google.golang.org/protobuf v1.30.0
@@ -103,7 +106,6 @@ require (
 	github.com/pierrec/lz4/v4 v4.1.18 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
-	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/rogpeppe/go-internal v1.8.1 // indirect
 	github.com/smartystreets/goconvey v1.8.0 // indirect
 	github.com/spf13/afero v1.9.3 // indirect
@@ -118,9 +120,7 @@ require (
 	github.com/vcaesar/cedar v0.20.1 // indirect
 	go.etcd.io/etcd/api/v3 v3.5.9 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.5.9 // indirect
-	go.opentelemetry.io/otel v1.19.0 // indirect
 	go.opentelemetry.io/otel/metric v1.19.0 // indirect
-	go.opentelemetry.io/otel/trace v1.19.0 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
 	go.uber.org/zap v1.21.0 // indirect

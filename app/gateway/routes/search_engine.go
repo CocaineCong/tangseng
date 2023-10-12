@@ -7,9 +7,14 @@ import (
 )
 
 func SearchRegisterHandlers(rg *gin.RouterGroup) {
-	favoriteGroup := rg.Group("/search_engine")
+	searchEngineGroup := rg.Group("/search_engine")
 	{
-		favoriteGroup.GET("/search", http.SearchEngineSearch)
-		favoriteGroup.GET("/query", http.WordAssociation)
+		searchEngineGroup.GET("/search", http.SearchEngineSearch)
+		searchEngineGroup.GET("/query", http.WordAssociation)
+	}
+
+	searchVectorGroup := rg.Group("/search_vector")
+	{
+		searchVectorGroup.GET("/img", http.SearchVector)
 	}
 }

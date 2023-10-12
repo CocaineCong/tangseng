@@ -10,6 +10,7 @@ import (
 
 	"github.com/CocaineCong/tangseng/app/search_engine/analyzer"
 	"github.com/CocaineCong/tangseng/app/search_engine/repository/storage"
+	"github.com/CocaineCong/tangseng/app/search_engine/rpc"
 	"github.com/CocaineCong/tangseng/app/search_engine/service"
 	"github.com/CocaineCong/tangseng/config"
 	pb "github.com/CocaineCong/tangseng/idl/pb/search_engine"
@@ -25,6 +26,7 @@ func main() {
 	// bi_dao.InitDB() // TODO starrocks完善才开启
 	analyzer.InitSeg()
 	storage.InitStorageDB(ctx)
+	rpc.Init()
 
 	// etcd 地址
 	etcdAddress := []string{config.Conf.Etcd.Address}
