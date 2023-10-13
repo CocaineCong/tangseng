@@ -15,14 +15,14 @@ func BuildIndexByFiles(ctx *gin.Context) {
 	var req pb.BuildIndexReq
 	if err := ctx.ShouldBind(&req); err != nil {
 		log.LogrusObj.Errorf("Bind:%v", err)
-		ctx.JSON(http.StatusOK, ctl.RespError(ctx, err, "绑定参数错误"))
+		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "绑定参数错误"))
 		return
 	}
 
 	r, err := rpc.BuildIndex(ctx, &req)
 	if err != nil {
 		log.LogrusObj.Errorf("BuildIndexByFiles:%v", err)
-		ctx.JSON(http.StatusOK, ctl.RespError(ctx, err, "BuildIndexByFiles RPC服务调用错误"))
+		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "BuildIndexByFiles RPC服务调用错误"))
 		return
 	}
 

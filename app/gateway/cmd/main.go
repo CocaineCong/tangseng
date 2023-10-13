@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"github.com/CocaineCong/tangseng/pkg/trace"
 	"net/http"
 	"os"
 	"os/signal"
@@ -27,6 +29,9 @@ func main() {
 	etcdRegister := discovery.NewResolver(etcdAddress, logrus.New())
 	defer etcdRegister.Close()
 	resolver.Register(etcdRegister)
+	// trace
+	cleanup := trace.InitTracerAuto()
+	defer cleanup(context.Background())
 	go startListen() // 转载路由
 	{
 		osSignals := make(chan os.Signal, 1)

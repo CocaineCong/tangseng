@@ -16,14 +16,14 @@ func SearchEngineSearch(ctx *gin.Context) {
 	var req *pb.SearchEngineRequest
 	if err := ctx.ShouldBind(&req); err != nil {
 		log.LogrusObj.Errorf("SearchEngineSearch-ShouldBind:%v", err)
-		ctx.JSON(http.StatusOK, ctl.RespError(ctx, err, "绑定参数错误"))
+		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "绑定参数错误"))
 		return
 	}
 
 	r, err := rpc.SearchEngineSearch(ctx, req)
 	if err != nil {
 		log.LogrusObj.Errorf("SearchEngineSearch:%v", err)
-		ctx.JSON(http.StatusOK, ctl.RespError(ctx, err, "SearchEngineSearch RPC服务调用错误"))
+		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "SearchEngineSearch RPC服务调用错误"))
 		return
 	}
 
@@ -35,14 +35,14 @@ func WordAssociation(ctx *gin.Context) {
 	var req *pb.SearchEngineRequest
 	if err := ctx.ShouldBind(&req); err != nil {
 		log.LogrusObj.Errorf("WordAssociation-ShouldBind:%v", err)
-		ctx.JSON(http.StatusOK, ctl.RespError(ctx, err, "绑定参数错误"))
+		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "绑定参数错误"))
 		return
 	}
 
 	r, err := rpc.WordAssociation(ctx, req)
 	if err != nil {
 		log.LogrusObj.Errorf("WordAssociation:%v", err)
-		ctx.JSON(http.StatusOK, ctl.RespError(ctx, err, "WordAssociation RPC服务调用错误"))
+		ctx.JSON(http.StatusInternalServerError, ctl.RespError(ctx, err, "WordAssociation RPC服务调用错误"))
 		return
 	}
 

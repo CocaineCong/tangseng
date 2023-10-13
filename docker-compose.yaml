@@ -38,23 +38,33 @@ services:
 
   jaeger:
     container_name: jaeger
-    image: jaegertracing/all-in-one:latest
+    image: jaegertracing/all-in-one:1.50
+    environment:
+      - COLLECTOR_ZIPKIN_HOST_PORT=:9411
     ports:
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
       - "16686:16686"
-    restart: always
+      - "4317:4317"
+      - "4318:4318"
+      - "14250:14250"
+      - "14268:14268"
+      - "14269:14269"
+      - "9411:9411"
     networks:
       - search_engine
 
   etcd:
-    image: "quay.io/coreos/etcd:v3.5.5"
+    image: "quay.io/coreos/etcd:latest"
     container_name: etcd
     restart: on-failure
     privileged: true
     ports:
-      - "2380:2379"
+      - "2379:2379"
     environment:
-      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2380
-      - ETCD_ADVERTISE_CLIENT_URLS=http://0.0.0.0:2380
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://0.0.0.0:2379
       - "ALLOW_NONE_AUTHENTICATION=yes"
       - ETCD_API=3
       - ETCD_CERT_FILE="/path/to/service.crt"
@@ -68,8 +78,8 @@ services:
     image: "evildecay/etcdkeeper:latest"
     container_name: etcd-keeper
     environment:
-      - ETCD_HOSTS=http://etcd:2380
-      - SW_STORAGE_ETCD_CLUSTER_NODES=etcd:2380
+      - ETCD_HOSTS=http://etcd:2379
+      - SW_STORAGE_ETCD_CLUSTER_NODES=etcd:2379
       - HOST=127.0.0.1
       - HOSTNAME=etcd-keeper
     links:
