@@ -1,1 +1,1 @@
-import etcd
+import etcd # noqa:
