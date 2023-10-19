@@ -34,7 +34,9 @@ $(SERVICES):
 
 .PHONY: env-up
 env-up:
-	docker-compose up -d
+	docker-compose -f docker-compose.yaml up -d
+	docker-compose -f docker-compose-with-kafka.yaml up -d
+	docker-compose -f docker-compose-milvus.yaml up -d
 
 .PHONY: env-down
 env-down:

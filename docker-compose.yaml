@@ -45,31 +45,32 @@ services:
     networks:
       - search_engine
 
-  etcd:
-    image: "quay.io/coreos/etcd:v3.5.5"
-    container_name: etcd
-    restart: on-failure
-    privileged: true
-    ports:
-      - "2380:2379"
-    environment:
-      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2380
-      - ETCD_ADVERTISE_CLIENT_URLS=http://0.0.0.0:2380
-      - "ALLOW_NONE_AUTHENTICATION=yes"
-      - ETCD_API=3
-      - ETCD_CERT_FILE="/path/to/service.crt"
-      - ETCD_KEY_FILE="/path/to/service.key"
-      - ETCD_AUTH="simple"
-      - ETCD_AUTH_USER="tangseng"
-      - ETCD_AUTH_PASSWORD="tangseng"
-      - search_engine
+#  etcd:
+#    image: quay.io/coreos/etcd:latest
+#    container_name: etcd
+#    restart: always
+#    privileged: true
+#    ports:
+#      - "3379:2379"
+#    environment:
+#      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:3379
+#      - ETCD_ADVERTISE_CLIENT_URLS=http://0.0.0.0:3379
+#      - "ALLOW_NONE_AUTHENTICATION=yes"
+#      - ETCD_API=3
+#      - ETCD_CERT_FILE="/path/to/service.crt"
+#      - ETCD_KEY_FILE="/path/to/service.key"
+#      - ETCD_AUTH="simple"
+#      - ETCD_AUTH_USER="tangseng"
+#      - ETCD_AUTH_PASSWORD="tangseng"
+#    networks:
+#      - search_engine
 
   etcd-keeper:
     image: "evildecay/etcdkeeper:latest"
     container_name: etcd-keeper
     environment:
-      - ETCD_HOSTS=http://etcd:2380
-      - SW_STORAGE_ETCD_CLUSTER_NODES=etcd:2380
+      - ETCD_HOSTS=http://etcd:2379
+      - SW_STORAGE_ETCD_CLUSTER_NODES=etcd:2379
       - HOST=127.0.0.1
       - HOSTNAME=etcd-keeper
     links:
