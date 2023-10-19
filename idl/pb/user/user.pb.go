@@ -89,13 +89,13 @@ type UserRegisterReq struct {
 	unknownFields protoimpl.UnknownFields
 
 	// @inject_tag:form:"nick_name" uri:"nick_name"
-	NickName string `protobuf:"bytes,1,opt,name=nick_name,json=nickName,proto3" json:"nick_name,omitempty" form:"nick_name" uri:"nick_name"`
+	NickName string `protobuf:"bytes,1,opt,name=nick_name,json=nickName,proto3" json:"nick_name,omitempty"`
 	// @inject_tag:form:"user_name" uri:"user_name"
-	UserName string `protobuf:"bytes,2,opt,name=user_name,json=userName,proto3" json:"user_name,omitempty" form:"user_name" uri:"user_name"`
+	UserName string `protobuf:"bytes,2,opt,name=user_name,json=userName,proto3" json:"user_name,omitempty"`
 	// @inject_tag:form:"password" uri:"password"
-	Password string `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty" form:"password" uri:"password"`
+	Password string `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
 	// @inject_tag:form:"password_confirm" uri:"password_confirm"
-	PasswordConfirm string `protobuf:"bytes,4,opt,name=password_confirm,json=passwordConfirm,proto3" json:"password_confirm,omitempty" form:"password_confirm" uri:"password_confirm"`
+	PasswordConfirm string `protobuf:"bytes,4,opt,name=password_confirm,json=passwordConfirm,proto3" json:"password_confirm,omitempty"`
 }
 
 func (x *UserRegisterReq) Reset() {
@@ -164,9 +164,9 @@ type UserLoginReq struct {
 	unknownFields protoimpl.UnknownFields
 
 	// @inject_tag:form:"user_name" uri:"user_name"
-	UserName string `protobuf:"bytes,1,opt,name=user_name,json=userName,proto3" json:"user_name,omitempty" form:"user_name" uri:"user_name"`
+	UserName string `protobuf:"bytes,1,opt,name=user_name,json=userName,proto3" json:"user_name,omitempty"`
 	// @inject_tag:form:"password" uri:"password"
-	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty" form:"password" uri:"password"`
+	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
 }
 
 func (x *UserLoginReq) Reset() {

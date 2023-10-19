@@ -22,7 +22,7 @@ func SearchRecall(ctx context.Context, query string) (res []*types.SearchItem, e
 // SearchQuery 词条联想
 func SearchQuery(query string) (res []string, err error) {
 	recallService := NewRecall()
-	res, err = recallService.SearchQuery(query)
+	res, err = recallService.SearchQueryWord(query)
 	if err != nil {
 		log.LogrusObj.Errorf("SearchRecall-NewRecallServ:%+v", err)
 		return

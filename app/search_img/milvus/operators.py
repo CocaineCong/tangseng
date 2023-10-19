@@ -1,8 +1,6 @@
 import sys
-import time
 
 from config.config import DEFAULT_MILVUS_TABLE_NAME, TRANSFORMER_MODEL
-from utils.encode import word2vec
 from utils.logs import LOGGER
 
 

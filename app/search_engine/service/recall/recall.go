@@ -5,11 +5,14 @@ import (
 
 	"github.com/RoaringBitmap/roaring"
 	"github.com/samber/lo"
+	"github.com/spf13/cast"
 
+	"github.com/CocaineCong/tangseng/app/gateway/rpc"
 	"github.com/CocaineCong/tangseng/app/search_engine/analyzer"
 	"github.com/CocaineCong/tangseng/app/search_engine/ranking"
 	"github.com/CocaineCong/tangseng/app/search_engine/repository/db/dao"
 	"github.com/CocaineCong/tangseng/app/search_engine/repository/storage"
+	pb "github.com/CocaineCong/tangseng/idl/pb/search_vector"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/CocaineCong/tangseng/repository/redis"
 	"github.com/CocaineCong/tangseng/types"
@@ -31,13 +34,63 @@ func (r *Recall) Search(ctx context.Context, query string) (res []*types.SearchI
 		return
 	}
 
+	// 倒排库搜索
 	res, err = r.searchDoc(ctx, splitQuery)
+	if err != nil {
+		log.LogrusObj.Errorf("searchDoc err: %v", err)
+		return
+	}
+	// 向量库搜索
+	vRes, err := r.SearchVector(ctx, splitQuery)
+	if err != nil {
+		log.LogrusObj.Errorf("SearchVector err: %v", err)
+		return
+	}
+
+	res = append(res, vRes...)
+	res = lo.Uniq(res)
 
 	return
 }
 
-// SearchQuery 入口
-func (r *Recall) SearchQuery(query string) (resp []string, err error) {
+// SearchVector 搜索向量
+func (r *Recall) SearchVector(ctx context.Context, queries []string) (res []*types.SearchItem, err error) {
+	// rpc 调用python接口 获取
+	req := &pb.SearchVectorRequest{Query: queries}
+	vectorResp, err := rpc.SearchVector(ctx, req)
+	if err != nil {
+		log.LogrusObj.Errorln(err)
+		return
+	}
+	// 去重
+	vDocIds := lo.Uniq(vectorResp.DocIds)
+	// 查询正排库
+	docIds := make([]uint32, len(vectorResp.DocIds))
+	for _, v := range vDocIds {
+		docIds = append(docIds, cast.ToUint32(v))
+	}
+	vList, err := dao.NewInputDataDao(ctx).ListInputDataByDocIds(docIds)
+	if err != nil {
+		log.LogrusObj.Errorln(err)
+		return
+	}
+
+	for _, v := range vList {
+		res = append(res, &types.SearchItem{
+			DocId:        v.DocId,
+			Content:      v.Content,
+			Title:        v.Title,
+			Score:        0,
+			DocCount:     0,
+			ContentScore: 0,
+		})
+	}
+
+	return
+}
+
+// SearchQueryWord 入口词语联想
+func (r *Recall) SearchQueryWord(query string) (resp []string, err error) {
 	dictTreeList := make([]string, 0, 1e3)
 	for _, trieDb := range storage.GlobalTrieDB {
 		trie, errx := trieDb.GetTrieTreeDict()

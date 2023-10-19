@@ -33,7 +33,6 @@ message WordAssociationResponse{
 	string data = 4;
 }
 
-
 service SearchEngineService{
 	rpc SearchEngineSearch(SearchEngineRequest) returns(SearchEngineResponse);
 	rpc WordAssociation(SearchEngineRequest) returns(WordAssociationResponse);

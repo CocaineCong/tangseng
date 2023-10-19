@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/CocaineCong/tangseng/app/gateway/rpc"
 	"github.com/CocaineCong/tangseng/app/search_engine/repository/storage"
 	"github.com/CocaineCong/tangseng/config"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
@@ -17,6 +18,7 @@ func TestMain(m *testing.M) {
 	config.InitConfigForTest(&re)
 	log.InitLog()
 	redis.InitRedis()
+	rpc.Init()
 	fmt.Println("Write tests on values: ", config.Conf)
 	m.Run()
 }
@@ -32,4 +34,15 @@ func TestGetTrieTreeFromRedis(t *testing.T) {
 		tree.TraverseForRecall()
 	}
 
+}
+
+func TestRecall_SearchVector(t *testing.T) {
+	ctx := context.Background()
+	r := NewRecall()
+	queries := []string{"小岛秀夫", "导演"}
+	res, err := r.SearchVector(ctx, queries)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(res)
 }

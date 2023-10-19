@@ -26,7 +26,7 @@ type BuildIndexReq struct {
 	unknownFields protoimpl.UnknownFields
 
 	// @inject_tag:form:"file_path" uri:"file_path"
-	FilePath []string `protobuf:"bytes,1,rep,name=file_path,json=filePath,proto3" json:"file_path,omitempty" form:"file_path" uri:"file_path"`
+	FilePath []string `protobuf:"bytes,1,rep,name=file_path,json=filePath,proto3" json:"file_path,omitempty"`
 }
 
 func (x *BuildIndexReq) Reset() {
@@ -74,9 +74,9 @@ type BuildIndexResp struct {
 	unknownFields protoimpl.UnknownFields
 
 	// @inject_tag:form:"code" uri:"code"
-	Code int64 `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty" form:"code" uri:"code"`
+	Code int64 `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
 	// @inject_tag:form:"message" uri:"message"
-	Message string `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty" form:"message" uri:"message"`
+	Message string `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
 }
 
 func (x *BuildIndexResp) Reset() {
