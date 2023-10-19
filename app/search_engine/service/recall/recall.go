@@ -37,13 +37,13 @@ func (r *Recall) Search(ctx context.Context, query string) (res []*types.SearchI
 	// 倒排库搜索
 	res, err = r.searchDoc(ctx, splitQuery)
 	if err != nil {
-		log.LogrusObj.Errorln("searchDoc err: %v", err)
+		log.LogrusObj.Errorf("searchDoc err: %v", err)
 		return
 	}
 	// 向量库搜索
 	vRes, err := r.SearchVector(ctx, splitQuery)
 	if err != nil {
-		log.LogrusObj.Errorln("SearchVector err: %v", err)
+		log.LogrusObj.Errorf("SearchVector err: %v", err)
 		return
 	}
 
