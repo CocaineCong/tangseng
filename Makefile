@@ -48,4 +48,4 @@ run-%:
 
 .PHONY: python-start
 python-start:
-	python $(DIR)/search_vec/main.py
+	python $(DIR)/search_vector/main.py

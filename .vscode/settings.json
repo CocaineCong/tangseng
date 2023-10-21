@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths": [
+        "./idl/pb/search_vector"
+    ]
+}
