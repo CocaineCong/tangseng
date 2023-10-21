@@ -17,7 +17,8 @@ class SearchVectorServiceStub(object):
         self.SearchVector = channel.unary_unary(
                 '/SearchVectorService/SearchVector',
                 request_serializer=search__vector__pb2.SearchVectorRequest.SerializeToString,
-                response_deserializer=search__vector__pb2.SearchVectorResponse.FromString)
+                response_deserializer=search__vector__pb2.SearchVectorResponse.FromString,
+                )
 
 
 class SearchVectorServiceServicer(object):

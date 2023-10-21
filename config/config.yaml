@@ -33,7 +33,7 @@ redis:
   redisNetwork: "tcp"
 
 etcd:
-  address: 127.0.0.1:2379
+  address: 127.0.0.1:3379
 
 services:
   gateway:

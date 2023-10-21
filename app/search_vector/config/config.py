@@ -2,9 +2,10 @@ import yaml
 from sentence_transformers import SentenceTransformer
 from yaml import Loader
 
+config_path = './app/search_vector/config/config.yaml'
 
 def load_website():
-    with open('config/config.yaml', 'r') as f:
+    with open(config_path, 'r') as f:
         conf = yaml.load(f, Loader=Loader)
 
     websites_conf = conf['websites']
@@ -12,7 +13,7 @@ def load_website():
 
 
 def load_milvus():
-    with open('config/config.yaml', 'r') as f:
+    with open(config_path, 'r') as f:
         conf = yaml.load(f, Loader=Loader)
     milvus_conf = conf['milvus']
     return milvus_conf['host'], milvus_conf['port'], milvus_conf['default_milvus_table_name'], milvus_conf[
@@ -20,7 +21,7 @@ def load_milvus():
 
 
 def load_model():
-    with open('config/config.yaml', 'r') as f:
+    with open(config_path, 'r') as f:
         conf = yaml.load(f, Loader=Loader)
     model_conf = conf['model']
     return model_conf['sentence_transformer'], model_conf['network']

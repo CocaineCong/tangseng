@@ -2,28 +2,24 @@ import grpc
 import logging
 import asyncio
 
-from app.search_img.config.config import DEFAULT_MILVUS_TABLE_NAME
-from app.search_img.milvus.operators import do_search
-from app.search_img.milvus.milvus import milvus_client
-from ....idl.pb.search_vector import search_vector_pb2,search_vector_pb2_grpc
+from idl.pb import search_vector_pb2_grpc
+from ctl.resp import RespDefaultSuccess,RespDefaultError
+from config.config import DEFAULT_MILVUS_TABLE_NAME
+from milvus.operators import do_search
+from milvus.milvus import milvus_client
 
 class SearchVectorService(search_vector_pb2_grpc.SearchVectorServiceServicer):
-
     def SearchVector(self, request, context):
-        resp = {'code':200, 'doc_ids':[], 'msg':""}
         try:
             queryies = request.query
             doc_ids = []
             for query in queryies:
-                ids,distants = do_search(DEFAULT_MILVUS_TABLE_NAME, query, 1, milvus_client)
+                ids, distants = do_search(DEFAULT_MILVUS_TABLE_NAME, query, 1, milvus_client)
                 doc_ids.append(ids)
-            resp['doc_ids'] = doc_ids
+            data = ','.join(doc_ids)
+            return RespDefaultSuccess(data)
         except Exception as e:
-            resp['code'] = 500
-            resp['msg'] = str(e)
-
-        return resp
-
+            return RespDefaultError(str(e))
 
 async def serve() -> None:
     server = grpc.aio.server()

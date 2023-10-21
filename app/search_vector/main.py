@@ -1,3 +1,4 @@
+import asyncio
 import io
 import json
 import os
@@ -10,11 +11,12 @@ import torch
 from PIL import Image
 from flask import Flask, request
 from torchvision import transforms
+from service.search_vector import serve
 
+from config.config import DEFAULT_MILVUS_TABLE_NAME, NETWORK_MODEL_NAME, WEBSITE_HOST, WEBSITE_PORT
 from cirtorch.datasets.datahelpers import imresize
 from cirtorch.networks.imageretrievalnet import init_network
-from config.config import WEBSITE_HOST, WEBSITE_PORT, NETWORK_MODEL_NAME, DEFAULT_MILVUS_TABLE_NAME
-from milvus.milvus import Milvus, milvus_client
+from milvus.milvus import milvus_client
 from milvus.operators import do_upload, do_search
 from utils.logs import LOGGER
 
@@ -140,7 +142,7 @@ def init_model():
     state = torch.load(network)
     # parsing net params from meta
     # architecture, pooling, mean, std required
-    # the rest has default values, in case that is doesnt exist
+    # the rest has default values, in case that is doesn't exist
     net_params = {
         'architecture': state['meta']['architecture'],
         'pooling': state['meta']['pooling'],
@@ -178,5 +180,6 @@ def init_model():
 net, lsh, transform = init_model()
 
 if __name__ == "__main__":
-    app.run(host=WEBSITE_HOST, port=WEBSITE_PORT, debug=True)
-    print("start server {}:{}".format(WEBSITE_HOST, WEBSITE_PORT))
+    # app.run(host=WEBSITE_HOST, port=WEBSITE_PORT, debug=True)
+    # print("start server {}:{}".format(WEBSITE_HOST, WEBSITE_PORT))
+    asyncio.run(serve())
