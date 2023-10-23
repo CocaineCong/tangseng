@@ -10,6 +10,7 @@ message SearchVectorResponse{
     int64 code = 1;
     repeated string doc_ids = 2;
     string msg = 3;
+    string error = 4;
 }
 
 service SearchVectorService {

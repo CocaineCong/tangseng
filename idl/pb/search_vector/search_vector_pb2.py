@@ -13,18 +13,19 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x13search_vector.proto\"$\n\x13SearchVectorRequest\x12\r\n\x05query\x18\x01 \x03(\t\"B\n\x14SearchVectorResponse\x12\x0c\n\x04\x63ode\x18\x01 \x01(\x03\x12\x0f\n\x07\x64oc_ids\x18\x02 \x03(\t\x12\x0b\n\x03msg\x18\x03 \x01(\t2R\n\x13SearchVectorService\x12;\n\x0cSearchVector\x12\x14.SearchVectorRequest\x1a\x15.SearchVectorResponseB\x11Z\x0f/search_vector;b\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x13search_vector.proto\"$\n\x13SearchVectorRequest\x12\r\n\x05query\x18\x01 \x03(\t\"Q\n\x14SearchVectorResponse\x12\x0c\n\x04\x63ode\x18\x01 \x01(\x03\x12\x0f\n\x07\x64oc_ids\x18\x02 \x03(\t\x12\x0b\n\x03msg\x18\x03 \x01(\t\x12\r\n\x05\x65rror\x18\x04 \x01(\t2R\n\x13SearchVectorService\x12;\n\x0cSearchVector\x12\x14.SearchVectorRequest\x1a\x15.SearchVectorResponseB\x11Z\x0f/search_vector;b\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'search_vector_pb2', _globals)
-if _descriptor._USE_C_DESCRIPTORS is False:
+if _descriptor._USE_C_DESCRIPTORS == False:
+
   DESCRIPTOR._options = None
   DESCRIPTOR._serialized_options = b'Z\017/search_vector;'
   _globals['_SEARCHVECTORREQUEST']._serialized_start=23
   _globals['_SEARCHVECTORREQUEST']._serialized_end=59
   _globals['_SEARCHVECTORRESPONSE']._serialized_start=61
-  _globals['_SEARCHVECTORRESPONSE']._serialized_end=127
-  _globals['_SEARCHVECTORSERVICE']._serialized_start=129
-  _globals['_SEARCHVECTORSERVICE']._serialized_end=211
+  _globals['_SEARCHVECTORRESPONSE']._serialized_end=142
+  _globals['_SEARCHVECTORSERVICE']._serialized_start=144
+  _globals['_SEARCHVECTORSERVICE']._serialized_end=226
 # @@protoc_insertion_point(module_scope)

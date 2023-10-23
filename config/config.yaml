@@ -72,6 +72,12 @@ services:
     addr:
       - 127.0.0.1:20006
 
+  search_vector:
+    name: search_vector
+    loadBalance: false
+    addr:
+      - 127.0.0.1:50051
+
 starrocks:
   username: root
   password:
@@ -98,3 +104,5 @@ domain:
     name: index_platform
   mapreduce:
     name: mapreduce
+  search_vector:
+    name: search_vector

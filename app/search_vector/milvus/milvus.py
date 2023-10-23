@@ -1,8 +1,8 @@
 import sys
 from pymilvus import (connections, Collection, utility,
                       FieldSchema, DataType, CollectionSchema)
-from config.config import VECTOR_DIMENSION, MILVUS_HOST, MILVUS_PORT, METRIC_TYPE
-from utils.logs import LOGGER
+from ..config.config import VECTOR_DIMENSION, MILVUS_HOST, MILVUS_PORT, METRIC_TYPE
+from ..utils.logs import LOGGER
 
 
 class Milvus:

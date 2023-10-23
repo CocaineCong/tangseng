@@ -3,7 +3,7 @@ websites:
     port: 10086
 
 model:
-    network: weights/gl18-tl-resnet50-gem-w-83fdc30.pth
+    network: app/search_vector/weights/gl18-tl-resnet50-gem-w-83fdc30.pth
     sentence_transformer: uer/sbert-base-chinese-nli
 
 milvus:

@@ -11,14 +11,14 @@ import torch
 from PIL import Image
 from flask import Flask, request
 from torchvision import transforms
-from service.search_vector import serve
+from app.search_vector.service.search_vector import serve
 
-from config.config import DEFAULT_MILVUS_TABLE_NAME, NETWORK_MODEL_NAME, WEBSITE_HOST, WEBSITE_PORT
-from cirtorch.datasets.datahelpers import imresize
-from cirtorch.networks.imageretrievalnet import init_network
-from milvus.milvus import milvus_client
-from milvus.operators import do_upload, do_search
-from utils.logs import LOGGER
+from app.search_vector.config.config import DEFAULT_MILVUS_TABLE_NAME, NETWORK_MODEL_NAME, WEBSITE_HOST, WEBSITE_PORT
+from app.search_vector.cirtorch.datasets.datahelpers import imresize
+from app.search_vector.cirtorch.networks.imageretrievalnet import init_network
+from app.search_vector.milvus.milvus import milvus_client
+from app.search_vector.milvus.operators import do_upload, do_search
+from app.search_vector.utils.logs import LOGGER
 
 app = Flask(__name__)
 
@@ -171,7 +171,7 @@ def init_model():
         normalize
     ])
 
-    with open(os.path.join("./index/", "dataset_index_wukong.pkl"), "rb") as f:
+    with open(os.path.join("app/search_vector/index/", "dataset_index_wukong.pkl"), "rb") as f:
         lsh = pickle.load(f)
 
     return net, lsh, transform

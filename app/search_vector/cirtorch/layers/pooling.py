@@ -2,8 +2,8 @@ import torch
 import torch.nn as nn
 from torch.nn.parameter import Parameter
 
-import cirtorch.layers.functional as LF
-from cirtorch.layers.normalization import L2N
+import app.search_vector.cirtorch.layers.functional as LF
+from app.search_vector.cirtorch.layers.normalization import L2N
 
 # --------------------------------------
 # Pooling layers

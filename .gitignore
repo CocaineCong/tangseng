@@ -13,12 +13,13 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
-
+.vscode
 config/config.yaml
 app/favorite/config/config.yml
 app/search-engine/config/config.yml
 app/user/config/config.yml
 .idea
+.fleet
 app/user/logs
 app/gateway/logs
 app/favorite/logs

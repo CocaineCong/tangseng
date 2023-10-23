@@ -1,7 +1,7 @@
 import sys
 
-from config.config import DEFAULT_MILVUS_TABLE_NAME, TRANSFORMER_MODEL
-from utils.logs import LOGGER
+from ..config.config import DEFAULT_MILVUS_TABLE_NAME, TRANSFORMER_MODEL
+from ..utils.logs import LOGGER
 
 
 # 上传数据到milvus中

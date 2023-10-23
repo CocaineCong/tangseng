@@ -1,7 +1,7 @@
 import os
 import torch.utils.data as data
 
-from cirtorch.datasets.datahelpers import default_loader, imresize
+from app.search_vector.cirtorch.datasets.datahelpers import default_loader, imresize
 
 
 class ImagesFromList(data.Dataset):

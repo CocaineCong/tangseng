@@ -5,9 +5,9 @@ import pdb
 import torch
 import torch.utils.data as data
 
-from cirtorch.datasets.datahelpers import default_loader, imresize, cid2filename
-from cirtorch.datasets.genericdataset import ImagesFromList
-from cirtorch.utils.general import get_data_root
+from app.search_vector.cirtorch.datasets.datahelpers import default_loader, imresize, cid2filename
+from app.search_vector.cirtorch.datasets.genericdataset import ImagesFromList
+from app.search_vector.cirtorch.utils.general import get_data_root
 
 class TuplesDataset(data.Dataset):
     """Data loader that loads training and validation tuples of 

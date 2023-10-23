@@ -7,10 +7,10 @@ import torch.utils.model_zoo as model_zoo
 
 import torchvision
 
-from cirtorch.layers.pooling import MAC, SPoC, GeM, GeMmp, RMAC, Rpool
-from cirtorch.layers.normalization import L2N, PowerLaw
-from cirtorch.datasets.genericdataset import ImagesFromList
-from cirtorch.utils.general import get_data_root
+from app.search_vector.cirtorch.layers.pooling import MAC, SPoC, GeM, GeMmp, RMAC, Rpool
+from app.search_vector.cirtorch.layers.normalization import L2N, PowerLaw
+from app.search_vector.cirtorch.datasets.genericdataset import ImagesFromList
+from app.search_vector.cirtorch.utils.general import get_data_root
 
 # for some models, we have imported features (convolutions) from caffe because the image retrieval performance is higher for them
 FEATURES = {

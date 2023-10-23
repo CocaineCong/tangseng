@@ -4,7 +4,7 @@ import json
 def RespDefaultSuccess(data):
     return json.dumps({
         'code':200,
-        'data':data,
+        'doc_ids':data,
         'msg':'ok',
         'error':'',
     })
@@ -12,7 +12,7 @@ def RespDefaultSuccess(data):
 def RespDefaultError(error):
     return json.dumps({
         'code':500,
-        'data':'',
+        'doc_ids':'',
         'msg':'ok',
         'error':str(error),
     })

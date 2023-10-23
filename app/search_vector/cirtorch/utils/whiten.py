@@ -1,7 +1,7 @@
 import os
 import numpy as np
 
-from utils.logs import LOGGER
+from app.search_vector.utils.logs import LOGGER
 
 
 def whitenapply(X, m, P, dimensions=None):
