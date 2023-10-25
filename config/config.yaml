@@ -76,7 +76,7 @@ services:
     name: search_vector
     loadBalance: false
     addr:
-      - 127.0.0.1:50051
+      - 127.0.0.1:20007
 
 starrocks:
   username: root
@@ -106,3 +106,15 @@ domain:
     name: mapreduce
   search_vector:
     name: search_vector
+
+model:
+    network: app/search_vector/weights/gl18-tl-resnet50-gem-w-83fdc30.pth
+    sentence_transformer: uer/sbert-base-chinese-nli
+
+milvus:
+    host: 127.0.0.1
+    port: 19530
+    vector_dimension: 768
+    default_milvus_table_name: milvus_table_name
+    metric_type: L2
+

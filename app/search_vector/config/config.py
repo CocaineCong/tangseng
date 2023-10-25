@@ -2,14 +2,15 @@ import yaml
 from sentence_transformers import SentenceTransformer
 from yaml import Loader
 
-config_path = './app/search_vector/config/config.yaml'
+config_path = 'config/config.yaml'
+
 
 def load_website():
     with open(config_path, 'r') as f:
         conf = yaml.load(f, Loader=Loader)
-
-    websites_conf = conf['websites']
-    return websites_conf['host'], websites_conf['port']
+    
+    websites_conf = conf['services']
+    return websites_conf['search_vector']['addr']
 
 
 def load_milvus():
@@ -27,10 +28,19 @@ def load_model():
     return model_conf['sentence_transformer'], model_conf['network']
 
 
+def load_etcd():
+    with open(config_path, 'r') as f:
+        conf = yaml.load(f, Loader=Loader)
+    etcd_conf = conf['etcd']
+    etcd_list = str.split(etcd_conf['address'],":")
+    return etcd_list[0], etcd_list[1]
+
+
 MILVUS_HOST, MILVUS_PORT, DEFAULT_MILVUS_TABLE_NAME, VECTOR_DIMENSION, METRIC_TYPE = load_milvus()
-WEBSITE_HOST, WEBSITE_PORT = load_website()
+VECTOR_ADDR = load_website()
 TRANSFORMER_MODEL_NAME, NETWORK_MODEL_NAME = load_model()
 TRANSFORMER_MODEL = SentenceTransformer(TRANSFORMER_MODEL_NAME)
+ETCD_HOST, ETCD_PORT = load_etcd()
 
 
 def init_config_test():

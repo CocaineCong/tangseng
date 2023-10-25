@@ -2,12 +2,14 @@ import json
 
 
 def RespDefaultSuccess(data):
-    return json.dumps({
+    resp = json.dumps({
         'code':200,
         'doc_ids':data,
         'msg':'ok',
         'error':'',
     })
+    print(resp)
+    return resp
 
 def RespDefaultError(error):
     return json.dumps({

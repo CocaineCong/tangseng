@@ -13,7 +13,7 @@ from flask import Flask, request
 from torchvision import transforms
 from app.search_vector.service.search_vector import serve
 
-from app.search_vector.config.config import DEFAULT_MILVUS_TABLE_NAME, NETWORK_MODEL_NAME, WEBSITE_HOST, WEBSITE_PORT
+from app.search_vector.config.config import DEFAULT_MILVUS_TABLE_NAME, NETWORK_MODEL_NAME
 from app.search_vector.cirtorch.datasets.datahelpers import imresize
 from app.search_vector.cirtorch.networks.imageretrievalnet import init_network
 from app.search_vector.milvus.milvus import milvus_client
