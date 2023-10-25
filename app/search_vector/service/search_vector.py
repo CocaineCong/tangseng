@@ -1,3 +1,4 @@
+import json
 import grpc
 import logging
 import asyncio
@@ -33,8 +34,10 @@ async def serve() -> None:
     # listen_addr = "[::]:50051"
     server.add_insecure_port(VECTOR_ADDR[0])
     logging.info("Starting server on %s", VECTOR_ADDR[0])
-    print("ETCD_HOST,ETCD_PORT", ETCD_HOST, ETCD_PORT)
-    etcd_client.set(f"/search_vector/{VECTOR_ADDR}", str({"name":"search_vector","addr":f"{VECTOR_ADDR}","version":"","weight":0})")
+    # print("ETCD_HOST,ETCD_PORT", ETCD_HOST, ETCD_PORT)
+    key = f"/search_vector/{VECTOR_ADDR}"
+    value = json.dumps({"name":"search_vector","addr":f"{VECTOR_ADDR}","version":"","weight":0})
+    etcd_client.set(key, value)
     await server.start()
     await server.wait_for_termination()
 

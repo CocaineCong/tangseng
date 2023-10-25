@@ -30,4 +30,4 @@ class Etcd_Client:
 
 
 etcd_client = Etcd_Client(ETCD_HOST, ETCD_PORT)
-    
+
