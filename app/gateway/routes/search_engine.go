@@ -15,6 +15,6 @@ func SearchRegisterHandlers(rg *gin.RouterGroup) {
 
 	searchVectorGroup := rg.Group("/search_vector")
 	{
-		searchVectorGroup.GET("/img", http.SearchVector)
+		searchVectorGroup.GET("/vector", http.SearchVector)
 	}
 }

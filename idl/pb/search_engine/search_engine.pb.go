@@ -26,7 +26,7 @@ type SearchEngineRequest struct {
 	unknownFields protoimpl.UnknownFields
 
 	// @inject_tag:form:"query" uri:"query"
-	Query string `protobuf:"bytes,1,opt,name=query,proto3" json:"query,omitempty"`
+	Query string `protobuf:"bytes,1,opt,name=query,proto3" json:"query,omitempty" form:"query" uri:"query"`
 }
 
 func (x *SearchEngineRequest) Reset() {

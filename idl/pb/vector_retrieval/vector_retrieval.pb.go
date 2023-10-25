@@ -26,9 +26,9 @@ type VectorReq struct {
 	unknownFields protoimpl.UnknownFields
 
 	// @inject_tag:form:"k" uri:"k"
-	K int64 `protobuf:"varint,1,opt,name=k,proto3" json:"k,omitempty"`
+	K int64 `protobuf:"varint,1,opt,name=k,proto3" json:"k,omitempty" form:"k" uri:"k"`
 	// @inject_tag:form:"vector" uri:"vector"
-	Vector []float32 `protobuf:"fixed32,2,rep,packed,name=vector,proto3" json:"vector,omitempty"`
+	Vector []float32 `protobuf:"fixed32,2,rep,packed,name=vector,proto3" json:"vector,omitempty" form:"vector" uri:"vector"`
 }
 
 func (x *VectorReq) Reset() {

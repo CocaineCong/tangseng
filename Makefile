@@ -22,7 +22,8 @@ proto:
 .PHONY: pyproto
 pyproto:
 	python3 -m grpc_tools.protoc --grpc_python_out=$(IDL_PATH)/pb/search_vector \
-	 --python_out=$(IDL_PATH)/pb/search_vector --proto_path=$(IDL_PATH) $(IDL_PATH)/search_vector.proto;
+		--python_out=$(IDL_PATH)/pb/search_vector --pyi_out=$(IDL_PATH)/pb/search_vector \
+		--proto_path=$(IDL_PATH) $(IDL_PATH)/search_vector.proto;
 
 # python3 -m grpc_tools.protoc -I ./ --python_out=./ --grpc_python_out=. ./search_vector.proto
 
@@ -42,13 +43,11 @@ env-up:
 env-down:
 	docker-compose down
 
-.PHONY: run
-run: 
-	make -j3 run-all;
-
-.PHONY: run-all
-run-all: $(addprefix run-, $(SERVICES))
-
 .PHONY: run-%
 run-%:
 	go run $(DIR)/$*/cmd/main.go;
+
+.PHONY: python-start
+python-start:
+    set PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+	python $(DIR)/search_vector/main.py
