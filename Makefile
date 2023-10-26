@@ -49,5 +49,5 @@ run-%:
 
 .PHONY: python-start
 python-start:
-    set PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
-	python $(DIR)/search_vector/main.py
+    # export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+	python main.py

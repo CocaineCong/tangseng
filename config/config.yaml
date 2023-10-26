@@ -21,9 +21,9 @@ vector:
   server_address:
   timeout: 3
 
-milvus:
-  server_address:
-  timeout: 3
+# milvus:
+#   server_address:
+#   timeout: 3
 
 redis:
   redisDbName: 4
@@ -117,4 +117,5 @@ milvus:
     vector_dimension: 768
     default_milvus_table_name: milvus_table_name
     metric_type: L2
+    timeout: 3
 

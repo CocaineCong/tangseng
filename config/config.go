@@ -19,8 +19,8 @@ type Config struct {
 	SeConfig  *SeConfig           `yaml:"SeConfig"`
 	Kafka     *Kafka              `yaml:"kafka"`
 	StarRocks *StarRocks          `yaml:"starrock"`
-	Vector    VectorConfig        `yaml:"vector"`
-	Milvus    MilvusConfig        `yaml:"milvus"`
+	Vector    *VectorConfig       `yaml:"vector"`
+	Milvus    *MilvusConfig       `yaml:"milvus"`
 }
 
 type VectorConfig struct {
@@ -29,8 +29,12 @@ type VectorConfig struct {
 }
 
 type MilvusConfig struct {
-	ServerAddress string
-	Timeout       int64
+	Host                   string `yaml:"host"`
+	Port                   string `yaml:"port"`
+	VectorDimension        int    `yaml:"vector_dimension"`
+	DefaultMilvusTableName string `yaml:"default_milvus_table_name"`
+	MetricType             string `yaml:"metric_type"`
+	Timeout                int    `yaml:"timeout`
 }
 
 type StarRocks struct {

@@ -2,6 +2,7 @@ package milvus
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/milvus-io/milvus-sdk-go/v2/client"
@@ -24,7 +25,7 @@ func (m *MilvusModel) Init() (err error) {
 	mConfig := config.Conf.Milvus
 	ctx, cancel := context.WithTimeout(m.ctx, time.Millisecond*time.Duration(mConfig.Timeout))
 	defer cancel()
-	milvusClient, err := client.NewGrpcClient(ctx, mConfig.ServerAddress)
+	milvusClient, err := client.NewGrpcClient(ctx, fmt.Sprintf("%s:%s", mConfig.Host, mConfig.Port))
 	if err != nil {
 		logs.LogrusObj.Errorln(err)
 		return
