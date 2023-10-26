@@ -10,7 +10,7 @@ def load_website():
         conf = yaml.load(f, Loader=Loader)
     
     websites_conf = conf['services']
-    return websites_conf['search_vector']['addr']
+    return websites_conf['search_vector']['addr'][0]
 
 
 def load_milvus():
