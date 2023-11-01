@@ -66,13 +66,16 @@ python -m venv venv
 ```
 
 3. 激活 venv python 环境
+
 macos:
+
 ```shell
 source venv/bin/activate
 ```
 
 windows:
-等我清完C盘再兼容一下...
+
+等我清完C盘再兼容一下...还没在win上跑过...
 
 ## Golang
 
