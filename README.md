@@ -2,15 +2,16 @@
 
 **[项目详细内容地址点击这里](https://cocainecong.github.io/tangseng/#/)** 
 
-## 项目大体框架
+## 项目大体框架&功能
 
-1、gin作为http框架，grpc作为rpc框架，etcd作为服务发现。\
-2、总体服务分成`用户模块`、`收藏夹模块`、`索引平台`、`搜索引擎(文字模块)`、`搜索引擎(图片模块)`。\
-3、分布式爬虫爬取数据，并发送到kafka集群中，再落库消费。 (虽然爬虫还没写，但不妨碍我画饼...) \
-4、搜索引擎模块的文本搜索单独设立使用boltdb存储index。\
-5、使用trie tree实现词条联想。 \
-6、图片搜索使用ResNet50来进行向量化查询 + Milvus or Faiss 向量数据库的查询 (开始做了...)。
-
+1. gin作为http框架，grpc作为rpc框架，etcd作为服务发现。
+2. 总体服务分成`用户模块`、`收藏夹模块`、`索引平台`、`搜索引擎(文字模块)`、`搜索引擎(图片模块)`。
+3. 分布式爬虫爬取数据，并发送到kafka集群中，再落库消费。 (虽然爬虫还没写，但不妨碍我画饼...) 
+4. 搜索引擎模块的文本搜索单独设立使用boltdb存储index。
+5. 使用trie tree实现词条联想。 
+6. 图片搜索使用ResNet50来进行向量化查询 + Milvus or Faiss 向量数据库的查询 (开始做了... DeepLearning也太难了...)。
+7. 支持多路召回，go中进行倒排索引召回，python进行向量召回。通过grpc调用连接，进行融合。
+8. 支持TF-IDF，BM25等等算法排序。
 
 ![项目大体框架](docs/images/tangseng.png)
 
@@ -24,7 +25,7 @@
 ### 架构相关
 
 - [ ] 引入降级熔断
-- [ ] 引入jaeger进行链路追踪
+- [ ] 引入jaeger进行全链路追踪(go追踪到python)
 - [ ] 引入skywalking or prometheus进行监控
 - [ ] 抽离dao的init，用key来获取相关数据库实例
 
@@ -37,6 +38,7 @@
 - [ ] 哈夫曼编码压缩前缀树
 - [ ] inverted 和 trie tree 的存储支持一致性hash分片存储
 - [ ] 词向量，pagerank
+- [ ] 分离 trie tree 的 build 和 recall 过程
 - [x] 分词加入ik分词器
 - [x] 构建索引平台，计算存储分离，构建索引与召回分开
 - [ ] 并且差运算
@@ -69,8 +71,8 @@ macos:
 source venv/bin/activate
 ```
 
-windos:
-...
+windows:
+等我清完C盘再兼容一下...
 
 ## Golang
 
