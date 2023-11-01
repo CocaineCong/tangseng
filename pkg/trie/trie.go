@@ -123,20 +123,7 @@ func traverse(node *TrieNode, prefix string) {
 	}
 }
 
-func traverseForRecall(node *TrieNode, prefix string) {
-	if node.IsEnd {
-		fmt.Println(prefix)
-	}
-
-	for c, child := range node.ChildrenRecall {
-		traverseForRecall(child, prefix+c)
-	}
-}
-
-func (trie *Trie) TraverseForRecall() {
-	traverseForRecall(trie.Root, "")
-}
-
 func (trie *Trie) Traverse() {
 	traverse(trie.Root, "")
 }
+

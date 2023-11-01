@@ -6,6 +6,7 @@ import (
 	"fmt"
 )
 
+// FindAllByPrefixForRecall 召回专用的，通过前缀获取所有的节点
 func (trie *Trie) FindAllByPrefixForRecall(prefix string) []string {
 	prefixs := []rune(prefix)
 	node := trie.Root
@@ -31,6 +32,7 @@ func (trie *Trie) dfsForRecall(node *TrieNode, word string, words *[]string) {
 	}
 }
 
+// SearchForRecall 召回时查询这个word是否存在
 func (trie *Trie) SearchForRecall(word string) bool {
 	words := []rune(word)
 	node := trie.Root
@@ -44,7 +46,8 @@ func (trie *Trie) SearchForRecall(word string) bool {
 	return node.IsEnd
 }
 
-// ParseTrieNode 解析 TrieNode 结构体
+// ParseTrieNode 解析 TrieNode 结构体,
+// 从数据库读出来是字符串，然后解析这个字符串成一棵树
 func ParseTrieNode(str string) (*TrieNode, error) {
 	var data map[string]interface{}
 	err := json.Unmarshal([]byte(str), &data)
@@ -63,7 +66,7 @@ func ParseTrieNode(str string) (*TrieNode, error) {
 			return nil, fmt.Errorf("invalid child data for key: %s", key)
 		}
 
-		childNode, err := ParseTrieNodeJSON(childData)
+		childNode, err := parseTrieNodeChild(childData)
 		if err != nil {
 			return nil, err
 		}
@@ -74,8 +77,9 @@ func ParseTrieNode(str string) (*TrieNode, error) {
 	return node, nil
 }
 
-// 解析 TrieNode 结构体的 JSON 数据
-func ParseTrieNodeJSON(data map[string]interface{}) (*TrieNode, error) {
+// parseTrieNodeChild 解析 TrieNode 结构体的 JSON 数据
+// 将这个map数据解析成树状数据
+func parseTrieNodeChild(data map[string]interface{}) (*TrieNode, error) {
 	node := &TrieNode{
 		IsEnd:          false,
 		ChildrenRecall: make(map[string]*TrieNode),
@@ -97,7 +101,7 @@ func ParseTrieNodeJSON(data map[string]interface{}) (*TrieNode, error) {
 			return nil, fmt.Errorf("invalid child data for key: %s", key)
 		}
 
-		childNode, err := ParseTrieNodeJSON(childData)
+		childNode, err := parseTrieNodeChild(childData)
 		if err != nil {
 			return nil, err
 		}
@@ -106,4 +110,19 @@ func ParseTrieNodeJSON(data map[string]interface{}) (*TrieNode, error) {
 	}
 
 	return node, nil
+}
+
+// TraverseForRecall 查看所有节点的信息
+func (trie *Trie) TraverseForRecall() {
+	traverseForRecall(trie.Root, "")
+}
+
+func traverseForRecall(node *TrieNode, prefix string) {
+	if node.IsEnd {
+		fmt.Println(prefix)
+	}
+
+	for c, child := range node.ChildrenRecall {
+		traverseForRecall(child, prefix+c)
+	}
 }
