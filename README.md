@@ -53,3 +53,34 @@
 
 ![文本搜索](docs/images/text2text.jpg)
 
+# 快速开始
+## Python
+1. 确保电脑已经安装了python
+
+2. 安装venv环境
+
+```shell
+python -m venv venv
+```
+
+3. 激活 venv python 环境
+macos:
+```shell
+source venv/bin/activate
+```
+
+windos:
+...
+
+## Golang
+
+下载第三方依赖包
+
+```shell
+go mod tidy
+```
+
+目录下执行
+```shell
+make run-xxx(user,favortie ...)
+```

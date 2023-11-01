@@ -123,6 +123,7 @@ func (s *IndexPlatformSrv) BuildIndexService(ctx context.Context, req *pb.BuildI
 		}
 	})
 
+	// 存储倒排索引
 	go func() {
 		newCtx := clone.NewContextWithoutDeadline()
 		newCtx.Clone(ctx)
@@ -133,6 +134,8 @@ func (s *IndexPlatformSrv) BuildIndexService(ctx context.Context, req *pb.BuildI
 	}()
 
 	logs.LogrusObj.Infoln("storeInvertedIndexByHash End")
+
+	// 存储前缀树
 	go func() {
 		newCtx := clone.NewContextWithoutDeadline()
 		newCtx.Clone(ctx)
@@ -171,7 +174,7 @@ func storeInvertedIndexByHash(ctx context.Context, invertedIndex cmap.Concurrent
 		return
 	}
 
-	// TODO: hash 分片存储
+	// TODO: hash 分片存储, 目前只是根据天数分库，一天的数据都放到同一个库中，感觉这样还是不太行，还是按照每小时或者ihash进行分库，以下同理
 	// dir, _ := os.Getwd()
 	// keys := invertedIndex.Keys()
 	// buffer := make([][]*types.KeyValue, consts.ReduceDefaultNum)

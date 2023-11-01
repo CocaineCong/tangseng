@@ -9,13 +9,13 @@ import (
 
 	"github.com/CocaineCong/tangseng/app/favorite/internal/service"
 	"github.com/CocaineCong/tangseng/config"
+	"github.com/CocaineCong/tangseng/consts"
 	favoritePb "github.com/CocaineCong/tangseng/idl/pb/favorite"
 	"github.com/CocaineCong/tangseng/loading"
 	"github.com/CocaineCong/tangseng/pkg/discovery"
 	logs "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
-const ServerName = "favorite"
 
 func main() {
 	loading.Loading()
@@ -23,10 +23,10 @@ func main() {
 	etcdAddress := []string{config.Conf.Etcd.Address}
 	// 服务注册
 	etcdRegister := discovery.NewRegister(etcdAddress, logs.LogrusObj)
-	grpcAddress := config.Conf.Services[ServerName].Addr[0]
+	grpcAddress := config.Conf.Services[consts.FavoriteServiceName].Addr[0]
 	defer etcdRegister.Stop()
 	node := discovery.Server{
-		Name: config.Conf.Domain[ServerName].Name,
+		Name: config.Conf.Domain[consts.FavoriteServiceName].Name,
 		Addr: grpcAddress,
 	}
 	server := grpc.NewServer()

@@ -13,12 +13,11 @@ import (
 	"github.com/CocaineCong/tangseng/app/search_engine/rpc"
 	"github.com/CocaineCong/tangseng/app/search_engine/service"
 	"github.com/CocaineCong/tangseng/config"
+	"github.com/CocaineCong/tangseng/consts"
 	pb "github.com/CocaineCong/tangseng/idl/pb/search_engine"
 	"github.com/CocaineCong/tangseng/loading"
 	"github.com/CocaineCong/tangseng/pkg/discovery"
 )
-
-const SearchEngineService = "search_engine"
 
 func main() {
 	ctx := context.Background()
@@ -32,10 +31,10 @@ func main() {
 	etcdAddress := []string{config.Conf.Etcd.Address}
 	// 服务注册
 	etcdRegister := discovery.NewRegister(etcdAddress, logrus.New())
-	grpcAddress := config.Conf.Services[SearchEngineService].Addr[0]
+	grpcAddress := config.Conf.Services[consts.SearchServiceName].Addr[0]
 	defer etcdRegister.Stop()
 	node := discovery.Server{
-		Name: config.Conf.Domain[SearchEngineService].Name,
+		Name: config.Conf.Domain[consts.SearchServiceName].Name,
 		Addr: grpcAddress,
 	}
 	server := grpc.NewServer()

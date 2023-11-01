@@ -34,7 +34,7 @@ type MilvusConfig struct {
 	VectorDimension        int    `yaml:"vector_dimension"`
 	DefaultMilvusTableName string `yaml:"default_milvus_table_name"`
 	MetricType             string `yaml:"metric_type"`
-	Timeout                int    `yaml:"timeout`
+	Timeout                int    `yaml:"timeout"`
 }
 
 type StarRocks struct {
