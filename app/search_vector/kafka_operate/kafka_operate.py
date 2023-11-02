@@ -1,5 +1,7 @@
 from kafka import KafkaProducer, KafkaConsumer
 from kafka.errors import KafkaError
+from milvus import milvus
+from milvus.operators import do_upload
 
 
 class KafkaHelper:
@@ -8,6 +10,7 @@ class KafkaHelper:
         self.bootstrap_servers = bootstrap_servers
         self.producer = None
         self.consumer = None
+        self.milvus_client = milvus.milvus_client
 
     def connect_producer(self):
         try:
@@ -39,8 +42,11 @@ class KafkaHelper:
             return
         print("Consuming messages...")
         for message in self.consumer:
-            print(message.value.decode('utf-8'))
+            # print(message.value.decode('utf-8'))
+            do_upload("test", 1, "mirror",
+                    message, self.milvus_client)
 
+            
     def on_send_success(self, record_metadata):
         print(f"Message sent successfully. Topic: {record_metadata.topic}, Partition: {record_metadata.partition}, Offset: {record_metadata.offset}")
 
