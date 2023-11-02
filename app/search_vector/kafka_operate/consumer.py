@@ -9,8 +9,6 @@ def consumer_inverted_index():
     kafka_helper.connect_consumer(kafka_topic)
     kafka_helper.consume_messages()
     
-
-
 # 创建线程对象
 thread = threading.Thread(target=consumer_inverted_index)
 
