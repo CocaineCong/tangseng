@@ -38,6 +38,7 @@ wukong_input_data/
 other_input_data/
 output_data/
 *.txt
+!requirements.txt
 mr-*
 wukong_100m*
 *.trie_tree
