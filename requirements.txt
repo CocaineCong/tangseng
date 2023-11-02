@@ -1,3 +1,4 @@
+autopep8==2.0.4
 blinker==1.6.2
 certifi==2023.7.22
 charset-normalizer==3.2.0
@@ -32,6 +33,7 @@ packaging==23.2
 pandas==2.1.1
 Pillow==10.0.0
 protobuf==4.24.4
+pycodestyle==2.11.1
 pymilvus==2.3.1
 python-dateutil==2.8.2
 python-dotenv==1.0.0
@@ -51,6 +53,7 @@ sympy==1.12
 tenacity==8.2.3
 threadpoolctl==3.2.0
 tokenizers==0.14.0
+tomli==2.0.1
 torch==2.0.1
 torchvision==0.15.2
 tqdm==4.66.1
