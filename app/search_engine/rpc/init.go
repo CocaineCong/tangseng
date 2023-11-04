@@ -12,6 +12,7 @@ import (
 	"google.golang.org/grpc/resolver"
 
 	"github.com/CocaineCong/tangseng/config"
+	"github.com/CocaineCong/tangseng/consts"
 	"github.com/CocaineCong/tangseng/idl/pb/search_vector"
 	"github.com/CocaineCong/tangseng/pkg/discovery"
 )
@@ -31,7 +32,7 @@ func Init() {
 	ctx, CancelFunc = context.WithTimeout(context.Background(), 3*time.Second)
 
 	defer Register.Close()
-	initClient(config.Conf.Domain["search_vector"].Name, &SearchVectorClient)
+	initClient(config.Conf.Domain[consts.SearchVectorName].Name, &SearchVectorClient)
 }
 
 // initClient 初始化所有的rpc客户端

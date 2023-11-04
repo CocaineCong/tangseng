@@ -7,11 +7,11 @@ import (
 	"github.com/samber/lo"
 	"github.com/spf13/cast"
 
-	"github.com/CocaineCong/tangseng/app/gateway/rpc"
 	"github.com/CocaineCong/tangseng/app/search_engine/analyzer"
 	"github.com/CocaineCong/tangseng/app/search_engine/ranking"
 	"github.com/CocaineCong/tangseng/app/search_engine/repository/db/dao"
 	"github.com/CocaineCong/tangseng/app/search_engine/repository/storage"
+	"github.com/CocaineCong/tangseng/app/search_engine/rpc"
 	pb "github.com/CocaineCong/tangseng/idl/pb/search_vector"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/CocaineCong/tangseng/repository/redis"
