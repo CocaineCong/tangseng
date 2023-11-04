@@ -1,9 +1,9 @@
 """kafka operate"""
 from kafka import KafkaProducer, KafkaConsumer
 from kafka.errors import KafkaError
-from config.config import KAFKA_CLUSTER
-from milvus import milvus
-from milvus.operators import do_upload
+from ..config.config import KAFKA_CLUSTER
+from ..milvus import milvus
+from ..milvus.operators import do_upload
 
 
 class KafkaHelper:

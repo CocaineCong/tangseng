@@ -1,5 +1,5 @@
 """store vector index from kafka"""
-from kafka_operate.kafka_operate import kafka_helper
+from ..kafka_operate.kafka_operate import kafka_helper
 
 
 def store_data_from_kafka(kafka_topic, milvus_table_name):

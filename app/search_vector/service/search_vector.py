@@ -4,8 +4,7 @@ import logging
 import asyncio
 
 from idl.pb.search_vector import search_vector_pb2
-from ..ctl.resp import RespDefaultSuccess, RespDefaultError
-from ..config.config import DEFAULT_MILVUS_TABLE_NAME, VECTOR_ADDR, ETCD_HOST, ETCD_PORT
+from ..config.config import DEFAULT_MILVUS_TABLE_NAME, VECTOR_ADDR
 from ..milvus.operators import do_search
 from ..etcd_operate.etcd import etcd_client
 from ..milvus.milvus import milvus_client
@@ -14,30 +13,42 @@ from idl.pb.search_vector import search_vector_pb2_grpc
 
 class SearchVectorService(search_vector_pb2_grpc.SearchVectorServiceServicer):
 
-    def SearchVector(self, request, context) -> search_vector_pb2.SearchVectorResponse:
+    def SearchVector(self, request,
+                     context) -> search_vector_pb2.SearchVectorResponse:
         try:
             queryies = request.query
             doc_ids = []
             for query in queryies:
-                ids, distants = do_search(DEFAULT_MILVUS_TABLE_NAME, query, 1, milvus_client)
+                ids, distants = do_search(DEFAULT_MILVUS_TABLE_NAME, query, 1,
+                                          milvus_client)
                 print("search vector ids", ids)
                 doc_ids += ids
             print("search vector data", doc_ids)
-            return search_vector_pb2.SearchVectorResponse(code=200, doc_ids=doc_ids, msg='ok', error='')
+            return search_vector_pb2.SearchVectorResponse(code=200,
+                                                          doc_ids=doc_ids,
+                                                          msg='ok',
+                                                          error='')
         except Exception as e:
             print("search vector error", e)
-            return search_vector_pb2.SearchVectorResponse(code=500, doc_ids='', msg='fail', error=str(e))
+            return search_vector_pb2.SearchVectorResponse(code=500,
+                                                          doc_ids='',
+                                                          msg='fail',
+                                                          error=str(e))
 
 
 async def serve() -> None:
     server = grpc.aio.server()
-    search_vector_pb2_grpc.add_SearchVectorServiceServicer_to_server(SearchVectorService(), server)
-    # listen_addr = "[::]:50051"
+    search_vector_pb2_grpc.add_SearchVectorServiceServicer_to_server(
+        SearchVectorService(), server)
     server.add_insecure_port(VECTOR_ADDR)
     logging.info("Starting server on %s", VECTOR_ADDR)
-    # print("ETCD_HOST,ETCD_PORT", ETCD_HOST, ETCD_PORT)
     key = f"/search_vector/{VECTOR_ADDR}"
-    value = json.dumps({"name": "search_vector", "addr": f"{VECTOR_ADDR}", "version": "", "weight": 0})
+    value = json.dumps({
+        "name": "search_vector",
+        "addr": f"{VECTOR_ADDR}",
+        "version": "",
+        "weight": 0
+    })
     etcd_client.set(key, value)
     await server.start()
     await server.wait_for_termination()

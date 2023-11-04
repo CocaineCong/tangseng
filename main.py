@@ -19,7 +19,7 @@ from app.search_vector.cirtorch.networks.imageretrievalnet import init_network
 from app.search_vector.milvus.milvus import milvus_client
 from app.search_vector.milvus.operators import do_upload, do_search
 from app.search_vector.utils.logs import LOGGER
-from script.vector_index import consume_inverted_index
+from app.search_vector.script.vector_index import consume_inverted_index
 
 app = Flask(__name__)
 
