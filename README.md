@@ -1,14 +1,14 @@
 # Tangseng 基于Go语言的搜索引擎
 
-**[项目详细内容地址点击这里](https://cocainecong.github.io/tangseng/#/)** 
+**[项目详细内容地址点击这里](https://cocainecong.github.io/tangseng/#/)**
 
 ## 项目大体框架&功能
 
 1. gin作为http框架，grpc作为rpc框架，etcd作为服务发现。
 2. 总体服务分成`用户模块`、`收藏夹模块`、`索引平台`、`搜索引擎(文字模块)`、`搜索引擎(图片模块)`。
-3. 分布式爬虫爬取数据，并发送到kafka集群中，再落库消费。 (虽然爬虫还没写，但不妨碍我画饼...) 
+3. 分布式爬虫爬取数据，并发送到kafka集群中，再落库消费。 (虽然爬虫还没写，但不妨碍我画饼...)
 4. 搜索引擎模块的文本搜索单独设立使用boltdb存储index。
-5. 使用trie tree实现词条联想。 
+5. 使用trie tree实现词条联想。
 6. 图片搜索使用ResNet50来进行向量化查询 + Milvus or Faiss 向量数据库的查询 (开始做了... DeepLearning也太难了...)。
 7. 支持多路召回，go中进行倒排索引召回，python进行向量召回。通过grpc调用连接，进行融合。
 8. 支持TF-IDF，BM25等等算法排序。
@@ -22,6 +22,7 @@ all in react, but still coding
 [react-tangseng](https://github.com/CocaineCong/react-tangseng)
 
 ## 未来规划
+
 ### 架构相关
 
 - [ ] 引入降级熔断
@@ -56,41 +57,47 @@ all in react, but still coding
 
 ![文本搜索](docs/images/text2text.jpg)
 
-# 快速开始
-## Python
+## 快速开始
+
+### Python
+
 1. 确保电脑已经安装了python
+
+    ```shell
+    python --version
+    ```
 
 2. 安装venv环境
 
-```shell
-python -m venv venv
-```
+    ```shell
+    python -m venv venv
+    ```
 
 3. 激活 venv python 环境
+    macos:
 
-macos:
+    ```shell
+    source venv/bin/activate
+    ```
 
-```shell
-source venv/bin/activate
-```
+    windows:
 
-windows:
+    等我清完C盘再兼容一下...还没在win上跑过...
 
-等我清完C盘再兼容一下...还没在win上跑过...
+### Golang
 
-## Golang
+1. 下载第三方依赖包
 
-下载第三方依赖包
+    ```shell
+    go mod tidy
+    ```
 
-```shell
-go mod tidy
-```
+2. 目录下执行
 
-目录下执行
-```shell
-make run-xxx(user,favortie ...)
-# e.g:
-# make run-user
-# make run-favorite
-# 具体看makefile文件
-```
+    ```shell
+    make run-xxx(user,favortie ...)
+    # e.g:
+    # make run-user
+    # make run-favorite
+    # 具体看makefile文件
+    ```
