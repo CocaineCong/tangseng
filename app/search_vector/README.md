@@ -4,18 +4,24 @@
 
 ## 项目结构
 
-```
-.├── cirtorch
- ├── ImageRetrieval
-  	└── jpg
- ├── index
- 	└── dataset_index_wukong.pkl
- ├── lshash
- ├── utils
-  	└── retrieval_feature.py
- ├── weights
- ├── config.yaml
- └── interface.py
+```shell
+cirtorch
+│   ├── datasets
+│   ├── examples
+│   ├── layers
+│   ├── networks
+│   └── utils
+├── config
+├── consts
+├── ctl
+├── etcd_operate
+├── index
+├── kafka_operate
+├── lshash
+├── milvus
+├── service
+├── utils
+└── weights
 ```
 
 其中，`cirtorch`部分来自于[CNN Image Retrieval in PyTorch](https://github.com/filipradenovic/cnnimageretrieval-pytorch)，使用了该项目的网络架构和预训练模型进行特征编码。
@@ -37,8 +43,4 @@
 
 ## 项目主要依赖
 
-- PyTorch
-- Flask
-- NumPy
-- PyYaml
-- PIL
+可查看根目录下的`requirement.txt`文件
