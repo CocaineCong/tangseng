@@ -6,6 +6,7 @@ from yaml import Loader, load
 
 CONFIG_PATH = 'config/config.yaml'
 
+
 def load_website():
     """
     loading the website infomation from config path.
@@ -27,8 +28,10 @@ def load_milvus():
     with open(CONFIG_PATH, 'r', encoding='utf-8') as f:
         conf = load(f, Loader=Loader)
     milvus_conf = conf['milvus']
-    return milvus_conf['host'], milvus_conf['port'], milvus_conf['default_milvus_table_name'], milvus_conf[
-        'vector_dimension'], milvus_conf['metric_type']
+    return milvus_conf['host'], milvus_conf['port'], milvus_conf[
+        'default_milvus_table_name'], milvus_conf[
+            'vector_dimension'], milvus_conf['metric_type']
+
 
 def load_model():
     """
@@ -49,7 +52,7 @@ def load_etcd():
     with open(CONFIG_PATH, 'r', encoding='utf-8') as f:
         conf = load(f, Loader=Loader)
     etcd_conf = conf['etcd']
-    etcd_list = str.split(etcd_conf['address'],":")
+    etcd_list = str.split(etcd_conf['address'], ":")
     return etcd_list[0], etcd_list[1]
 
 
@@ -67,7 +70,9 @@ def load_kafka():
     kafka_conf = conf['kafka']
     return kafka_conf['address']
 
-MILVUS_HOST, MILVUS_PORT, DEFAULT_MILVUS_TABLE_NAME, VECTOR_DIMENSION, METRIC_TYPE = load_milvus()
+
+MILVUS_HOST, MILVUS_PORT, DEFAULT_MILVUS_TABLE_NAME, VECTOR_DIMENSION, METRIC_TYPE = load_milvus(
+)
 VECTOR_ADDR = load_website()
 TRANSFORMER_MODEL_NAME, NETWORK_MODEL_NAME = load_model()
 TRANSFORMER_MODEL = SentenceTransformer(TRANSFORMER_MODEL_NAME)

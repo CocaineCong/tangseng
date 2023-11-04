@@ -1,17 +1,10 @@
-from kafka_operate import KafkaHelper
-import threading
+"""store vector index from kafka"""
+from kafka_operate.kafka_operate import kafka_helper
 
 
-def consumer_inverted_index():
-    kafka_servers = ['localhost:10001','localhost:10002','localhost:10003']
-    kafka_topic = 'my_topic'
-    kafka_helper = KafkaHelper(kafka_servers)
+def store_data_from_kafka(kafka_topic, milvus_table_name):
+    """
+    store data to mivlus from kakfa for building inverted index
+    """
     kafka_helper.connect_consumer(kafka_topic)
-    kafka_helper.consume_messages()
-
-# 创建线程对象
-thread = threading.Thread(target=consumer_inverted_index)
-# 启动线程
-thread.start()
-# 等待线程结束
-thread.join()
+    kafka_helper.consume_messages_store_milvus(milvus_table_name)
