@@ -1,4 +1,5 @@
 """kafka operate"""
+import json
 from kafka import KafkaProducer, KafkaConsumer
 from kafka.errors import KafkaError
 from ..config.config import KAFKA_CLUSTER
@@ -75,7 +76,9 @@ class KafkaHelper:
             return
         print("Consuming messages...")
         for msg in self.consumer:
-            do_upload(milvus_table, 1, "mirror", msg, self.milvus_client)
+            data = json.loads(msg.value.decode('utf-8'))
+            do_upload(milvus_table, int(data["doc_id"]), data["title"],
+                      data["body"], self.milvus_client)
 
     def on_send_success(self, record_metadata):
         """

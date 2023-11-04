@@ -4,7 +4,8 @@ from ..config.config import DEFAULT_MILVUS_TABLE_NAME, TRANSFORMER_MODEL
 from ..utils.logs import LOGGER
 
 
-def do_upload(table_name, doc_id, title, body, milvus_client):
+def do_upload(table_name: str, doc_id: int, title: str, body: str,
+              milvus_client):
     """
     upload info in milvus
 
