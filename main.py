@@ -19,6 +19,7 @@ from app.search_vector.cirtorch.networks.imageretrievalnet import init_network
 from app.search_vector.milvus.milvus import milvus_client
 from app.search_vector.milvus.operators import do_upload, do_search
 from app.search_vector.utils.logs import LOGGER
+from script.vector_index import consume_inverted_index
 
 app = Flask(__name__)
 
@@ -35,7 +36,8 @@ def test_insert_something():
 def test_search_something():
     query = request.form.get('query')
     print(query)
-    ids, distance = do_search(DEFAULT_MILVUS_TABLE_NAME, query, 1, milvus_client)
+    ids, distance = do_search(DEFAULT_MILVUS_TABLE_NAME, query, 1,
+                              milvus_client)
     print(ids)
     print(distance)
     return json.dumps({'err': 0, 'msg': 'ok', 'data': 'ok'})
@@ -91,7 +93,7 @@ def get_response_image(image_path):
 
 # Compute the cosine relativity
 def cosine_dist(x, y):
-    return 100 * float(np.dot(x, y)) / (np.dot(x, x) * np.dot(y, y)) ** 0.5
+    return 100 * float(np.dot(x, y)) / (np.dot(x, x) * np.dot(y, y))**0.5
 
 
 # Inference from ResNet-50
@@ -126,8 +128,12 @@ def retrieval(img):
         for i in range(3):
             similar_path = response[i][0][1]
             # compute the relativity of the query image and the result image
-            score = np.rint(cosine_dist(list(query_vect), list(response[i][0][0])))
-            result = {"score": score, "image": get_response_image(similar_path)}
+            score = np.rint(
+                cosine_dist(list(query_vect), list(response[i][0][0])))
+            result = {
+                "score": score,
+                "image": get_response_image(similar_path)
+            }
             results.append(result)
     except Exception as e:
         results = []
@@ -162,16 +168,13 @@ def init_model():
     net.eval()
 
     # set up the transform
-    normalize = transforms.Normalize(
-        mean=net.meta['mean'],
-        std=net.meta['std']
-    )
-    transform = transforms.Compose([
-        transforms.ToTensor(),
-        normalize
-    ])
+    normalize = transforms.Normalize(mean=net.meta['mean'],
+                                     std=net.meta['std'])
+    transform = transforms.Compose([transforms.ToTensor(), normalize])
 
-    with open(os.path.join("app/search_vector/index/", "dataset_index_wukong.pkl"), "rb") as f:
+    with open(
+            os.path.join("app/search_vector/index/",
+                         "dataset_index_wukong.pkl"), "rb") as f:
         lsh = pickle.load(f)
 
     return net, lsh, transform
@@ -182,4 +185,5 @@ net, lsh, transform = init_model()
 if __name__ == "__main__":
     # app.run(host=WEBSITE_HOST, port=WEBSITE_PORT, debug=True)
     # print("start server {}:{}".format(WEBSITE_HOST, WEBSITE_PORT))
+    consume_inverted_index()
     asyncio.run(serve())
