@@ -16,7 +16,6 @@ import (
 	logs "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
-
 func main() {
 	loading.Loading()
 	// etcd 地址

@@ -185,5 +185,5 @@ net, lsh, transform = init_model()
 if __name__ == "__main__":
     # app.run(host=WEBSITE_HOST, port=WEBSITE_PORT, debug=True)
     # print("start server {}:{}".format(WEBSITE_HOST, WEBSITE_PORT))
-    # consume_inverted_index()
-    asyncio.run(serve())
+    # asyncio.run(serve())
+    consume_inverted_index()

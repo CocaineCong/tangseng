@@ -19,3 +19,8 @@ func TestGetSeasonDate(t *testing.T) {
 	a := GetSeasonDate()
 	fmt.Println(a)
 }
+
+func TestGetNowTime(t *testing.T) {
+	b := GetNowTime()
+	fmt.Println(b)
+}
