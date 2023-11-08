@@ -97,7 +97,7 @@ func (s *IndexPlatformSrv) BuildIndexService(ctx context.Context, req *pb.BuildI
 		}
 		wg.Wait()
 
-		// // 构建前缀树 // TODO:kafka处理
+		// // 构建前缀树 // TODO: kafka处理
 		// go func(tokenList []string) {
 		// 	err = input_data.DocTrie2Kfk(tokenList)
 		// 	if err != nil {
@@ -151,7 +151,7 @@ func (s *IndexPlatformSrv) BuildIndexService(ctx context.Context, req *pb.BuildI
 // storeInvertedIndexByHash 分片存储
 func storeInvertedIndexByHash(ctx context.Context, invertedIndex cmap.ConcurrentMap[string, *roaring.Bitmap]) (err error) {
 	dir, _ := os.Getwd()
-	outName := fmt.Sprintf("%s/%s.%s", dir, timeutils.GetTodayDate(), cconsts.InvertedBucket)
+	outName := fmt.Sprintf("%s/%s.%s", dir, timeutils.GetNowTime(), cconsts.InvertedBucket)
 	invertedDB := storage.NewInvertedDB(outName)
 	// 找出所有的key进行存储
 	for k, val := range invertedIndex.Items() {
@@ -193,7 +193,7 @@ func storeInvertedIndexByHash(ctx context.Context, invertedIndex cmap.Concurrent
 func storeDictTrieByHash(ctx context.Context, dict *trie.Trie) (err error) {
 	// TODO: 抽离一个hash存储的方法
 	dir, _ := os.Getwd()
-	outName := fmt.Sprintf("%s/%s.%s", dir, timeutils.GetTodayDate(), cconsts.TrieTreeBucket)
+	outName := fmt.Sprintf("%s/%s.%s", dir, timeutils.GetNowTime(), cconsts.TrieTreeBucket)
 	trieDB := storage.NewTrieDB(outName)
 	err = trieDB.StorageDict(dict)
 	if err != nil {

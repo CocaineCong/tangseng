@@ -1,8 +1,10 @@
+"""search vector grpc service"""
 import json
 import grpc
 import logging
 import asyncio
 
+from ..consts.consts import VECTOR_RECALL_TOPK
 from idl.pb.search_vector import search_vector_pb2
 from ..config.config import DEFAULT_MILVUS_TABLE_NAME, VECTOR_ADDR
 from ..milvus.operators import do_search
@@ -12,6 +14,9 @@ from idl.pb.search_vector import search_vector_pb2_grpc
 
 
 class SearchVectorService(search_vector_pb2_grpc.SearchVectorServiceServicer):
+    """
+    search vector service objective
+    """
 
     def SearchVector(self, request,
                      context) -> search_vector_pb2.SearchVectorResponse:
@@ -19,8 +24,8 @@ class SearchVectorService(search_vector_pb2_grpc.SearchVectorServiceServicer):
             queryies = request.query
             doc_ids = []
             for query in queryies:
-                ids, distants = do_search(DEFAULT_MILVUS_TABLE_NAME, query, 1,
-                                          milvus_client)
+                ids, distants = do_search(DEFAULT_MILVUS_TABLE_NAME, query,
+                                          VECTOR_RECALL_TOPK, milvus_client)
                 print("search vector ids", ids)
                 doc_ids += ids
             print("search vector data", doc_ids)
@@ -31,8 +36,6 @@ class SearchVectorService(search_vector_pb2_grpc.SearchVectorServiceServicer):
         except Exception as e:
             print("search vector error", e)
             return search_vector_pb2.SearchVectorResponse(code=500,
-                                                          doc_ids='',
-                                                          msg='fail',
                                                           error=str(e))
 
 

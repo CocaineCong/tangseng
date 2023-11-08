@@ -18,7 +18,8 @@ def do_upload(table_name: str, doc_id: int, title: str, body: str,
     try:
         if not table_name:
             table_name = DEFAULT_MILVUS_TABLE_NAME
-        milvus_client.create_collection(table_name)
+        if not milvus_client.has_collection(table_name):
+            milvus_client.create_collection(table_name)
         body_feat = TRANSFORMER_MODEL.encode(title + body)  # word 转 vec
         ids = milvus_client.insert(table_name, [doc_id], [body_feat])
         return ids
