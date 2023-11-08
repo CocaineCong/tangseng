@@ -41,14 +41,14 @@ all in react, but still coding
 
 #### 倒排库
 
-> x.inverted 存储倒排索引文件
+> x.inverted 存储倒排索引文件 \
 > x.trie_tree 存储词典trie树
 
-目前使用mapreduce来构建倒排索引
+目前使用 `mapreduce` 来构建倒排索引
 
 - map任务将数据拆分以下形式
 
-``json
+```json
 {
   "token":"xxx",
   "doc_id":1
@@ -67,7 +67,7 @@ all in react, but still coding
 
 #### 向量库
 
-向量库采用milvus或者faiss来存储向量信息
+向量库采用milvus来存储向量信息
 
 ## 4. 搜索模块
 
@@ -75,7 +75,7 @@ all in react, but still coding
 
 - 倒排召回
 
-因为boltdb是kv数据库，所以直接获取所有的对应的query对应的doc id即可
+因为 boltdb 是kv数据库，所以直接获取所有的对应的query对应的 doc id 即可
 
 - 向量召回
 
@@ -89,10 +89,8 @@ query向量化，并从milvus中查询获取
 
 bm25进行排序
 
-
 ### 4.2 图片搜索
 - resnet50 模型召回
-
 
 - 向量召回
 
@@ -138,7 +136,6 @@ query向量化，并从milvus或者faiss中查询获取
 - [x] 排序器优化
 
 ![文本搜索](./images/text2text.jpg)
-
 
 # ✨ 项目结构
 
@@ -306,9 +303,9 @@ vector:
   server_address:
   timeout: 3
 
-milvus:
-  server_address:
-  timeout: 3
+# milvus:
+#   server_address:
+#   timeout: 3
 
 redis:
   redisDbName: 4
@@ -318,7 +315,7 @@ redis:
   redisNetwork: "tcp"
 
 etcd:
-  address: 127.0.0.1:2379
+  address: 127.0.0.1:3379
 
 services:
   gateway:
@@ -357,6 +354,12 @@ services:
     addr:
       - 127.0.0.1:20006
 
+  search_vector:
+    name: search_vector
+    loadBalance: false
+    addr:
+      - 127.0.0.1:20007
+
 starrocks:
   username: root
   password:
@@ -383,31 +386,93 @@ domain:
     name: index_platform
   mapreduce:
     name: mapreduce
+  search_vector:
+    name: search_vector
+
+model:
+    network: app/search_vector/weights/gl18-tl-resnet50-gem-w-83fdc30.pth
+    sentence_transformer: uer/sbert-base-chinese-nli
+
+milvus:
+    host: 127.0.0.1
+    port: 19530
+    vector_dimension: 768
+    default_milvus_table_name: milvus_table_name
+    metric_type: L2
+    timeout: 3
 ```
 
 # 项目启动
-## makefile启动
+## makefile启动(推荐)
 
-启动命令
+### Python
+
+1. 确保电脑已经安装了python
 
 ```shell
-make env-up         # 启动容器环境
-make user           # 启动用户摸块
-make task           # 启动任务模块
-make gateway        # 启动网关
-make env-down       # 关闭并删除容器环境
+python --version
+```
+
+2. 安装venv环境
+
+```shell
+python -m venv venv
+```
+
+3. 激活 venv python 环境
+
+macos:
+
+```shell
+source venv/bin/activate
+```
+windows:
+
+等我清完C盘再兼容一下...还没在win上跑过...
+
+4. 启动python程序
+
+macos:
+
+```shell
+./python-start.sh
+```
+
+windows:
+
+等我清完C盘再兼容一下...还没在win上跑过...
+
+### Golang
+
+1. 下载第三方依赖包
+
+```shell
+go mod tidy
+```
+
+2. 目录下执行
+
+```shell
+make env-up               # 启动容器环境
+make run-user             # 启动用户摸块
+make run-favorite         # 启动收藏模块
+make run-search_engine    # 启动搜索引擎模块
+make run-index_platform   # 启动索引平台模块
+make gateway              # 启动网关
+make env-down             # 关闭并删除容器环境
 ```
 
 其他命令
 
 ```shell
-make run   # 启动所有模块
 make proto # 生成proto文件，如果proto有改变的话，则需要重新生成文件
 ```
 
 生成.pb文件所需要的工具有`protoc-gen-go`,`protoc-gen-go-grpc`,`protoc-go-inject-tag`
 
-## 手动启动
+mac可以直接`brew install`来下载
+
+## 手动启动(不推荐)
 
 1. 利用compose快速构建环境
 
@@ -415,7 +480,7 @@ make proto # 生成proto文件，如果proto有改变的话，则需要重新生
 docker-compose up -d
 ```
 
-2. 保证mysql,etcd活跃, 在 app 文件夹下的各个模块的 cmd 下执行
+1. 保证各个模块活跃, 在 app 文件夹下的各个模块的 cmd 下执行
 
 ```go
 go run main.go
