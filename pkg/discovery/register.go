@@ -69,6 +69,7 @@ func (r *Register) register() error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(r.DialTimeout)*time.Second)
 	defer cancel()
 
+	// 在etcd创建一个续期的lease对象
 	leaseResp, err := r.cli.Grant(ctx, r.srvTTL)
 	if err != nil {
 		return err
@@ -76,6 +77,7 @@ func (r *Register) register() error {
 
 	r.leasesID = leaseResp.ID
 
+	// 开启自动续期KeepAlive
 	if r.keepAliveCh, err = r.cli.KeepAlive(context.Background(), r.leasesID); err != nil {
 		return err
 	}
@@ -101,6 +103,7 @@ func (r *Register) unregister() error {
 	return err
 }
 
+// 监听服务地址列表的变化
 func (r *Register) keepAlive() {
 	ticker := time.NewTicker(time.Duration(r.srvTTL) * time.Second)
 
