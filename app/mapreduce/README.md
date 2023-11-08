@@ -1,0 +1,1 @@
+采用rpc调用的MapReduce模块，已弃用，改成chan+goroutine的形式(`pkg/mapreduce/mapreduce.go`)

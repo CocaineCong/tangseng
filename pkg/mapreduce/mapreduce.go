@@ -8,6 +8,7 @@ import (
 )
 
 // MapReduce By chan and goroutine to replace using rpc to make master or worker
+// https://github.com/kevwan/mapreduce
 
 const (
 	defaultWorkers = 5
