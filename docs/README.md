@@ -6,9 +6,9 @@ Tangseng是一个基于Go语言的分布式搜索引擎
 
 1. gin作为http框架，grpc作为rpc框架，etcd作为服务发现。
 2. 总体服务分成`用户模块`、`收藏夹模块`、`索引平台`、`搜索引擎(文字模块)`、`搜索引擎(图片模块)`。
-3. 分布式爬虫爬取数据，并发送到kafka集群中，再落库消费。 (虽然爬虫还没写，但不妨碍我画饼...) 
+3. 分布式爬虫爬取数据，并发送到kafka集群中，再落库消费。 (虽然爬虫还没写，但不妨碍我画饼...)
 4. 搜索引擎模块的文本搜索单独设立使用boltdb存储index。
-5. 使用trie tree实现词条联想。 
+5. 使用trie tree实现词条联想。
 6. 图片搜索使用ResNet50来进行向量化查询 + Milvus or Faiss 向量数据库的查询 (开始做了... DeepLearning也太难了...)。
 7. 支持多路召回，go中进行倒排索引召回，python进行向量召回。通过grpc调用连接，进行融合。
 8. 支持TF-IDF，BM25等等算法排序。
@@ -17,7 +17,7 @@ Tangseng是一个基于Go语言的分布式搜索引擎
 
 ## 🧑🏻‍💻 前端地址
 
-前端用的是 react, but still coding
+all in react, but still coding
 
 [react-tangseng](https://github.com/CocaineCong/react-tangseng)
 
@@ -249,7 +249,34 @@ seach-engine/
 
 ## 6.search-vector 向量引擎模块
 
+```shell
+search_vector/
+├── cirtorch
+│   ├── datasets
+│   ├── examples
+│   ├── layers
+│   ├── networks
+│   └── utils
+├── config
+├── consts
+├── ctl
+├── etcd_operate   // etcd 相关操作
+├── index
+├── kafka_operate  // kafka 相关操作
+├── lshash
+├── milvus         // milvus 相关操作
+├── service        // 服务
+├── utils
+└── weights
+```
 
+- `cirtorch`部分来自于[CNN Image Retrieval in PyTorch](https://github.com/filipradenovic/cnnimageretrieval-pytorch)，使用了该项目的网络架构和预训练模型进行特征编码。
+- `ImageRetrieval\jpg`文件夹下存放用于进行查找的图像库，在本处，选用从[悟空数据集](https://wukong-dataset.github.io/wukong-dataset/index.html)的`Wukong100m`中爬取的20000张图片
+- `index`文件夹下存放从图片库中抽取的特征信息以及LSH索引信息，LSH索引地址为[dataset_index_wukong.pkl](https://pan.baidu.com/s/1t_BXCGVEO0U_9tVCHnY5pw?pwd=e1fa)。
+- `lshash`部分使用[LSHash](https://github.com/kayzhu/LSHash)的代码，使用局部敏感哈希以加快检索速度。
+- `utils\retrieval_feature.py`部分为通过预训练的模型进行特征抽取，并使用LSH计算索引，并将特征数据和索引数据保存到本地。
+- `weights`目录下保存所使用的预训练模型，本项目中采用的是[CNN Image Retrieval in PyTorch](https://github.com/filipradenovic/cnnimageretrieval-pytorch)中使用ResNet50，Pooling层使用GeM，在`google-landmarks-2018 (gl18)`数据集上进行预训练的模型，
+模型地址为[gl18-tl-resnet50-gem-w](http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/gl18/gl18-tl-resnet50-gem-w-83fdc30.pth)。
 
 # 项目文件配置
 
@@ -358,7 +385,6 @@ domain:
     name: mapreduce
 ```
 
-
 # 项目启动
 ## makefile启动
 
@@ -373,12 +399,13 @@ make env-down       # 关闭并删除容器环境
 ```
 
 其他命令
+
 ```shell
 make run   # 启动所有模块
 make proto # 生成proto文件，如果proto有改变的话，则需要重新生成文件
 ```
-生成.pb文件所需要的工具有`protoc-gen-go`,`protoc-gen-go-grpc`,`protoc-go-inject-tag`
 
+生成.pb文件所需要的工具有`protoc-gen-go`,`protoc-gen-go-grpc`,`protoc-go-inject-tag`
 
 ## 手动启动
 

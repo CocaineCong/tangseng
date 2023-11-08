@@ -5,7 +5,8 @@
 ## 项目结构
 
 ```shell
-cirtorch
+search_vector/
+├── cirtorch
 │   ├── datasets
 │   ├── examples
 │   ├── layers
