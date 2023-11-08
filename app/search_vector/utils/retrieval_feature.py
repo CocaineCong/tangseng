@@ -13,6 +13,7 @@ os.environ['CUDA_VISIBLE_DEVICES'] = "0"
 
 
 class ImageProcess:
+
     def __init__(self, img_dir):
         self.img_dir = img_dir
 
@@ -34,6 +35,7 @@ class ImageProcess:
 
 
 class AntiFraudFeatureDataset:
+
     def __init__(self, img_dir, network, feature_path='', index_path=''):
         self.img_dir = img_dir
         self.network = network
@@ -69,23 +71,21 @@ class AntiFraudFeatureDataset:
         net.eval()
 
         # set up the transform
-        normalize = transforms.Normalize(
-            mean=net.meta['mean'],
-            std=net.meta['std']
-        )
-        transform = transforms.Compose([
-            transforms.ToTensor(),
-            normalize
-        ])
+        normalize = transforms.Normalize(mean=net.meta['mean'],
+                                         std=net.meta['std'])
+        transform = transforms.Compose([transforms.ToTensor(), normalize])
 
         # extract database and query vectors
         print('>> database images...')
         images = ImageProcess(self.img_dir).process()
         vecs, img_paths = extract_vectors(net, images, 1024, transform, ms=ms)
         img_paths = [b for a in img_paths for b in a]
-        feature_dict = dict(zip(img_paths, list(vecs.detach().cpu().numpy().T)))
+        feature_dict = dict(zip(img_paths,
+                                list(vecs.detach().cpu().numpy().T)))
         # index
-        lsh = LSHash(hash_size=int(hash_size), input_dim=int(input_dim), num_hashtables=int(num_hash_tables))
+        lsh = LSHash(hash_size=int(hash_size),
+                     input_dim=int(input_dim),
+                     num_hashtables=int(num_hash_tables))
         for img_path, vec in feature_dict.items():
             lsh.index(vec.flatten(), extra_data=img_path)
 

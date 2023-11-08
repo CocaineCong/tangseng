@@ -9,12 +9,11 @@ import (
 
 	"github.com/CocaineCong/tangseng/app/user/internal/service"
 	"github.com/CocaineCong/tangseng/config"
+	"github.com/CocaineCong/tangseng/consts"
 	pb "github.com/CocaineCong/tangseng/idl/pb/user"
 	"github.com/CocaineCong/tangseng/loading"
 	"github.com/CocaineCong/tangseng/pkg/discovery"
 )
-
-const UserServiceName = "user"
 
 func main() {
 	loading.Loading()
@@ -22,10 +21,10 @@ func main() {
 	etcdAddress := []string{config.Conf.Etcd.Address}
 	// 服务注册
 	etcdRegister := discovery.NewRegister(etcdAddress, logrus.New())
-	grpcAddress := config.Conf.Services[UserServiceName].Addr[0]
+	grpcAddress := config.Conf.Services[consts.UserServiceName].Addr[0]
 	defer etcdRegister.Stop()
 	userNode := discovery.Server{
-		Name: config.Conf.Domain[UserServiceName].Name,
+		Name: config.Conf.Domain[consts.UserServiceName].Name,
 		Addr: grpcAddress,
 	}
 	server := grpc.NewServer()

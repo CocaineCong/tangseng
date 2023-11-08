@@ -17,53 +17,81 @@ es:
   EsPort: 9200
   EsIndex: mylog
 
+vector:
+  server_address:
+  timeout: 3
+
+# milvus:
+#   server_address:
+#   timeout: 3
 
 redis:
-  user_name: default
-  address: 127.0.0.1:6379
-  password:
+  redisDbName: 4
+  redisHost: 127.0.0.1
+  redisPort: 6379
+  redisPassword: 123456
+  redisNetwork: "tcp"
 
 etcd:
-  address: 127.0.0.1:2379
+  address: 127.0.0.1:3379
 
 services:
   gateway:
     name: gateway
     loadBalance: true
     addr:
-      - 127.0.0.1:10001
+      - 127.0.0.1:20001
 
   user:
     name: user
     loadBalance: false
     addr:
-      - 127.0.0.1:10002
+      - 127.0.0.1:20002
 
   favorite:
     name: favorite
     loadBalance: false
     addr:
-      - 127.0.0.1:10003
+      - 127.0.0.1:20003
 
   search_engine:
     name: search_engine
     loadBalance: false
     addr:
-      - 127.0.0.1:10004
+      - 127.0.0.1:20004
 
-SeConfig:
-  Version: "1.0.0"
-  StoragePath: "../app/search_engine/data/db/"
-  SourceWuKoFile: "../app/search_engine/data/movies_data.csv"
-  MetaPath: "../app/search_engine/data/db/segments.json"
-  SourceFiles:
-    - "./source"
-    - "./"
-  MergeChannelSize:
+  index_platform:
+    name: index_platform
+    loadBalance: false
+    addr:
+      - 127.0.0.1:20005
+
+  mapreduce:
+    name: mapreduce
+    loadBalance: false
+    addr:
+      - 127.0.0.1:20006
+
+  search_vector:
+    name: search_vector
+    loadBalance: false
+    addr:
+      - 127.0.0.1:20007
+
+starrocks:
+  username: root
+  password:
+  database: test
+  load_url: localhost:8083
+  host: localhost
+  port: 9030
+  charset: utf8mb4
 
 kafka:
   address:
-    - 127.0.0.1:9200
+    - 127.0.0.1:10000
+    - 127.0.0.1:10001
+    - 127.0.0.1:10002
 
 domain:
   user:
@@ -72,3 +100,22 @@ domain:
     name: favorite
   search_engine:
     name: search_engine
+  index_platform:
+    name: index_platform
+  mapreduce:
+    name: mapreduce
+  search_vector:
+    name: search_vector
+
+model:
+    network: app/search_vector/weights/gl18-tl-resnet50-gem-w-83fdc30.pth
+    sentence_transformer: uer/sbert-base-chinese-nli
+
+milvus:
+    host: 127.0.0.1
+    port: 19530
+    vector_dimension: 768
+    default_milvus_table_name: milvus_table_name
+    metric_type: L2
+    timeout: 3
+

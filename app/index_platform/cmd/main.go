@@ -13,14 +13,11 @@ import (
 	"github.com/CocaineCong/tangseng/app/index_platform/cmd/kfk_register"
 	"github.com/CocaineCong/tangseng/app/index_platform/service"
 	"github.com/CocaineCong/tangseng/config"
+	"github.com/CocaineCong/tangseng/consts"
 	"github.com/CocaineCong/tangseng/idl/pb/index_platform"
 	"github.com/CocaineCong/tangseng/loading"
 	"github.com/CocaineCong/tangseng/pkg/discovery"
 	logs "github.com/CocaineCong/tangseng/pkg/logger"
-)
-
-const (
-	IndexPlatformServerName = "index_platform"
 )
 
 func main() {
@@ -32,18 +29,12 @@ func main() {
 	job.RegisterJob(ctx)
 
 	// 注册服务
-	_ = registerIndexPlatform()
-}
-
-// registerIndexPlatform 注册索引平台服务
-func registerIndexPlatform() (err error) {
 	etcdAddress := []string{config.Conf.Etcd.Address}
 	etcdRegister := discovery.NewRegister(etcdAddress, logs.LogrusObj)
 	defer etcdRegister.Stop()
-
-	grpcAddress := config.Conf.Services[IndexPlatformServerName].Addr[0]
+	grpcAddress := config.Conf.Services[consts.IndexPlatformName].Addr[0]
 	node := discovery.Server{
-		Name: config.Conf.Domain[IndexPlatformServerName].Name,
+		Name: config.Conf.Domain[consts.IndexPlatformName].Name,
 		Addr: grpcAddress,
 	}
 	server := grpc.NewServer()
@@ -61,6 +52,4 @@ func registerIndexPlatform() (err error) {
 	if err = server.Serve(lis); err != nil {
 		panic(err)
 	}
-
-	return
 }
