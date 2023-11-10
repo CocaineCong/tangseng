@@ -51,3 +51,7 @@ run-%:
 python-start:
     # export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
 	python main.py
+
+.PHONY: python-consume
+python-consume:
+	python ./vector_index.py
