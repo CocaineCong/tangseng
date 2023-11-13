@@ -39,12 +39,14 @@ all in react, but still coding
 - [ ] 哈夫曼编码压缩前缀树
 - [ ] python 引入 bert 模型进行分词的推荐词并提供 grpc 接口
 - [ ] inverted 和 trie tree 的存储支持一致性hash分片存储
-- [ ] 词向量，pagerank
+- [x] 词向量
+- [ ] pagerank
 - [ ] 分离 trie tree 的 build 和 recall 过程
 - [x] 分词加入ik分词器
 - [x] 构建索引平台，计算存储分离，构建索引与召回分开
 - [ ] 并且差运算 (位运算)
-- [ ] 分页，排序
+- [ ] 分页
+- [x] 排序
 - [ ] 纠正输入的query,比如“陆加嘴”-->“陆家嘴”
 - [x] 输入进行词条可以进行联想，比如 “东方明” 提示--> “东方明珠”
 - [x] 目前是基于块的索引方法，后续看看能不能改成分布式mapreduce来构建索引 (6.824 lab1)
@@ -58,6 +60,11 @@ all in react, but still coding
 ![文本搜索](docs/images/text2text.jpg)
 
 ## 快速开始
+
+    环境启动！
+    ```shell
+    make env-up
+    ```
 
 ### Python
 
@@ -83,6 +90,12 @@ all in react, but still coding
     windows:
 
     等我清完C盘再兼容一下...还没在win上跑过...
+
+4. 安装第三方依赖
+
+   ```python
+   pip install -r requirements.txt
+   ```
 
 ### Golang
 
