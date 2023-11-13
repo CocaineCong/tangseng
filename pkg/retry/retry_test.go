@@ -16,7 +16,7 @@ func doSomethingFunc(ctx context.Context, req interface{}) (interface{}, bool, e
 	return nil, false, nil
 }
 
-func TestRetryOption_Retry(t *testing.T) {
+func TestRetryOptionRetry(t *testing.T) {
 	ctx := context.Background()
 	func_ := func(ctx context.Context, req interface{}) (interface{}, bool, error) {
 		return doSomethingFunc(ctx, req)

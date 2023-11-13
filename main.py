@@ -19,7 +19,6 @@ from app.search_vector.cirtorch.networks.imageretrievalnet import init_network
 from app.search_vector.milvus.milvus import milvus_client
 from app.search_vector.milvus.operators import do_upload, do_search
 from app.search_vector.utils.logs import LOGGER
-from app.search_vector.script.vector_index import consume_inverted_index
 
 app = Flask(__name__)
 
@@ -185,5 +184,4 @@ net, lsh, transform = init_model()
 if __name__ == "__main__":
     # app.run(host=WEBSITE_HOST, port=WEBSITE_PORT, debug=True)
     # print("start server {}:{}".format(WEBSITE_HOST, WEBSITE_PORT))
-    # asyncio.run(serve())
-    consume_inverted_index()
+    asyncio.run(serve())
