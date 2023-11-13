@@ -153,7 +153,7 @@ func storeInvertedIndexByHash(ctx context.Context, invertedIndex cmap.Concurrent
 	dir, _ := os.Getwd()
 	outName := fmt.Sprintf("%s/%s.%s", dir, timeutils.GetNowTime(), cconsts.InvertedBucket)
 	invertedDB := storage.NewInvertedDB(outName)
-	// 找出所有的key进行存储
+	// 对所有的key进行存储
 	for k, val := range invertedIndex.Items() {
 		outByte, errx := val.MarshalBinary()
 		if errx != nil {
