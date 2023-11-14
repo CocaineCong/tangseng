@@ -27,7 +27,7 @@ func NewRecall() *Recall {
 }
 
 // Search 入口
-func (r *Recall) Search(ctx context.Context, query string) (res []*types.SearchItem, err error) {
+func (r *Recall) Search(ctx context.Context, query string) (resp []*types.SearchItem, err error) {
 	splitQuery, err := analyzer.GseCutForRecall(query)
 	if err != nil {
 		log.LogrusObj.Errorf("text2postingslists err: %v", err)
@@ -35,11 +35,12 @@ func (r *Recall) Search(ctx context.Context, query string) (res []*types.SearchI
 	}
 
 	// 倒排库搜索
-	res, err = r.searchDoc(ctx, splitQuery)
+	res, err := r.searchDoc(ctx, splitQuery)
 	if err != nil {
 		log.LogrusObj.Errorf("searchDoc err: %v", err)
 		return
 	}
+
 	// 向量库搜索
 	vRes, err := r.SearchVector(ctx, splitQuery)
 	if err != nil {
@@ -47,14 +48,24 @@ func (r *Recall) Search(ctx context.Context, query string) (res []*types.SearchI
 		return
 	}
 
-	res = append(res, vRes...)
-	res = lo.Uniq(res)
-
+	resp, _ = r.Multiplex(ctx, query, res, vRes)
 	return
 }
 
+// Multiplex 多路融合排序
+func (r *Recall) Multiplex(ctx context.Context, query string, iRes, vRes []int64) ([]*types.SearchItem, error) {
+	// 融合去重
+	iRes = append(iRes, vRes...)
+	iRes = lo.Uniq(iRes)
+	recallData, _ := dao.NewInputDataDao(ctx).ListInputDataByDocIds(iRes)
+	// 排序
+	searchItems := ranking.CalculateScoreBm25(query, recallData)
+
+	return searchItems, nil
+}
+
 // SearchVector 搜索向量
-func (r *Recall) SearchVector(ctx context.Context, queries []string) (res []*types.SearchItem, err error) {
+func (r *Recall) SearchVector(ctx context.Context, queries []string) (docIds []int64, err error) {
 	// rpc 调用python接口 获取
 	req := &pb.SearchVectorRequest{Query: queries}
 	vectorResp, err := rpc.SearchVector(ctx, req)
@@ -62,29 +73,35 @@ func (r *Recall) SearchVector(ctx context.Context, queries []string) (res []*typ
 		log.LogrusObj.Errorln(err)
 		return
 	}
-	// 去重
-	vDocIds := lo.Uniq(vectorResp.DocIds)
-	// 查询正排库
-	docIds := make([]uint32, len(vectorResp.DocIds))
-	for _, v := range vDocIds {
-		docIds = append(docIds, cast.ToUint32(v))
-	}
-	vList, err := dao.NewInputDataDao(ctx).ListInputDataByDocIds(docIds)
-	if err != nil {
-		log.LogrusObj.Errorln(err)
-		return
+	docIds = make([]int64, len(vectorResp.DocIds))
+	for i, v := range vectorResp.DocIds {
+		docIds[i] = cast.ToInt64(v)
 	}
 
-	for _, v := range vList {
-		res = append(res, &types.SearchItem{
-			DocId:        v.DocId,
-			Content:      v.Content,
-			Title:        v.Title,
-			Score:        0,
-			DocCount:     0,
-			ContentScore: 0,
-		})
-	}
+	// 去重
+	// vDocIds := lo.Uniq(vectorResp.DocIds)
+
+	// 查询正排库
+	// docIds := make([]uint32, len(vectorResp.DocIds))
+	// for _, v := range vDocIds {
+	// 	docIds = append(docIds, cast.ToUint32(v))
+	// }
+	// vList, err := dao.NewInputDataDao(ctx).ListInputDataByDocIds(docIds)
+	// if err != nil {
+	// 	log.LogrusObj.Errorln(err)
+	// 	return
+	// }
+
+	// for _, v := range vList {
+	// 	res = append(res, &types.SearchItem{
+	// 		DocId:        v.DocId,
+	// 		Content:      v.Content,
+	// 		Title:        v.Title,
+	// 		Score:        0,
+	// 		DocCount:     0,
+	// 		ContentScore: 0,
+	// 	})
+	// }
 
 	return
 }
@@ -106,9 +123,8 @@ func (r *Recall) SearchQueryWord(query string) (resp []string, err error) {
 	return
 }
 
-func (r *Recall) searchDoc(ctx context.Context, tokens []string) (recalls []*types.SearchItem, err error) {
-	recalls = make([]*types.SearchItem, 0)
-	allPostingsList := []*types.PostingsList{}
+func (r *Recall) searchDoc(ctx context.Context, tokens []string) (recalls []int64, err error) {
+	recalls = make([]int64, 0)
 	for _, token := range tokens {
 		docIds, errx := redis.GetInvertedIndexTokenDocIds(ctx, token)
 		var postingsList []*types.PostingsList
@@ -126,19 +142,22 @@ func (r *Recall) searchDoc(ctx context.Context, tokens []string) (recalls []*typ
 				})
 			}
 		}
-		allPostingsList = append(allPostingsList, postingsList...)
+		// TODO: term的position，后面再更新
+		for _, v := range docIds.ToArray() {
+			recalls = append(recalls, cast.ToInt64(v))
+		}
 	}
 
 	// 排序打分
-	iDao := dao.NewInputDataDao(ctx)
-	for _, p := range allPostingsList {
-		if p == nil || p.DocIds == nil || p.DocIds.IsEmpty() {
-			continue
-		}
-		recallData, _ := iDao.ListInputDataByDocIds(p.DocIds.ToArray())
-		searchItems := ranking.CalculateScoreBm25(p.Term, recallData)
-		recalls = append(recalls, searchItems...)
-	}
+	// iDao := dao.NewInputDataDao(ctx)
+	// for _, p := range allPostingsList {
+	// 	if p == nil || p.DocIds == nil || p.DocIds.IsEmpty() {
+	// 		continue
+	// 	}
+	// 	recallData, _ := iDao.ListInputDataByDocIds(p.DocIds.ToArray())
+	// 	searchItems := ranking.CalculateScoreBm25(p.Term, recallData)
+	// 	recalls = append(recalls, searchItems...)
+	// }
 
 	log.LogrusObj.Infof("recalls size:%v", len(recalls))
 
