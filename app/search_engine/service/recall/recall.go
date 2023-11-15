@@ -2,6 +2,7 @@ package recall
 
 import (
 	"context"
+	"sort"
 
 	"github.com/RoaringBitmap/roaring"
 	"github.com/samber/lo"
@@ -53,15 +54,36 @@ func (r *Recall) Search(ctx context.Context, query string) (resp []*types.Search
 }
 
 // Multiplex 多路融合排序
-func (r *Recall) Multiplex(ctx context.Context, query string, iRes, vRes []int64) ([]*types.SearchItem, error) {
+func (r *Recall) Multiplex(ctx context.Context, query string, iRes, vRes []int64) (resp []*types.SearchItem, err error) {
 	// 融合去重
 	iRes = append(iRes, vRes...)
 	iRes = lo.Uniq(iRes)
 	recallData, _ := dao.NewInputDataDao(ctx).ListInputDataByDocIds(iRes)
-	// 排序
-	searchItems := ranking.CalculateScoreBm25(query, recallData)
+	searchItems := make([]*types.SearchItem, 0)
 
-	return searchItems, nil
+	// 处理
+	for _, v := range recallData {
+		if v.Content == "" || v.Title == "" {
+			continue
+		}
+		searchItems = append(searchItems, v)
+	}
+
+	// 排序
+	searchItems = ranking.CalculateScoreTFIDF(query, searchItems)
+	sort.Slice(searchItems, func(i, j int) bool {
+		return searchItems[i].Score > searchItems[j].Score
+	})
+
+	// 二次处理
+	for _, v := range searchItems {
+		if v.Score == 0 {
+			continue
+		}
+		resp = append(resp, v)
+	}
+
+	return
 }
 
 // SearchVector 搜索向量
@@ -129,6 +151,7 @@ func (r *Recall) searchDoc(ctx context.Context, tokens []string) (recalls []int6
 		docIds, errx := redis.GetInvertedIndexTokenDocIds(ctx, token)
 		var postingsList []*types.PostingsList
 		if errx != nil || docIds == nil {
+			docIds = roaring.New()
 			// 如果缓存不存在，就去索引表里面读取
 			postingsList, err = fetchPostingsByToken(token)
 			if err != nil {
@@ -136,15 +159,19 @@ func (r *Recall) searchDoc(ctx context.Context, tokens []string) (recalls []int6
 				continue
 			} else {
 				// 如果缓存存在，就直接读缓存，不用担心实时性问题，缓存10分钟清空一次，这延迟是能接受到
-				postingsList = append(postingsList, &types.PostingsList{
-					Term:   token,
-					DocIds: docIds,
-				})
+				for _, v := range postingsList {
+					if v != nil && v.DocIds != nil {
+						docIds.AddMany(v.DocIds.ToArray())
+					}
+				}
 			}
+
 		}
 		// TODO: term的position，后面再更新
-		for _, v := range docIds.ToArray() {
-			recalls = append(recalls, cast.ToInt64(v))
+		if docIds != nil {
+			for _, v := range docIds.ToArray() {
+				recalls = append(recalls, cast.ToInt64(v))
+			}
 		}
 	}
 

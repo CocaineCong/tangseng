@@ -470,4 +470,3 @@ func Reduce(key string, values []string) *roaring.Bitmap {
 最终 output 输出
 
 ![output](https://raw.githubusercontent.com/CremeU/cloud-img/main/1695145441347.jpg)
-
