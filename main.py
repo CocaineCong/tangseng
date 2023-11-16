@@ -171,11 +171,11 @@ def init_model():
                                      std=net.meta['std'])
     transform = transforms.Compose([transforms.ToTensor(), normalize])
 
-    with open(
-            os.path.join("app/search_vector/index/",
-                         "dataset_index_wukong.pkl"), "rb") as f:
-        lsh = pickle.load(f)
-
+    # with open(
+    #         os.path.join("app/search_vector/index/",
+    #                      "dataset_index_wukong.pkl"), "rb") as f:
+    #     lsh = pickle.load(f)
+    lsh = ""
     return net, lsh, transform
 
 
