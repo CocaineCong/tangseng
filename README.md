@@ -62,13 +62,14 @@ all in react, but still coding
 ## 快速开始
 
     环境启动！
+
     ```shell
     make env-up
     ```
 
-### Python
+### Python 启动!
 
-1. 确保电脑已经安装了python
+1. 确保电脑已经安装了python,确保python version>=3.9,我的版本是3.10.2
 
     ```shell
     python --version
@@ -97,7 +98,9 @@ all in react, but still coding
    pip install -r requirements.txt
    ```
 
-### Golang
+### Golang 启动! 
+
+golang version >= go 1.16 即可。我的go版本是 1.18.6
 
 1. 下载第三方依赖包
 

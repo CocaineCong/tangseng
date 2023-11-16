@@ -1,9 +1,7 @@
 package ranking
 
 import (
-	"fmt"
 	"math"
-	"sync"
 
 	"github.com/CocaineCong/tangseng/app/search_engine/analyzer"
 	"github.com/CocaineCong/tangseng/pkg/mapreduce"
@@ -44,42 +42,36 @@ func CalculateTFIDF(word string, doc string, docs []string) float64 {
 	return tf * idf
 }
 
-func CalculateScoreTFIDF(token string, searchItem []*types.SearchItem) []*types.SearchItem {
+func CalculateScoreTFIDF(token string, searchItem []*types.SearchItem) (resp []*types.SearchItem, err error) {
 	contents := make([]string, len(searchItem))
+	resp = make([]*types.SearchItem, len(searchItem))
 	for i, item := range searchItem {
 		contents[i] = item.Content
 	}
 	words := analyzer.GlobalSega.Cut(token, true)
-	wg := new(sync.WaitGroup)
-	for i := range searchItem {
-		wg.Add(1)
-		go func(i int) {
-			for _, word := range words {
-				searchItem[i].Score += CalculateTFIDF(word, searchItem[i].Content, contents)
-			}
-			wg.Done()
-		}(i)
-	}
-
-	mapreduce.MapReduce(func(source chan<- *types.SearchItem) {
+	index := 0
+	_, err = mapreduce.MapReduce(func(source chan<- *types.SearchItem) {
 		for i := range searchItem {
 			source <- searchItem[i]
 		}
 	}, func(item *types.SearchItem, writer mapreduce.Writer[*types.SearchItem], cancel func(err error)) {
-		for _, word := range words {
-			item.Score = CalculateTFIDF(word, item.Content, contents)
+		if item != nil {
+			for _, word := range words {
+				item.Score = CalculateTFIDF(word, item.Content, contents)
+			}
 		}
 		writer.Write(item)
 	}, func(pipe <-chan *types.SearchItem, writer mapreduce.Writer[*types.SearchItem], cancel func(err error)) {
 		for values := range pipe {
-			fmt.Println("values", values)
-			values.Score += values.Score
+			if values != nil {
+				values.Score += values.Score
+			}
+			resp[index] = values
+			index++
 		}
 	})
 
-	wg.Wait()
-
-	return searchItem
+	return
 }
 
 // func CalculateScoreTFIDF(token string, searchItem []*types.SearchItem) (resp []*types.SearchItem) {
