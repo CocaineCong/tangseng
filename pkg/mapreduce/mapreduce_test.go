@@ -1,4 +1,4 @@
-package mapreduce
+package mapreduce_test
 
 import (
 	"fmt"
@@ -10,9 +10,12 @@ import (
 	cmap "github.com/orcaman/concurrent-map/v2"
 	"github.com/spf13/cast"
 
-	"github.com/CocaineCong/tangseng/app/index_platform/analyzer"
+	analyzer2 "github.com/CocaineCong/tangseng/app/index_platform/analyzer"
 	"github.com/CocaineCong/tangseng/app/index_platform/input_data"
+	"github.com/CocaineCong/tangseng/app/search_engine/analyzer"
+	"github.com/CocaineCong/tangseng/app/search_engine/ranking"
 	logs "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/CocaineCong/tangseng/pkg/mapreduce"
 	"github.com/CocaineCong/tangseng/pkg/util/stringutils"
 	"github.com/CocaineCong/tangseng/types"
 )
@@ -25,12 +28,12 @@ func TestMain(m *testing.M) {
 func TestMapReduce(t *testing.T) {
 	invertedIndex := cmap.New[*roaring.Bitmap]()
 	filePaths := []string{"/Users/mac/GolandProjects/Go-SearchEngine/app/mapreduce/input_data/other_input_data/movies_data.csv"}
-	_, _ = MapReduce(func(source chan<- []byte) {
+	_, _ = mapreduce.MapReduce(func(source chan<- []byte) {
 		for _, path := range filePaths {
 			content, _ := os.ReadFile(path)
 			source <- content
 		}
-	}, func(item []byte, writer Writer[[]*types.KeyValue], cancel func(error)) {
+	}, func(item []byte, writer mapreduce.Writer[[]*types.KeyValue], cancel func(error)) {
 		res := make([]*types.KeyValue, 0, 1e3)
 		lines := strings.Split(string(item), "\r\n")
 		for _, line := range lines[1:] {
@@ -38,13 +41,13 @@ func TestMapReduce(t *testing.T) {
 			if docStruct.DocId == 0 {
 				continue
 			}
-			tokens, _ := analyzer.GseCutForBuildIndex(docStruct.DocId, docStruct.Body)
+			tokens, _ := analyzer2.GseCutForBuildIndex(docStruct.DocId, docStruct.Body)
 			for _, v := range tokens {
 				res = append(res, &types.KeyValue{Key: v.Token, Value: cast.ToString(v.DocId)})
 			}
 		}
 		writer.Write(res)
-	}, func(pipe <-chan []*types.KeyValue, writer Writer[string], cancel func(error)) {
+	}, func(pipe <-chan []*types.KeyValue, writer mapreduce.Writer[string], cancel func(error)) {
 		for values := range pipe {
 			for _, v := range values {
 				if value, ok := invertedIndex.Get(v.Key); ok {
@@ -74,7 +77,7 @@ func Map(filename string, contents string) (res []*types.KeyValue) {
 			continue
 		}
 
-		tokens, err := analyzer.GseCutForBuildIndex(docStruct.DocId, docStruct.Body)
+		tokens, err := analyzer2.GseCutForBuildIndex(docStruct.DocId, docStruct.Body)
 		if err != nil {
 			logs.LogrusObj.Errorf("Map-GseCutForBuildIndex :%+v", err)
 			continue
@@ -138,4 +141,36 @@ func doc2Struct(docStr string) (doc *types.Document, err error) {
 	}
 
 	return
+}
+
+func TestMapreduceTFIDF(t *testing.T) {
+	var searchItem []*types.SearchItem
+	for i := 0; i < 3; i++ {
+		searchItem = append(searchItem, &types.SearchItem{
+			Content: "test" + cast.ToString(i),
+			Score:   2 * float64(i),
+		})
+	}
+	words := []string{"test1", "test1"}
+	contents := []string{"test", "test"}
+	_, err := mapreduce.MapReduce(func(source chan<- *types.SearchItem) {
+		for i := range searchItem {
+			source <- searchItem[i]
+		}
+	}, func(item *types.SearchItem, writer mapreduce.Writer[*types.SearchItem], cancel func(err error)) {
+		if item != nil {
+			for _, word := range words {
+				item.Score = ranking.CalculateTFIDF(word, item.Content, contents)
+			}
+		}
+		writer.Write(item)
+	}, func(pipe <-chan *types.SearchItem, writer mapreduce.Writer[*types.SearchItem], cancel func(err error)) {
+		for values := range pipe {
+			if values != nil {
+				values.Score += values.Score
+			}
+			fmt.Println(values)
+		}
+	})
+	fmt.Println(err)
 }

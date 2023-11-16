@@ -1,9 +1,12 @@
 package ranking
 
 import (
+	"fmt"
 	"math"
+	"sync"
 
 	"github.com/CocaineCong/tangseng/app/search_engine/analyzer"
+	"github.com/CocaineCong/tangseng/pkg/mapreduce"
 	"github.com/CocaineCong/tangseng/types"
 )
 
@@ -35,24 +38,62 @@ func calculateIDF(word string, docs []string) float64 {
 }
 
 // 计算TF-IDF值
-func calculateTFIDF(word string, doc string, docs []string) float64 {
+func CalculateTFIDF(word string, doc string, docs []string) float64 {
 	tf := calculateTF(word, doc)
 	idf := calculateIDF(word, docs)
 	return tf * idf
 }
 
-func CalculateScoreTFIDF(token string, searchItem []*types.SearchItem) (resp []*types.SearchItem) {
-	contents := make([]string, 0)
-	for i := range searchItem {
-		contents = append(contents, searchItem[i].Content)
+func CalculateScoreTFIDF(token string, searchItem []*types.SearchItem) []*types.SearchItem {
+	contents := make([]string, len(searchItem))
+	for i, item := range searchItem {
+		contents[i] = item.Content
 	}
 	words := analyzer.GlobalSega.Cut(token, true)
+	wg := new(sync.WaitGroup)
 	for i := range searchItem {
-		for _, word := range words {
-			searchItem[i].Score += calculateTFIDF(word, searchItem[i].Content, contents)
-		}
+		wg.Add(1)
+		go func(i int) {
+			for _, word := range words {
+				searchItem[i].Score += CalculateTFIDF(word, searchItem[i].Content, contents)
+			}
+			wg.Done()
+		}(i)
 	}
 
-	resp = searchItem
-	return
+	mapreduce.MapReduce(func(source chan<- *types.SearchItem) {
+		for i := range searchItem {
+			source <- searchItem[i]
+		}
+	}, func(item *types.SearchItem, writer mapreduce.Writer[*types.SearchItem], cancel func(err error)) {
+		for _, word := range words {
+			item.Score = CalculateTFIDF(word, item.Content, contents)
+		}
+		writer.Write(item)
+	}, func(pipe <-chan *types.SearchItem, writer mapreduce.Writer[*types.SearchItem], cancel func(err error)) {
+		for values := range pipe {
+			fmt.Println("values", values)
+			values.Score += values.Score
+		}
+	})
+
+	wg.Wait()
+
+	return searchItem
 }
+
+// func CalculateScoreTFIDF(token string, searchItem []*types.SearchItem) (resp []*types.SearchItem) {
+// 	contents := make([]string, 0)
+// 	for i := range searchItem {
+// 		contents = append(contents, searchItem[i].Content)
+// 	}
+// 	words := analyzer.GlobalSega.Cut(token, true)
+// 	for i := range searchItem {
+// 		for _, word := range words {
+// 			searchItem[i].Score += calculateTFIDF(word, searchItem[i].Content, contents)
+// 		}
+// 	}
+
+// 	resp = searchItem
+// 	return
+// }

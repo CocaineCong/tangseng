@@ -27,12 +27,14 @@ var (
 
 // Init 初始化所有的rpc请求
 func Init() {
+	fmt.Println("loading rpc init")
 	Register = discovery.NewResolver([]string{config.Conf.Etcd.Address}, logrus.New())
 	resolver.Register(Register)
 	ctx, CancelFunc = context.WithTimeout(context.Background(), 3*time.Second)
 
 	defer Register.Close()
 	initClient(config.Conf.Domain[consts.SearchVectorName].Name, &SearchVectorClient)
+	fmt.Println("loading rpc init finished")
 }
 
 // initClient 初始化所有的rpc客户端

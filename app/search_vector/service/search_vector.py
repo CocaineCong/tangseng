@@ -53,6 +53,7 @@ async def serve() -> None:
         "weight": 0
     })
     etcd_client.set(key, value)
+    logging.info("set %s node on %s", key, value)
     await server.start()
     await server.wait_for_termination()
 
