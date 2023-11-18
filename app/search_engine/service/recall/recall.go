@@ -70,7 +70,7 @@ func (r *Recall) Multiplex(ctx context.Context, query string, iRes, vRes []int64
 	}
 
 	// 排序
-	searchItems = ranking.CalculateScoreTFIDF(query, searchItems)
+	searchItems, _ = ranking.CalculateScoreTFIDF(query, searchItems)
 	sort.Slice(searchItems, func(i, j int) bool {
 		return searchItems[i].Score > searchItems[j].Score
 	})
@@ -99,32 +99,6 @@ func (r *Recall) SearchVector(ctx context.Context, queries []string) (docIds []i
 	for i, v := range vectorResp.DocIds {
 		docIds[i] = cast.ToInt64(v)
 	}
-
-	// 去重
-	// vDocIds := lo.Uniq(vectorResp.DocIds)
-
-	// 查询正排库
-	// docIds := make([]uint32, len(vectorResp.DocIds))
-	// for _, v := range vDocIds {
-	// 	docIds = append(docIds, cast.ToUint32(v))
-	// }
-	// vList, err := dao.NewInputDataDao(ctx).ListInputDataByDocIds(docIds)
-	// if err != nil {
-	// 	log.LogrusObj.Errorln(err)
-	// 	return
-	// }
-
-	// for _, v := range vList {
-	// 	res = append(res, &types.SearchItem{
-	// 		DocId:        v.DocId,
-	// 		Content:      v.Content,
-	// 		Title:        v.Title,
-	// 		Score:        0,
-	// 		DocCount:     0,
-	// 		ContentScore: 0,
-	// 	})
-	// }
-
 	return
 }
 
