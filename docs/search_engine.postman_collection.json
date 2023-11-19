@@ -1050,7 +1050,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}api/v1/search_engine/search?query=导演",
+							"raw": "{{url}}api/v1/search_engine/search?query=导演,月球",
 							"host": [
 								"{{url}}api"
 							],
@@ -1062,7 +1062,7 @@
 							"query": [
 								{
 									"key": "query",
-									"value": "导演"
+									"value": "导演,月球"
 								}
 							]
 						}
@@ -1278,14 +1278,13 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "file_path",
-									"value": "/Users/mac/GolandProjects/Go-SearchEngine/app/mapreduce/input_data/other_input_data/movies_data.csv",
-									"type": "text"
+							"mode": "raw",
+							"raw": "{\n      \"file_path\":[\"/Users/admin/VscodeProject/tangseng/app/mapreduce/data/movies.csv\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "{{url}}api/v1/index_platform/build_index",
@@ -1296,6 +1295,158 @@
 								"v1",
 								"index_platform",
 								"build_index"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "索引建立",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "file_path",
+											"value": "/Users/mac/GolandProjects/Go-SearchEngine/app/mapreduce/input_data/other_input_data/movies_data.csv",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}api/v1/index_platform/build_index",
+									"host": [
+										"{{url}}api"
+									],
+									"path": [
+										"v1",
+										"index_platform",
+										"build_index"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 04 Nov 2023 10:01:58 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "71"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"data\": {\n        \"code\": 200,\n        \"message\": \"ok\"\n    },\n    \"msg\": \"ok\",\n    \"error\": \"\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "python相关",
+			"item": [
+				{
+					"name": "test_insert",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{py_url}}/test_insert",
+							"host": [
+								"{{py_url}}"
+							],
+							"path": [
+								"test_insert"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "test_search",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "query",
+									"value": "mirror",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{py_url}}/test_search",
+							"host": [
+								"{{py_url}}"
+							],
+							"path": [
+								"test_search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search_vector_grpc",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "向量索引平台",
+			"item": [
+				{
+					"name": "search_vector",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n      \"query\":\"milvus\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}api/v1/search_vector/vector?query=导演",
+							"host": [
+								"{{url}}api"
+							],
+							"path": [
+								"v1",
+								"search_vector",
+								"vector"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "导演"
+								},
+								{
+									"key": "query",
+									"value": "mirror",
+									"disabled": true
+								}
 							]
 						}
 					},
@@ -1318,6 +1469,14 @@
 						"ping"
 					]
 				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": []
 			},
 			"response": []
 		}
