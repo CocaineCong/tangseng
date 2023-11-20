@@ -40,23 +40,12 @@
         paths: auto,// 注意：仅适用于 paths: 'auto' 模式
         placeholder: 'Type to search',
         // 支持本地化
-        placeholder: {
-          '/zh-cn/': '搜索',
-          '/': 'Type to search'
-        },
-        noData: 'No Results!',
-        // 支持本地化
         noData: {
           '/zh-cn/': '找不到结果',
           '/': 'No Results'
         },
-
-        // 搜索标题的最大层级, 1 - 6
         depth: 2,
-        // 您可以提供一个正则表达式来匹配前缀。在这种情况下，
-        // 匹配到的字符串将被用来识别索引
         hideOtherSidebarContent: false,
-        namespace:'此处放项目名称',
         pathNamespaces: /^(\/(zh-cn|ru-ru))?(\/(v1|v2))?/
       }
     }
