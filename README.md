@@ -29,6 +29,7 @@ all in react, but still coding
 - [ ] 引入jaeger进行全链路追踪(go追踪到python)
 - [ ] 引入skywalking or prometheus进行监控
 - [ ] 抽离dao的init，用key来获取相关数据库实例
+- [ ] 冷热数据分离
 
 ### 功能相关
 
