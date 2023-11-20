@@ -8,7 +8,8 @@
   - [favorite](/content/favorite/favorite.md)
 
 - mapreduce
-  - [mapreduce](/content/mapreduce/mapreduce.md)
+  - [mapreduce-grpc](/content/mapreduce/mapreduce-grpc.md)
+  - [mapreduce-chan](/content/mapreduce/mapreduce-chan.md)
 
 - 索引平台
   - [index_platform](/content/index_platform/index_platform.md)
