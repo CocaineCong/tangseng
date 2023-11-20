@@ -29,7 +29,7 @@ all in react, but still coding
 - [ ] 引入jaeger进行全链路追踪(go追踪到python)
 - [ ] 引入skywalking or prometheus进行监控
 - [ ] 抽离dao的init，用key来获取相关数据库实例
-- [ ] 冷热数据分离
+- [ ] 冷热数据分离(参考es的方案,关键在于判断冷热的标准,或许可以写在中间件里面？)
 
 ### 功能相关
 
