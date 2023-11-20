@@ -7,8 +7,8 @@
 1. gin作为http框架，grpc作为rpc框架，etcd作为服务发现。
 2. 总体服务分成`用户模块`、`收藏夹模块`、`索引平台`、`搜索引擎(文字模块)`、`搜索引擎(图片模块)`。
 3. 分布式爬虫爬取数据，并发送到kafka集群中，再落库消费。 (虽然爬虫还没写，但不妨碍我画饼...)
-4. 搜索引擎模块的文本搜索单独设立使用boltdb存储index。
-5. 使用trie tree实现词条联想。
+4. 搜索引擎模块的文本搜索单独设立使用boltdb存储index，mapreduce加速索引构建并使用`roaring bitmap`存储索引。
+5. 使用trie tree实现词条联想(后面打算加上算法模型辅助词条联想)。
 6. 图片搜索使用ResNet50来进行向量化查询 + Milvus or Faiss 向量数据库的查询 (开始做了... DeepLearning也太难了...)。
 7. 支持多路召回，go中进行倒排索引召回，python进行向量召回。通过grpc调用连接，进行融合。
 8. 支持TF-IDF，BM25等等算法排序。
@@ -30,6 +30,7 @@ all in react, but still coding
 - [ ] 引入skywalking or prometheus进行监控
 - [ ] 抽离dao的init，用key来获取相关数据库实例
 - [ ] 冷热数据分离(参考es的方案,关键在于判断冷热的标准,或许可以写在中间件里面？)
+- [ ] 目前来说mysql已经足够存储正排索引，但后续可能直接一步到位到OLAP，starrocks单表亿级数据也能毫秒查询，mysql到这个级别早就分库分表了..
 
 ### 功能相关
 
@@ -55,7 +56,6 @@ all in react, but still coding
 - [ ] 在上一条的基础上再加上动态索引（还不知道上一条能不能实现...）
 - [x] 改造倒排索引，使用 roaring bitmap 存储docid (好难)
 - [ ] 实现TF类
-- [ ] 所有的输入数据都收口到starrocks，从starrocks读取来构建索引
 - [x] 搜索完一个接着搜索，没有清除缓存导致结果是和上一个产生并集
 - [x] 排序器优化
 
@@ -67,6 +67,8 @@ all in react, but still coding
    ```shell
    make env-up
    ```
+
+小小数据集就在 `source_data/movies_data.csv` 
 
 ### Python 启动!
 
