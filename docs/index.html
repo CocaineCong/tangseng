@@ -7,15 +7,70 @@
   <meta name="description" content="Description" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css" />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+  <!-- 默认主题 -->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/lib/themes/vue.css">
+  <!-- 侧边栏目录折叠 -->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/sidebar.min.css" />
+
 </head>
 <body>
-  <div id="app"></div>
+  <div id="app">
+  </div>
   <script>
     window.$docsify = {
-      name: '',
-      repo: ''
+      name: 'tangseng search',
+      nameLink: {
+        '/content/index_platform/': 'https://tainacan.github.io/tainacan-wiki/#/pt-br/',
+        '/content/other/': 'https://tainacan.github.io/tainacan-wiki/#/es-mx/',
+        '/': 'https://tainacan.github.io/tainacan-wiki/#/',
+      },
+      repo: 'https://github.com/cocainecong/tangseng',
+      loadSidebar: true,
+      mergeNavbar: true,
+      coverpage: true,
+      namespace:'tangseng',
+      sidebarDisplayLevel: 3,
+      depth: 3,
+    }
+  </script>
+  <script>
+    // 搜索配置(url：https://docsify.js.org/#/zh-cn/plugins?id=%e5%85%a8%e6%96%87%e6%90%9c%e7%b4%a2-search)
+    window.$docsify = {
+      // 基础配置参数 完整的参数请参考 官网
+      search: {
+        maxAge: 86400000, // 过期时间，单位毫秒，默认一天
+        paths: auto,// 注意：仅适用于 paths: 'auto' 模式
+        placeholder: 'Type to search',
+        // 支持本地化
+        placeholder: {
+          '/zh-cn/': '搜索',
+          '/': 'Type to search'
+        },
+        noData: 'No Results!',
+        // 支持本地化
+        noData: {
+          '/zh-cn/': '找不到结果',
+          '/': 'No Results'
+        },
+
+        // 搜索标题的最大层级, 1 - 6
+        depth: 2,
+        // 您可以提供一个正则表达式来匹配前缀。在这种情况下，
+        // 匹配到的字符串将被用来识别索引
+        hideOtherSidebarContent: false,
+        namespace:'此处放项目名称',
+        pathNamespaces: /^(\/(zh-cn|ru-ru))?(\/(v1|v2))?/
+      }
     }
   </script>
   <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+  <!-- 搜索功能支持 -->
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/docsify-sidebar-collapse.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-go.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-python.min.js"></script>
 </body>
 </html>
