@@ -42,7 +42,6 @@ invertedIndex := cmap.New[*roaring.Bitmap]() // 倒排索引
 
 > 后面补充一下roaring bitmap的数据结构
 
-
 ### 2. mapreduce构建索引
 
 第一版的mapreduce是使用的是grpc进行处理worker节点。第二版采用chan和goroutine来处理worker，以减少rpc的调用。

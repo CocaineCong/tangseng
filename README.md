@@ -29,6 +29,7 @@ all in react, but still coding
 - [ ] 引入jaeger进行全链路追踪(go追踪到python)
 - [ ] 引入skywalking or prometheus进行监控
 - [ ] 抽离dao的init，用key来获取相关数据库实例
+- [ ] 冷热数据分离(参考es的方案,关键在于判断冷热的标准,或许可以写在中间件里面？)
 
 ### 功能相关
 
@@ -37,6 +38,7 @@ all in react, but still coding
 - [x] 相关性的计算要考虑一下，TFIDF，bm25
 - [x] 使用前缀树存储联想信息
 - [ ] 哈夫曼编码压缩前缀树
+- [ ] 建索引的时候，传文件地址改成传文件流
 - [ ] python 引入 bert 模型进行分词的推荐词并提供 grpc 接口
 - [ ] inverted 和 trie tree 的存储支持一致性hash分片存储
 - [x] 词向量

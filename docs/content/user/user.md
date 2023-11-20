@@ -5,14 +5,11 @@
 ```shell
 user/
 ├── cmd             // 启动器
-│   └── main.go
 └── internal    
     ├── repository  // 存储仓库
     │   └── db      // 存储db操作
     │       └── dao
-    │           └── user.go
     └── service     // 具体实现的微服务 
-        └── user.go
 ```
 
 ## 2. 表设计
@@ -28,9 +25,9 @@ type User struct {
 
 user表设计的比较简单，因为这不是项目重点，只有一个主键`user_id`，用户名`user_name`，昵称`nick_name`，密码`PasswordDigest`。
 
-密码是加密存储的，所以我们需要对这个user model的对象进行一些加减密操作。
+密码是加密存储的，所以我们需要对这个`user model`的对象进行一些加解密操作。
 
-加密密码
+加密密码，我们对这个user对象进行`SetPassword`操作，这个 password 就是需要加密的原始password
 
 ```go
 func (user *User) SetPassword(password string) error {
@@ -43,7 +40,8 @@ func (user *User) SetPassword(password string) error {
 }
 ```
 
-校验密码
+校验密码，我们对user对象进行`CheckPassword`密码操作，password就是需要校验的password，与这个查询出来的user对象进行密码校验。
+
 ```go
 func (user *User) CheckPassword(password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(user.PasswordDigest), []byte(password))

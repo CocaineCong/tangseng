@@ -3,7 +3,7 @@
 > 本项目的kafka集群通过compose启动，具体可以查看 `docker-compose-with-kafka.yaml`. 
 > 抛弃了原有的zookeeper，使用基于raft的kraft。减少第三方的依赖。
 
-## 连接kafka
+## go kafka部分
 
 > `github.com/IBM/sarama`
 
@@ -169,4 +169,74 @@ func (consumer *ForwardIndexConsumer) ConsumeClaim(session sarama.ConsumerGroupS
 		}
 	}
 }
+```
+
+## python kafka
+
+具体代码在`app/search_vector/kafka_operate/`下
+
+python的kakfa监听指定的topic，然后消费消息到milvus中
+
+定义一个 `KafkaHelper` 类，
+
+```python
+class KafkaHelper:
+    """
+    kafka handle objective
+    """
+
+    def __init__(self, bootstrap_servers):
+        self.bootstrap_servers = bootstrap_servers
+        self.producer = None
+        self.consumer = None
+        self.milvus_client = milvus.milvus_client
+```
+
+连接生产者
+
+```python
+def connect_producer(self):
+	"""
+	connect kafka producer
+	"""
+	try:
+		self.producer = KafkaProducer(
+			bootstrap_servers=self.bootstrap_servers)
+		print("Connected to Kafka producer successfully.")
+	except KafkaError as e:
+		print(f"Failed to connect to Kafka producer: {e}")
+```
+
+传入topic连接消费者
+
+```python
+def connect_consumer(self, topic):
+	"""
+	connect kafka consumer
+	"""
+	try:
+		self.consumer = KafkaConsumer(
+			topic, bootstrap_servers=self.bootstrap_servers)
+		print(
+			f"Connected to Kafka consumer successfully. Listening to topic: {topic}"
+		)
+	except KafkaError as e:
+		print(f"Failed to connect to Kafka consumer: {e}")
+```
+
+消费者消费信息并存储在mlivus当中(后面加上批量插入)
+
+```python
+def consume_messages_store_milvus(self, milvus_table):
+	"""
+	consume messages from kafka and store in milvus
+	"""
+	if not self.consumer:
+		print("No Kafka consumer connected.")
+		return
+	print("Consuming messages...")
+	for msg in self.consumer:
+		data = json.loads(msg.value.decode('utf-8'))
+		do_upload(milvus_table, int(data["doc_id"]), data["title"],
+					data["body"], self.milvus_client)
 ```
