@@ -4,12 +4,12 @@
 
 ```shell
 /favorite
-├── cmd
-└── internal
-    ├── repository
-    │   └── db
+├── cmd               // 启动器
+└── internal    
+    ├── repository    // 存储仓库
+    │   └── db        // 存储db操作
     │       └── dao
-    └── service
+    └── service       // 具体实现的微服务 
 ```
 
 ## 表结构

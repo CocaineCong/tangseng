@@ -10,9 +10,9 @@
 - Present stories to the public using Gutenberg blocks
 
 [bilibili video](/#tainacan-wiki)
-[GetStart](/content/#wiki-do-tainacan)
-[立即开始](/content/#wiki-do-tainacan)
+[GetStart](/content/README.md)
+[立即开始](/content/README.md)
 
 <!-- background color -->
 
-<!-- ![color](#ffffff) -->
+![color](#ffffff)

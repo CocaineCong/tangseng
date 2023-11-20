@@ -97,7 +97,7 @@ func (s *IndexPlatformSrv) BuildIndexService(ctx context.Context, req *pb.BuildI
 		}
 		wg.Wait()
 
-		// // 构建前缀树 // TODO: kafka处理
+		// // 构建前缀树 // TODO: kafka异步处理一下前缀树的插入，不然占着这里的资源
 		// go func(tokenList []string) {
 		// 	err = input_data.DocTrie2Kfk(tokenList)
 		// 	if err != nil {

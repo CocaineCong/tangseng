@@ -18,7 +18,7 @@
 
 那么如何对 map tasks 和 reduce tasks 进行合理的协调呢？这里我们就要引入两个角色，**master 和 worker**，在原论文中，对这两者的并没有非常明确的定义，但我们可以摘录并提炼原论文对这两个角色的描述：
 
-**master : The master picks idle workers and assigns each one a map task or a reduce task. **
+**master : The master picks idle workers and assigns each one a map task or a reduce task.**
 
 **worker :**
 
