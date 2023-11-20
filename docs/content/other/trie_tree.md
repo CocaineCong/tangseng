@@ -28,7 +28,7 @@ func (trie *Trie) Insert(word string) {
 查询前缀树
 
 ```go
-func (trie *Trie) FindAllByPrefix(prefix string) []string {
+func (trie *Trie) FindAllByPrefix(prefix string) []string { 
 	prefixs := []rune(prefix)
 	node := trie.Root
 	for i := 0; i < len(prefixs); i++ {

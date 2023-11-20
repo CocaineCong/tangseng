@@ -60,12 +60,11 @@ all in react, but still coding
 ![文本搜索](docs/images/text2text.jpg)
 
 ## 快速开始
+   环境启动！
 
-    环境启动！
-
-    ```shell
-    make env-up
-    ```
+   ```shell
+   make env-up
+   ```
 
 ### Python 启动!
 
@@ -82,7 +81,8 @@ all in react, but still coding
     ```
 
 3. 激活 venv python 环境
-    macos:
+    
+   macos:
 
     ```shell
     source venv/bin/activate
