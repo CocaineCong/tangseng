@@ -2,7 +2,7 @@
 
 ## 项目结构
 
-```shell
+```go
 search_engine/
 ├── analyzer            // 解析器，分词作用，与索引平台的解析不一样
 ├── cmd                 // 启动文件
