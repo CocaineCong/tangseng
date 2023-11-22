@@ -1,18 +1,16 @@
 # Welcome to Tangseng Search Engine
 
 
-> An **open source**, **distrubution** and **flexible** repository platform for search.
+> 一款开源，分布式且灵活的分布式搜索引擎
 
-- Create collections with custom metadata and filters
-- Browse your items with a faceted search
-- Manage taxonomies that can be used across all your collections
-- Consume data via a powerful API
-- Present stories to the public using Gutenberg blocks
+- 支持倒排索引，向量索引，正排索引等索引结构
+- 支持 golang 和 python 的 grpc 接口调用
+- mapreduce 结合 kafka集群 加速索引构建
+- mysql、redis、milvus、boltdb、starrocks等多种类型数据库集成设计
+- 支持图片搜索(开发中...)
 
-[bilibili video](/#tainacan-wiki)
-[GetStart](/content/#wiki-do-tainacan)
-[立即开始](/content/#wiki-do-tainacan)
+[bilibili video](/)
+[GetStart](/content/README.md)
+[立即开始](/content/README.md)
 
-<!-- background color -->
-
-<!-- ![color](#ffffff) -->
+![color](#ffffff)
