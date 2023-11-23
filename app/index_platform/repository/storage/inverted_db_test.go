@@ -7,38 +7,8 @@ import (
 
 	"github.com/RoaringBitmap/roaring"
 
-	"github.com/CocaineCong/tangseng/config"
 	"github.com/CocaineCong/tangseng/consts"
 )
-
-func TestInvertedDBRead(t *testing.T) {
-	query := "电影"
-	termName := config.Conf.SeConfig.StoragePath + "0.term"
-	inverted := NewInvertedDB(termName)
-	v, err := inverted.GetInverted([]byte(query))
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println("v", string(v))
-	err = inverted.StoragePostings(query, []byte("100"))
-	if err != nil {
-		fmt.Println(err)
-	}
-	v2, err := inverted.GetInverted([]byte(query))
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println("v2", string(v2))
-	err = inverted.PutInverted([]byte(query), []byte("11111"))
-	if err != nil {
-		fmt.Println(err)
-	}
-	v3, err := inverted.GetInverted([]byte(query))
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(string(v3))
-}
 
 func TestStoreInvertedInfo(t *testing.T) {
 	query := "蜘蛛侠"

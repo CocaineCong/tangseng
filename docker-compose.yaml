@@ -125,19 +125,15 @@ services:
     networks:
       - search_engine
 
-#  starrocks: # TODO 后面加上starrocks
-#    images: starrock.docker.scarf.sh/starrock/allin1-ubuntu
-#    restart: on-failure
-#    container_name: "starrock"
-#    ports:
-#      - "8030:8030"
-#      - "9030:9030"
-#      - "8040:8040"
-#    volumes:
-#      - ./starrock/fe/meta:/opt/apache-doris/fe/meta
-#      - ./starrock/fe/log:/data/deploy/starrock/fe/log
-#      - ./starrock/be/storage:/data/deploy/starrock/be/storage
-#      - ./starrock/be/log:/data/deploy/starrock/be/log
-#      - ./initdb.d:/docker-entrypoint-initdb.d/
-#    networks:
-#      - search_engine
+  starrocks:
+    image: starrocks.docker.scarf.sh/starrocks/allin1-ubuntu
+    ports:
+        - "9030:9030"
+        - "8030:8030"
+        - "8040:8040"
+    volumes:
+      - ./config/bi_sql:/docker-entrypoint-initdb.d/
+    tty: true
+    stdin_open: true
+    networks:
+      - search_engine

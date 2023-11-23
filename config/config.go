@@ -9,18 +9,18 @@ import (
 var Conf *Config
 
 type Config struct {
-	Server    *Server             `yaml:"service"`
-	MySQL     *MySQL              `yaml:"mysql"`
-	Redis     *Redis              `yaml:"redis"`
-	Etcd      *Etcd               `yaml:"etcd"`
-	Es        *Es                 `yaml:"es"`
-	Services  map[string]*Service `yaml:"services"`
-	Domain    map[string]*Domain  `yaml:"domain"`
-	SeConfig  *SeConfig           `yaml:"SeConfig"`
-	Kafka     *Kafka              `yaml:"kafka"`
-	StarRocks *StarRocks          `yaml:"starrock"`
-	Vector    *VectorConfig       `yaml:"vector"`
-	Milvus    *MilvusConfig       `yaml:"milvus"`
+	Server   *Server             `yaml:"service"`
+	MySQL    *MySQL              `yaml:"mysql"`
+	Redis    *Redis              `yaml:"redis"`
+	Etcd     *Etcd               `yaml:"etcd"`
+	Es       *Es                 `yaml:"es"`
+	Services map[string]*Service `yaml:"services"`
+	Domain   map[string]*Domain  `yaml:"domain"`
+	// SeConfig  *SeConfig           `yaml:"SeConfig"`
+	Kafka     *Kafka        `yaml:"kafka"`
+	StarRocks *StarRocks    `yaml:"starrocks"`
+	Vector    *VectorConfig `yaml:"vector"`
+	Milvus    *MilvusConfig `yaml:"milvus"`
 }
 
 type VectorConfig struct {
@@ -47,14 +47,14 @@ type StarRocks struct {
 	Charset  string `yaml:"charset"`
 }
 
-type SeConfig struct {
-	StoragePath      string   `yaml:"StoragePath"`
-	SourceFiles      []string `yaml:"SourceFiles"`
-	MergeChannelSize int64    `yaml:"MergeChannelSize"`
-	Version          string   `yaml:"Version"`
-	SourceWuKoFile   string   `yaml:"SourceWuKoFile"`
-	MetaPath         string   `yaml:"MetaPath"`
-}
+// type SeConfig struct {
+// 	StoragePath      string   `yaml:"StoragePath"`
+// 	SourceFiles      []string `yaml:"SourceFiles"`
+// 	MergeChannelSize int64    `yaml:"MergeChannelSize"`
+// 	Version          string   `yaml:"Version"`
+// 	SourceWuKoFile   string   `yaml:"SourceWuKoFile"`
+// 	MetaPath         string   `yaml:"MetaPath"`
+// }
 
 type Server struct {
 	Port      string `yaml:"port"`

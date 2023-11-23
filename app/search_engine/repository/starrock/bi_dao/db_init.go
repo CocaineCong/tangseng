@@ -18,8 +18,8 @@ import (
 
 var _db *gorm.DB
 
-func InitDB() {
-	mConfig := config.Conf.MySQL
+func InitStarRocks() {
+	mConfig := config.Conf.StarRocks
 	host := mConfig.Host
 	port := mConfig.Port
 	database := mConfig.Database
