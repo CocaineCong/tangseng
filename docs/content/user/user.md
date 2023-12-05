@@ -50,3 +50,7 @@ func (user *User) CheckPassword(password string) bool {
 ```
 
 详细用法请看 `app/user/internal/service/user.go` 对dao的调用.
+
+## 3. 鉴权操作
+
+具体看 `docs/content/other/jwt.md`
