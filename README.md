@@ -68,7 +68,7 @@ all in react, but still coding
    make env-up
    ```
 
-小小数据集就在 `source_data/movies_data.csv` 
+小小数据集就在 `source_data/movies_data.csv`
 
 ### Python 启动!
 

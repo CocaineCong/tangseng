@@ -49,4 +49,4 @@ search_vector/
 ## 权重下载
 
 夸克云盘权重下载链接：<https://pan.quark.cn/s/8526d0c23356>
-下载完放到 `weight/` 目录下
+下载完放到 `weights/` 目录下
