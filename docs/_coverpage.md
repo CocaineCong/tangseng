@@ -9,8 +9,4 @@
 - mysql、redis、milvus、boltdb、starrocks等多种类型数据库集成设计
 - 支持图片搜索(开发中...)
 
-[bilibili video](/)
-[GetStart](/content/README.md)
-[立即开始](/content/README.md)
-
-![color](#ffffff)
+### [立即开始](/content/README.md)
