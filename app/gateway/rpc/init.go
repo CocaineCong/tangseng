@@ -43,7 +43,7 @@ func Init() {
 	// initClient(config.Conf.Domain[consts.UserServiceName].Name, &UserClient)
 	// initClient(config.Conf.Domain[consts.FavoriteServiceName].Name, &FavoriteClient)
 	initClient(config.Conf.Domain[consts.SearchServiceName].Name, &SearchEngineClient)
-	// initClient(config.Conf.Domain[consts.IndexPlatformName].Name, &IndexPlatformClient)
+	initClient(config.Conf.Domain[consts.IndexPlatformName].Name, &IndexPlatformClient)
 	initClient(config.Conf.Domain[consts.SearchVectorName].Name, &SearchVectorClient)
 }
 
