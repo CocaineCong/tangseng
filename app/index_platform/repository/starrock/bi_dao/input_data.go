@@ -2,6 +2,7 @@ package bi_dao
 
 import (
 	"context"
+	"github.com/pkg/errors"
 
 	"gorm.io/gorm"
 
@@ -21,5 +22,5 @@ func (dao *StarRocksDao) ListDataRocks() (r []*types.Data2Starrocks, err error) 
 	sql := "SELECT * FROM input_data"
 	err = dao.DB.Raw(sql).Find(&r).Error
 
-	return
+	return r, errors.Wrap(err, "failed to find data")
 }

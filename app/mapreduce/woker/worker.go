@@ -3,6 +3,7 @@ package woker
 import (
 	"context"
 	"fmt"
+	"github.com/pkg/errors"
 	"hash/fnv"
 	"time"
 
@@ -21,7 +22,8 @@ func Worker(ctx context.Context, mapf func(string, string) []*types.KeyValue, re
 		// worker从master获取任务
 		task, err := getTask(ctx)
 		if err != nil {
-			log.LogrusObj.Error("Worker-getTask", err)
+			log.LogrusObj.Errorf("getTask failed, original error: %T %v", errors.Cause(err), errors.Cause(err))
+			log.LogrusObj.Errorf("stack trace: \n%+v\n", err)
 			return
 		}
 		fmt.Println("Worker task", task)
@@ -54,12 +56,12 @@ func getTask(ctx context.Context) (resp *mapreduce.MapReduceTask, err error) {
 	taskReq := &mapreduce.MapReduceTask{}
 	resp, err = rpc.MasterAssignTask(ctx, taskReq)
 	fmt.Println("getTask Resp")
-
+	err = errors.WithMessage(err, "MasterAssignTask error")
 	return
 }
 
 func TaskCompleted(ctx context.Context, task *mapreduce.MapReduceTask) (reply *mapreduce.MasterTaskCompletedResp, err error) {
 	reply, err = rpc.MasterTaskCompleted(ctx, task)
-
+	err = errors.WithMessage(err, "MasterTaskCompleted error")
 	return
 }

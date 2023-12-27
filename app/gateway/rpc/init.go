@@ -3,6 +3,7 @@ package rpc
 import (
 	"context"
 	"fmt"
+	"github.com/pkg/errors"
 	"log"
 	"time"
 
@@ -84,5 +85,6 @@ func connectServer(serviceName string) (conn *grpc.ClientConn, err error) {
 	}
 
 	conn, err = grpc.DialContext(ctx, addr, opts...)
+	err = errors.Wrapf(err, "failed to connect to gRPC service,address is %v", addr)
 	return
 }

@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/pkg/errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -22,7 +23,8 @@ func SearchEngineSearch(ctx *gin.Context) {
 
 	r, err := rpc.SearchEngineSearch(ctx, req)
 	if err != nil {
-		log.LogrusObj.Errorf("SearchEngineSearch:%v", err)
+		log.LogrusObj.Errorf("rpc.SearchEngineSearch failed, original error: %T %v", errors.Cause(err), errors.Cause(err))
+		log.LogrusObj.Errorf("stack trace: \n%+v\n", err)
 		ctx.JSON(http.StatusOK, ctl.RespError(ctx, err, "SearchEngineSearch RPC服务调用错误"))
 		return
 	}
@@ -41,7 +43,8 @@ func WordAssociation(ctx *gin.Context) {
 
 	r, err := rpc.WordAssociation(ctx, req)
 	if err != nil {
-		log.LogrusObj.Errorf("WordAssociation:%v", err)
+		log.LogrusObj.Errorf("rpc.WordAssociation failed, original error: %T %v", errors.Cause(err), errors.Cause(err))
+		log.LogrusObj.Errorf("stack trace: \n%+v\n", err)
 		ctx.JSON(http.StatusOK, ctl.RespError(ctx, err, "WordAssociation RPC服务调用错误"))
 		return
 	}

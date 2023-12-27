@@ -1,6 +1,7 @@
 package ranking
 
 import (
+	"github.com/pkg/errors"
 	"math"
 
 	"github.com/CocaineCong/tangseng/app/search_engine/analyzer"
@@ -70,7 +71,9 @@ func CalculateScoreTFIDF(token string, searchItem []*types.SearchItem) (resp []*
 			index++
 		}
 	})
-
+	if err != nil {
+		err = errors.WithMessage(err, "mapreduce error")
+	}
 	return
 }
 

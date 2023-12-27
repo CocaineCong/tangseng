@@ -3,7 +3,7 @@ package discovery
 import (
 	"context"
 	"encoding/json"
-	"errors"
+	"github.com/pkg/errors"
 	"net/http"
 	"strconv"
 	"strings"
@@ -41,21 +41,21 @@ func (r *Register) Register(srvInfo Server, ttl int64) (chan<- struct{}, error) 
 	var err error
 
 	if strings.Split(srvInfo.Addr, ":")[0] == "" {
-		return nil, errors.New("invalid ip address")
+		return nil, errors.Wrap(errors.New("invalid ip address"), "Split error")
 	}
 
 	if r.cli, err = clientv3.New(clientv3.Config{
 		Endpoints:   r.EtcdAddrs,
 		DialTimeout: time.Duration(r.DialTimeout) * time.Second,
 	}); err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to create new etcd client")
 	}
 
 	r.srvInfo = srvInfo
 	r.srvTTL = ttl
 
 	if err = r.register(); err != nil {
-		return nil, err
+		return nil, errors.WithMessage(err, "register error")
 	}
 
 	r.closeCh = make(chan struct{})
@@ -72,24 +72,26 @@ func (r *Register) register() error {
 	// 在etcd创建一个续期的lease对象
 	leaseResp, err := r.cli.Grant(ctx, r.srvTTL)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to create lease")
 	}
 
 	r.leasesID = leaseResp.ID
 
 	// 开启自动续期KeepAlive
 	if r.keepAliveCh, err = r.cli.KeepAlive(context.Background(), r.leasesID); err != nil {
-		return err
+		return errors.Wrap(err, "failed to establish KeepAlive for lease")
 	}
 
 	data, err := json.Marshal(r.srvInfo)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to marshal srvInfo")
 	}
 
 	_, err = r.cli.Put(context.Background(), BuildRegisterPath(r.srvInfo), string(data), clientv3.WithLease(r.leasesID))
-
-	return err
+	if err != nil {
+		return errors.Wrap(err, "failed to write service registration data to etcd")
+	}
+	return nil
 }
 
 // Stop stop register
@@ -100,7 +102,10 @@ func (r *Register) Stop() {
 // unregister 删除节点
 func (r *Register) unregister() error {
 	_, err := r.cli.Delete(context.Background(), BuildRegisterPath(r.srvInfo))
-	return err
+	if err != nil {
+		return errors.Wrap(err, "failed to unregister")
+	}
+	return nil
 }
 
 // 监听服务地址列表的变化
@@ -151,7 +156,7 @@ func (r *Register) UpdateHandler() http.HandlerFunc {
 			}
 
 			_, err = r.cli.Put(context.Background(), BuildRegisterPath(r.srvInfo), string(data), clientv3.WithLease(r.leasesID))
-			return err
+			return errors.WithMessage(err, "put error")
 		}
 
 		if err := update(); err != nil {
@@ -167,13 +172,13 @@ func (r *Register) UpdateHandler() http.HandlerFunc {
 func (r *Register) GetServerInfo() (Server, error) {
 	resp, err := r.cli.Get(context.Background(), BuildRegisterPath(r.srvInfo))
 	if err != nil {
-		return r.srvInfo, err
+		return r.srvInfo, errors.Wrap(err, "failed to get server info")
 	}
 
 	server := Server{}
 	if resp.Count >= 1 {
 		if err := json.Unmarshal(resp.Kvs[0].Value, &server); err != nil {
-			return server, err
+			return server, errors.Wrap(err, "failed to unmarshal resp")
 		}
 	}
 

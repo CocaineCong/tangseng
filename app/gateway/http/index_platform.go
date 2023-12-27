@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/pkg/errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -21,7 +22,8 @@ func BuildIndexByFiles(ctx *gin.Context) {
 
 	r, err := rpc.BuildIndex(ctx, &req)
 	if err != nil {
-		log.LogrusObj.Errorf("BuildIndexByFiles:%v", err)
+		log.LogrusObj.Errorf("rpc.BuildIndex failed, original error: %T %v", errors.Cause(err), errors.Cause(err))
+		log.LogrusObj.Errorf("stack trace: \n%+v\n", err)
 		ctx.JSON(http.StatusOK, ctl.RespError(ctx, err, "BuildIndexByFiles RPC服务调用错误"))
 		return
 	}

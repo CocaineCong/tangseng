@@ -2,7 +2,8 @@ package mapreduce
 
 import (
 	"context"
-	"errors"
+	log "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/pkg/errors"
 	"sync"
 	"sync/atomic"
 )
@@ -16,8 +17,9 @@ const (
 )
 
 var (
-	ErrCancelWithNil  = errors.New("mapreduce cancelled with nil")
-	ErrReduceNoOutput = errors.New("reduce not writing value")
+	ErrCancelWithNil           = errors.New("mapreduce cancelled with nil")
+	ErrReduceNoOutput          = errors.New("reduce not writing value")
+	ErrWriteMoreThanOneProduce = errors.New("more than one element written in reducer")
 )
 
 type (
@@ -52,11 +54,11 @@ type (
 	}
 )
 
-func MapReduce[T, U, V any](gen GenerateFunc[T], mapper MapperFunc[T, U], reducer ReducerFunc[U, V], opts ...Option) (V, error) {
+func MapReduce[T, U, V any](gen GenerateFunc[T], mapper MapperFunc[T, U], reducer ReducerFunc[U, V], opts ...Option) (v V, err error) {
 	panicChan := &onceChan{channel: make(chan any)}
 	source := buildSource(gen, panicChan)
-
-	return mapReduceWithPanicChan(source, panicChan, mapper, reducer, opts...)
+	v, err = mapReduceWithPanicChan(source, panicChan, mapper, reducer, opts...)
+	return v, errors.WithMessage(err, "mapReduceWithPanicChan error")
 }
 
 func newOptions() *mapReduceOptions {
@@ -82,7 +84,8 @@ func mapReduceWithPanicChan[T, U, V any](source <-chan T, panicChan *onceChan, m
 	defer func() {
 		// reducer can only write once, if more, panic
 		for range output {
-			panic("more than one element written in reducer")
+			log.LogrusObj.Errorln(ErrWriteMoreThanOneProduce)
+			panic(ErrWriteMoreThanOneProduce)
 		}
 	}()
 
@@ -153,7 +156,7 @@ func mapReduceWithPanicChan[T, U, V any](source <-chan T, panicChan *onceChan, m
 		}
 	}
 
-	return
+	return val, errors.Wrap(err, "mapReduceWithPanicChan error")
 }
 
 func once(fn func(error)) func(error) {

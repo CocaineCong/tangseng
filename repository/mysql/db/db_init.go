@@ -2,7 +2,6 @@ package db
 
 import (
 	"context"
-	"fmt"
 	"strings"
 	"time"
 
@@ -29,8 +28,7 @@ func InitDB() {
 	dsn := strings.Join([]string{username, ":", password, "@tcp(", host, ":", port, ")/", database, "?charset=" + charset + "&parseTime=true"}, "")
 	err := Database(dsn)
 	if err != nil {
-		fmt.Println(err)
-		log.LogrusObj.Error(err)
+		log.LogrusObj.Errorln(err)
 	}
 }
 
@@ -55,6 +53,7 @@ func Database(connString string) error {
 		},
 	})
 	if err != nil {
+		log.LogrusObj.Errorln(err)
 		panic(err)
 	}
 	sqlDB, _ := db.DB()

@@ -2,6 +2,7 @@ package master
 
 import (
 	"context"
+	"github.com/pkg/errors"
 	"math"
 	"sync"
 	"time"
@@ -166,6 +167,7 @@ func (m *MasterSrv) MasterTaskCompleted(ctx context.Context, req *mapreduce.MapR
 	m.TaskMeta[int(req.TaskNumber)].TaskStatus = types.Completed
 	err = m.processTaskResult(req) // always success haha and hope u so :)
 	if err != nil {
+		err = errors.WithMessage(err, "processTaskResult error")
 		resp.Code = e.ERROR
 		resp.Message = "map finish failed"
 		return

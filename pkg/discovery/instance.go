@@ -2,8 +2,8 @@ package discovery
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
+	"github.com/pkg/errors"
 	"strings"
 
 	"google.golang.org/grpc/resolver"
@@ -31,7 +31,7 @@ func BuildRegisterPath(server Server) string {
 func ParseValue(value []byte) (Server, error) {
 	server := Server{}
 	if err := json.Unmarshal(value, &server); err != nil {
-		return server, err
+		return server, errors.Wrap(err, "failed to unmarshal value")
 	}
 
 	return server, nil
@@ -41,7 +41,7 @@ func SplitPath(path string) (Server, error) {
 	server := Server{}
 	strs := strings.Split(path, "/")
 	if len(strs) == 0 {
-		return server, errors.New("invalid path")
+		return server, errors.Wrap(errors.New("invalid path"), "Split error")
 	}
 
 	server.Addr = strs[len(strs)-1]

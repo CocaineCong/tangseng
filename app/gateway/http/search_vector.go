@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/pkg/errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -22,7 +23,8 @@ func SearchVector(ctx *gin.Context) {
 
 	r, err := rpc.SearchVector(ctx, &req)
 	if err != nil {
-		log.LogrusObj.Errorf("SearchVector:%v", err)
+		log.LogrusObj.Errorf("rpc.SearchVector failed, original error: %T %v", errors.Cause(err), errors.Cause(err))
+		log.LogrusObj.Errorf("stack trace: \n%+v\n", err)
 		ctx.JSON(http.StatusOK, ctl.RespError(ctx, err, "SearchVector RPC服务调用错误"))
 		return
 	}

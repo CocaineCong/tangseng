@@ -2,6 +2,7 @@ package dao
 
 import (
 	"context"
+	"github.com/pkg/errors"
 	"sync"
 	"time"
 
@@ -99,7 +100,7 @@ func (d *MySqlDirectUpload) StreamUpload() (count int, err error) {
 
 	err = NewInputDataDao(d.ctx).BatchCreateInputData(d.upData)
 	if err != nil {
-		log.LogrusObj.Error("BatchCreateInputData ", err)
+		return count, errors.WithMessage(err, "BatchCreateInputData error")
 	}
 
 	// 重制 updata
