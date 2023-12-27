@@ -2,12 +2,12 @@ package service
 
 import (
 	"context"
+	"github.com/pingcap/errors"
 	"sync"
 
 	"github.com/CocaineCong/tangseng/app/search_engine/service/recall"
 	"github.com/CocaineCong/tangseng/consts/e"
 	pb "github.com/CocaineCong/tangseng/idl/pb/search_engine"
-	log "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/CocaineCong/tangseng/types"
 )
 
@@ -34,7 +34,7 @@ func (s *SearchEngineSrv) SearchEngineSearch(ctx context.Context, req *pb.Search
 	if err != nil {
 		resp.Code = e.ERROR
 		resp.Msg = err.Error()
-		log.LogrusObj.Error("SearchEngineSearch-recall.SearchRecall", err)
+		err = errors.WithMessage(err, "SearchEngineSearch-recall.SearchRecall error")
 		return
 	}
 
@@ -42,7 +42,7 @@ func (s *SearchEngineSrv) SearchEngineSearch(ctx context.Context, req *pb.Search
 	if err != nil {
 		resp.Code = e.ERROR
 		resp.Msg = err.Error()
-		log.LogrusObj.Error("SearchEngineSearch-BuildSearchEngineResp", err)
+		err = errors.WithMessage(err, "SearchEngineSearch-BuildSearchEngineResp error")
 		return
 	}
 	resp.Count = int64(len(sResult))
@@ -59,7 +59,7 @@ func (s *SearchEngineSrv) WordAssociation(ctx context.Context, req *pb.SearchEng
 	if err != nil {
 		resp.Code = e.ERROR
 		resp.Msg = err.Error()
-		log.LogrusObj.Error("SearchEngineSearch-WordAssociation", err)
+		err = errors.WithMessage(err, "SearchEngineSearch-WordAssociation error")
 		return
 	}
 	resp.WordAssociationList = associationList

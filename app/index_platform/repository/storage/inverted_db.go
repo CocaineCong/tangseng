@@ -1,8 +1,7 @@
 package storage
 
 import (
-	"errors"
-	"fmt"
+	"github.com/pkg/errors"
 	"os"
 
 	"github.com/RoaringBitmap/roaring"
@@ -44,17 +43,21 @@ func NewInvertedDB(invertedName string) *InvertedDB {
 
 // StoragePostings 存储 倒排索引表
 func (t *InvertedDB) StoragePostings(token string, values []byte) (err error) {
-	return t.PutInverted([]byte(token), values)
+	err = t.PutInverted([]byte(token), values)
+	return errors.WithMessage(err, "putInverted error")
 }
 
 // PutInverted 插入term
-func (t *InvertedDB) PutInverted(key, value []byte) error {
-	return Put(t.db, consts.InvertedBucket, key, value)
+func (t *InvertedDB) PutInverted(key, value []byte) (err error) {
+	err = Put(t.db, consts.InvertedBucket, key, value)
+	return errors.WithMessage(err, "put error")
 }
 
 // GetInverted 通过term获取value
 func (t *InvertedDB) GetInverted(key []byte) (value []byte, err error) {
-	return Get(t.db, consts.InvertedBucket, key)
+	value, err = Get(t.db, consts.InvertedBucket, key)
+	err = errors.WithMessage(err, "get error")
+	return
 }
 
 func (t *InvertedDB) GetAllInverted() (p []*types.InvertedInfo, err error) {
@@ -65,15 +68,19 @@ func (t *InvertedDB) GetAllInverted() (p []*types.InvertedInfo, err error) {
 func (t *InvertedDB) GetInvertedInfo(token string) (p *types.InvertedInfo, err error) {
 	c, err := t.GetInverted([]byte(token))
 	if err != nil {
+		err = errors.WithMessage(err, "getInverted error")
 		return
 	}
 
 	if len(c) == 0 {
-		err = errors.New("暂无此token")
+		err = errors.Wrap(errors.New("暂无此token"), "len(c) equal to zero")
 		return
 	}
 	output := roaring.New()
-	_ = output.UnmarshalBinary(c)
+	err = output.UnmarshalBinary(c)
+	if err != nil {
+		err = errors.Wrap(err, "failed to unmarshalBinary")
+	}
 	p = &types.InvertedInfo{
 		Token:  token,
 		DocIds: output,
@@ -86,7 +93,7 @@ func (t *InvertedDB) GetInvertedDoc(offset int64, size int64) ([]byte, error) {
 	page := os.Getpagesize()
 	b, err := Mmap(int(t.file.Fd()), offset/int64(page), int(offset+size))
 	if err != nil {
-		return nil, fmt.Errorf("GetDocinfo Mmap err: %v", err)
+		return nil, errors.WithMessage(errors.Errorf("GetDocinfo Mmap err: %v", err), "mmap error")
 	}
 	return b[offset : offset+size], nil
 }

@@ -3,6 +3,7 @@ package storage
 import (
 	"bytes"
 	"context"
+	"github.com/pkg/errors"
 	"os"
 
 	bolt "go.etcd.io/bbolt"
@@ -61,11 +62,12 @@ func NewTrieDB(filePath string) *TrieDB { // TODO: 先都放在一个下面吧�
 func (d *TrieDB) StorageDict(trieTree *trie.Trie) (err error) {
 	tt, err := trieTree.MarshalJSON()
 	if err != nil {
+		err = errors.Wrap(err, "failed marshal data")
 		return
 	}
-
-	err = d.PutTrieTree([]byte(consts.TrieTreeBucket), tt)
-
+	if err = d.PutTrieTree([]byte(consts.TrieTreeBucket), tt); err != nil {
+		err = errors.Wrap(err, "failed to put trie tree")
+	}
 	return
 }
 
@@ -73,11 +75,13 @@ func (d *TrieDB) StorageDict(trieTree *trie.Trie) (err error) {
 func (d *TrieDB) GetTrieTreeDict() (trieTree *trie.Trie, err error) {
 	v, err := d.GetTrieTree([]byte(consts.TrieTreeBucket))
 	if err != nil {
+		err = errors.WithMessage(err, "getTrieTree error")
 		return
 	}
 	replaced := bytes.Replace(v, []byte("children"), []byte("children_recall"), -1)
 	node, err := trie.ParseTrieNode(string(replaced))
 	if err != nil {
+		err = errors.WithMessage(err, "ParseTrieNode error")
 		return
 	}
 
@@ -88,16 +92,25 @@ func (d *TrieDB) GetTrieTreeDict() (trieTree *trie.Trie, err error) {
 }
 
 // PutTrieTree 存储
-func (d *TrieDB) PutTrieTree(key, value []byte) error {
-	return Put(d.db, consts.TrieTreeBucket, key, value)
+func (d *TrieDB) PutTrieTree(key, value []byte) (err error) {
+	err = Put(d.db, consts.TrieTreeBucket, key, value)
+	if err != nil {
+		err = errors.WithMessage(err, "put error")
+	}
+	return
 }
 
 // GetTrieTree 通过term获取value
 func (d *TrieDB) GetTrieTree(key []byte) (value []byte, err error) {
-	return Get(d.db, consts.TrieTreeBucket, key)
+	value, err = Get(d.db, consts.TrieTreeBucket, key)
+	err = errors.WithMessage(err, "get error")
+	return
 }
 
 // Close 关闭db
-func (d *TrieDB) Close() error {
-	return d.db.Close()
+func (d *TrieDB) Close() (err error) {
+	if err = d.db.Close(); err != nil {
+		err = errors.WithMessage(d.db.Close(), "close error")
+	}
+	return
 }

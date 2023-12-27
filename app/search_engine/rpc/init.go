@@ -3,6 +3,8 @@ package rpc
 import (
 	"context"
 	"fmt"
+	logs "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/pkg/errors"
 	"log"
 	"time"
 
@@ -42,6 +44,7 @@ func initClient(serviceName string, client interface{}) {
 	conn, err := connectServer(serviceName)
 
 	if err != nil {
+		logs.LogrusObj.Errorf("start service failed, original error: %T %v", errors.Cause(err), errors.Cause(err))
 		panic(err)
 	}
 
@@ -66,5 +69,6 @@ func connectServer(serviceName string) (conn *grpc.ClientConn, err error) {
 	}
 
 	conn, err = grpc.DialContext(ctx, addr, opts...)
+	err = errors.Wrap(err, "failed to connect grpc")
 	return
 }

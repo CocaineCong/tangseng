@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/pkg/errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -23,7 +24,8 @@ func UserRegister(ctx *gin.Context) {
 	}
 	r, err := rpc.UserRegister(ctx, &userReq)
 	if err != nil {
-		log.LogrusObj.Errorf("UserRegister:%v", err)
+		log.LogrusObj.Errorf("rpc.UserRegister failed, original error: %T %v", errors.Cause(err), errors.Cause(err))
+		log.LogrusObj.Errorf("stack trace: \n%+v\n", err)
 		ctx.JSON(http.StatusOK, ctl.RespError(ctx, err, "UserRegister RPC服务调用错误"))
 		return
 	}
@@ -42,14 +44,16 @@ func UserLogin(ctx *gin.Context) {
 
 	userResp, err := rpc.UserLogin(ctx, &req)
 	if err != nil {
-		log.LogrusObj.Errorf("RPC UserLogin:%v", err)
+		log.LogrusObj.Errorf("rpc.UserLogin failed, original error: %T %v", errors.Cause(err), errors.Cause(err))
+		log.LogrusObj.Errorf("stack trace: \n%+v\n", err)
 		ctx.JSON(http.StatusOK, ctl.RespError(ctx, err, "UserLogin RPC服务调用错误"))
 		return
 	}
 
 	aToken, rToken, err := jwt.GenerateToken(userResp.UserDetail.UserId, userResp.UserDetail.UserName)
 	if err != nil {
-		log.LogrusObj.Errorf("RPC GenerateToken:%v", err)
+		log.LogrusObj.Errorf("jwt.GenerateToken failed, original error: %T %v", errors.Cause(err), errors.Cause(err))
+		log.LogrusObj.Errorf("stack trace: \n%+v\n", err)
 		ctx.JSON(http.StatusOK, ctl.RespError(ctx, err, "加密错误"))
 		return
 	}

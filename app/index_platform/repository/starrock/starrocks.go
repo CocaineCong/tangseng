@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"context"
+	"github.com/pkg/errors"
 	"net/http"
 	"strings"
 	"sync"
@@ -104,12 +105,12 @@ func (d *DirectUpload) StreamUpload() (count int, err error) {
 		}, ",")
 		_, err = write.WriteString(line + rowDelimiter)
 		if err != nil {
-			log.LogrusObj.Errorf("WriteString Error")
+			return count, errors.Wrap(err, "WriteString Error")
 		}
 	}
 	err = write.Flush()
 	if err != nil {
-		log.LogrusObj.Errorf("write.Flush() :%+v", err)
+		return count, errors.Wrapf(err, "write.Flush() :%v", err)
 	}
 
 	// check 机制
@@ -119,7 +120,7 @@ func (d *DirectUpload) StreamUpload() (count int, err error) {
 			req.Header = v.Header
 			req.Body, err = v.GetBody()
 			if err != nil {
-				log.LogrusObj.Errorf("starrock woker")
+				err = errors.Wrapf(err, "starrock woker")
 			}
 			return err
 		},
@@ -144,7 +145,7 @@ func (d *DirectUpload) StreamUpload() (count int, err error) {
 		}).SetBody(sb.Bytes()).SetContentLength(true).
 		Put("https://{host}/api/{db}/{table}/_stream_load")
 	if err != nil {
-		log.LogrusObj.Errorf("stream load error :%+v", err)
+		err = errors.Wrap(err, "stream load error")
 	}
 
 	if hp.StatusCode() != http.StatusOK {
