@@ -2,7 +2,7 @@ package bi_dao
 
 import (
 	"context"
-	"fmt"
+	"github.com/pkg/errors"
 	"strings"
 	"time"
 
@@ -29,8 +29,8 @@ func InitDB() {
 	dsn := strings.Join([]string{username, ":", password, "@tcp(", host, ":", port, ")/", database, "?charset=" + charset + "&parseTime=true"}, "")
 	err := Database(dsn)
 	if err != nil {
-		fmt.Println(err)
-		log.LogrusObj.Error(err)
+		log.LogrusObj.Errorf("start database failed, original error: %T %v", errors.Cause(err), errors.Cause(err))
+		log.LogrusObj.Errorf("stack trace: \n%+v\n", err)
 	}
 }
 
@@ -50,7 +50,8 @@ func Database(connString string) error {
 		},
 	})
 	if err != nil {
-		panic(err)
+		err = errors.Wrap(err, "failed to connect Mysql")
+		return err
 	}
 	sqlDB, _ := db.DB()
 	sqlDB.SetMaxIdleConns(20)
