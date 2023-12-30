@@ -2,7 +2,8 @@ package bi_dao
 
 import (
 	"context"
-	"fmt"
+	logs "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/pkg/errors"
 	"strings"
 	"time"
 
@@ -13,7 +14,6 @@ import (
 	"gorm.io/gorm/schema"
 
 	"github.com/CocaineCong/tangseng/config"
-	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
 var _db *gorm.DB
@@ -29,8 +29,8 @@ func InitDB() {
 	dsn := strings.Join([]string{username, ":", password, "@tcp(", host, ":", port, ")/", database, "?charset=" + charset + "&parseTime=true"}, "")
 	err := Database(dsn)
 	if err != nil {
-		fmt.Println(err)
-		log.LogrusObj.Error(err)
+		logs.LogrusObj.Errorf("start database failed, original error: %T %v", errors.Cause(err), errors.Cause(err))
+		logs.LogrusObj.Panicf("stack trace: \n%+v\n", err)
 	}
 }
 
@@ -50,7 +50,7 @@ func Database(connString string) error {
 		},
 	})
 	if err != nil {
-		panic(err)
+		return errors.Wrap(err, "failed to open Mysql")
 	}
 	sqlDB, _ := db.DB()
 	sqlDB.SetMaxIdleConns(20)
