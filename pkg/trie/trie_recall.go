@@ -2,8 +2,8 @@ package trie
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
+	"github.com/pkg/errors"
 )
 
 // FindAllByPrefixForRecall 召回专用的，通过前缀获取所有的节点
@@ -52,7 +52,7 @@ func ParseTrieNode(str string) (*TrieNode, error) {
 	var data map[string]interface{}
 	err := json.Unmarshal([]byte(str), &data)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to unmarshal data")
 	}
 
 	node := &TrieNode{
@@ -63,12 +63,12 @@ func ParseTrieNode(str string) (*TrieNode, error) {
 	for key, value := range data {
 		childData, ok := value.(map[string]interface{})
 		if !ok {
-			return nil, fmt.Errorf("invalid child data for key: %s", key)
+			return nil, errors.Wrap(errors.Errorf("invalid child data for key: %s", key), "failed to assert type")
 		}
 
 		childNode, err := parseTrieNodeChild(childData)
 		if err != nil {
-			return nil, err
+			return nil, errors.WithMessage(err, "parseTrieNodeChild error")
 		}
 
 		node.ChildrenRecall[key] = childNode
@@ -92,18 +92,18 @@ func parseTrieNodeChild(data map[string]interface{}) (*TrieNode, error) {
 
 	childrenData, ok := data["children_recall"].(map[string]interface{})
 	if !ok {
-		return nil, errors.New("invalid children data")
+		return nil, errors.Wrap(errors.New("invalid children data"), "failed to assert type")
 	}
 
 	for key, value := range childrenData {
 		childData, ok := value.(map[string]interface{})
 		if !ok {
-			return nil, fmt.Errorf("invalid child data for key: %s", key)
+			return nil, errors.Wrap(errors.Errorf("invalid child data for key: %s", key), "failed to assert type")
 		}
 
 		childNode, err := parseTrieNodeChild(childData)
 		if err != nil {
-			return nil, err
+			return nil, errors.WithMessage(err, "parseTrieNodeChild error")
 		}
 
 		node.ChildrenRecall[key] = childNode

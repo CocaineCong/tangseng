@@ -3,12 +3,12 @@ package milvus
 import (
 	"context"
 	"fmt"
+	"github.com/pkg/errors"
 	"time"
 
 	"github.com/milvus-io/milvus-sdk-go/v2/client"
 
 	"github.com/CocaineCong/tangseng/config"
-	logs "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
 type MilvusModel struct {
@@ -27,8 +27,7 @@ func (m *MilvusModel) Init() (err error) {
 	defer cancel()
 	milvusClient, err := client.NewGrpcClient(ctx, fmt.Sprintf("%s:%s", mConfig.Host, mConfig.Port))
 	if err != nil {
-		logs.LogrusObj.Errorln(err)
-		return
+		return errors.Wrap(err, "failed to create new grpc client")
 	}
 	m.client = milvusClient
 
@@ -38,6 +37,7 @@ func (m *MilvusModel) Init() (err error) {
 func (m *MilvusModel) Search(req interface{}) (resp interface{}, err error) {
 	request, ok := req.(*MilvusRequest)
 	if !ok {
+		err = errors.Wrap(errors.New("unexpected request type"), "failed to assert req as MilvusRequest")
 		return
 	}
 
