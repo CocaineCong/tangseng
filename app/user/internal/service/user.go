@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/pkg/errors"
 	"sync"
 
 	"github.com/CocaineCong/tangseng/app/user/internal/repository/db/dao"
@@ -29,6 +30,7 @@ func (u *UserSrv) UserLogin(ctx context.Context, req *pb.UserLoginReq) (resp *pb
 	r, err := dao.NewUserDao(ctx).GetUserInfo(req)
 	if err != nil {
 		resp.Code = e2.ERROR
+		err = errors.WithMessage(err, "getUserInfo error")
 		return
 	}
 	resp.UserDetail = &pb.UserResp{
@@ -45,6 +47,7 @@ func (u *UserSrv) UserRegister(ctx context.Context, req *pb.UserRegisterReq) (re
 	err = dao.NewUserDao(ctx).CreateUser(req)
 	if err != nil {
 		resp.Code = e2.ERROR
+		err = errors.WithMessage(err, "createUser error")
 		return
 	}
 	resp.Data = e2.GetMsg(int(resp.Code))

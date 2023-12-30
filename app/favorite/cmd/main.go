@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"github.com/pkg/errors"
 	"net"
 
 	"github.com/sirupsen/logrus"
@@ -36,11 +36,12 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	if _, err := etcdRegister.Register(node, 10); err != nil {
-		panic(fmt.Sprintf("start service failed, err: %v", err))
+	if _, err = etcdRegister.Register(node, 10); err != nil {
+		logs.LogrusObj.Errorf("start service failed, original error: %T %v", errors.Cause(err), errors.Cause(err))
+		logs.LogrusObj.Panicf("stack trace: \n%+v\n", err)
 	}
 	logrus.Info("service started listen on ", grpcAddress)
-	if err := server.Serve(lis); err != nil {
+	if err = server.Serve(lis); err != nil {
 		panic(err)
 	}
 }
