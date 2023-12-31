@@ -2,12 +2,11 @@ package dao
 
 import (
 	"context"
-	"errors"
+	"github.com/pkg/errors"
 
 	"gorm.io/gorm"
 
 	userPb "github.com/CocaineCong/tangseng/idl/pb/user"
-	log "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/CocaineCong/tangseng/repository/mysql/db"
 	"github.com/CocaineCong/tangseng/repository/mysql/model"
 )
@@ -24,7 +23,9 @@ func NewUserDao(ctx context.Context) *UserDao {
 func (dao *UserDao) GetUserInfo(req *userPb.UserLoginReq) (r *model.User, err error) {
 	err = dao.Model(&model.User{}).Where("user_name=?", req.UserName).
 		First(&r).Error
-
+	if err != nil {
+		err = errors.Wrapf(err, "failed to get user info, userName = %v", req.UserName)
+	}
 	return
 }
 
@@ -34,7 +35,7 @@ func (dao *UserDao) CreateUser(req *userPb.UserRegisterReq) (err error) {
 	var count int64
 	dao.Model(&model.User{}).Where("user_name = ?", req.UserName).Count(&count)
 	if count != 0 {
-		return errors.New("UserName Exist")
+		return errors.Wrapf(errors.New("UserName Exist"), "failed to create user, userName = %v", req.UserName)
 	}
 
 	user = model.User{
@@ -43,8 +44,7 @@ func (dao *UserDao) CreateUser(req *userPb.UserRegisterReq) (err error) {
 	}
 	_ = user.SetPassword(req.Password)
 	if err = dao.Model(&model.User{}).Create(&user).Error; err != nil {
-		log.LogrusObj.Error("Insert User Error:" + err.Error())
-		return
+		return errors.Wrap(err, "failed to create user")
 	}
 
 	return
