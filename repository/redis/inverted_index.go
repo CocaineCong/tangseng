@@ -56,7 +56,6 @@ func ListInvertedPath(ctx context.Context, keys []string) (paths []string, err e
 			prefixKey := getAllDbPaths(key)
 			results, errx := ListInvertedIndexByPrefixKey(ctx, prefixKey)
 			if errx != nil {
-				err = errx
 				return paths, errors.Wrap(errx, "failed to list inverted index")
 			}
 			paths = append(paths, results...)
