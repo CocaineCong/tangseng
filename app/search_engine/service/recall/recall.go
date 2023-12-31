@@ -2,8 +2,9 @@ package recall
 
 import (
 	"context"
-	"github.com/pkg/errors"
 	"sort"
+
+	"github.com/pkg/errors"
 
 	"github.com/RoaringBitmap/roaring"
 	"github.com/samber/lo"

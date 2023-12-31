@@ -3,8 +3,9 @@ package storage
 import (
 	"bytes"
 	"context"
-	"github.com/pkg/errors"
 	"os"
+
+	"github.com/pkg/errors"
 
 	bolt "go.etcd.io/bbolt"
 

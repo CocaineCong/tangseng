@@ -2,8 +2,9 @@ package service
 
 import (
 	"context"
-	"github.com/pingcap/errors"
 	"sync"
+
+	"github.com/pingcap/errors"
 
 	"github.com/CocaineCong/tangseng/app/search_engine/service/recall"
 	"github.com/CocaineCong/tangseng/consts/e"

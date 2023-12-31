@@ -4,8 +4,9 @@
 package storage
 
 import (
-	"github.com/pkg/errors"
 	"syscall"
+
+	"github.com/pkg/errors"
 )
 
 // Mmap 将一个文件映射到内存中，以便可以直接通过内存访问文件的内容。
