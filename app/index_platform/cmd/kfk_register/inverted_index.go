@@ -19,6 +19,7 @@ package kfk_register
 
 import (
 	"context"
+
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/pkg/errors"
 

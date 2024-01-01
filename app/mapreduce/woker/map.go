@@ -21,9 +21,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/pkg/errors"
 	"os"
 	"path/filepath"
+
+	"github.com/pkg/errors"
 
 	"github.com/CocaineCong/tangseng/idl/pb/mapreduce"
 	log "github.com/CocaineCong/tangseng/pkg/logger"

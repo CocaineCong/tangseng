@@ -20,9 +20,10 @@ package job
 import (
 	"context"
 	"fmt"
-	"github.com/pkg/errors"
 	"os"
 	"sort"
+
+	"github.com/pkg/errors"
 
 	"github.com/RoaringBitmap/roaring"
 	"github.com/golang-module/carbon"

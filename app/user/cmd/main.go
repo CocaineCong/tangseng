@@ -18,9 +18,10 @@
 package main
 
 import (
+	"net"
+
 	logs "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/pkg/errors"
-	"net"
 
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"

@@ -143,4 +143,3 @@ func traverse(node *TrieNode, prefix string) {
 func (trie *Trie) Traverse() {
 	traverse(trie.Root, "")
 }
-

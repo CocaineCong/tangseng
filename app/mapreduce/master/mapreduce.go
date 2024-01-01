@@ -19,10 +19,11 @@ package master
 
 import (
 	"context"
-	"github.com/pkg/errors"
 	"math"
 	"sync"
 	"time"
+
+	"github.com/pkg/errors"
 
 	"github.com/CocaineCong/tangseng/app/mapreduce/consts"
 	"github.com/CocaineCong/tangseng/consts/e"

@@ -20,9 +20,10 @@ package woker
 import (
 	"context"
 	"fmt"
-	"github.com/pkg/errors"
 	"hash/fnv"
 	"time"
+
+	"github.com/pkg/errors"
 
 	"github.com/RoaringBitmap/roaring"
 

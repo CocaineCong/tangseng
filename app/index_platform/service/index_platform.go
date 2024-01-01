@@ -20,12 +20,13 @@ package service
 import (
 	"context"
 	"fmt"
-	"github.com/pkg/errors"
 	"hash/fnv"
 	"os"
 	"sort"
 	"strings"
 	"sync"
+
+	"github.com/pkg/errors"
 
 	"github.com/RoaringBitmap/roaring"
 	cmap "github.com/orcaman/concurrent-map/v2"

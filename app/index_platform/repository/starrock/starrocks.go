@@ -21,11 +21,12 @@ import (
 	"bufio"
 	"bytes"
 	"context"
-	"github.com/pkg/errors"
 	"net/http"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/pkg/errors"
 
 	"github.com/go-resty/resty/v2"
 	"github.com/spf13/cast"

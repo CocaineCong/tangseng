@@ -20,10 +20,11 @@ package rpc
 import (
 	"context"
 	"fmt"
-	logs "github.com/CocaineCong/tangseng/pkg/logger"
-	"github.com/pkg/errors"
 	"log"
 	"time"
+
+	logs "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/pkg/errors"
 
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"

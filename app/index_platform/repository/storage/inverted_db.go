@@ -18,8 +18,9 @@
 package storage
 
 import (
-	"github.com/pkg/errors"
 	"os"
+
+	"github.com/pkg/errors"
 
 	"github.com/RoaringBitmap/roaring"
 	bolt "go.etcd.io/bbolt"
