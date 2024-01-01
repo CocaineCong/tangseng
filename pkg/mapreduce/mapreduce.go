@@ -19,10 +19,11 @@ package mapreduce
 
 import (
 	"context"
-	log "github.com/CocaineCong/tangseng/pkg/logger"
-	"github.com/pkg/errors"
 	"sync"
 	"sync/atomic"
+
+	log "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/pkg/errors"
 )
 
 // MapReduce By chan and goroutine to replace using rpc to make master or worker

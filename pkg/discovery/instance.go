@@ -20,8 +20,9 @@ package discovery
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/pkg/errors"
 	"strings"
+
+	"github.com/pkg/errors"
 
 	"google.golang.org/grpc/resolver"
 )

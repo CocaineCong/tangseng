@@ -22,6 +22,7 @@ import (
 	"encoding/binary"
 	"encoding/gob"
 	"fmt"
+
 	"github.com/pkg/errors"
 
 	"github.com/bytedance/sonic"

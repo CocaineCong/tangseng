@@ -20,8 +20,9 @@ package milvus
 import (
 	"context"
 	"fmt"
-	"github.com/pkg/errors"
 	"time"
+
+	"github.com/pkg/errors"
 
 	"github.com/milvus-io/milvus-sdk-go/v2/client"
 

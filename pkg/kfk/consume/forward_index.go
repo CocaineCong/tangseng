@@ -19,12 +19,13 @@ package consume
 
 import (
 	"context"
-	"github.com/pkg/errors"
 	"log"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
+
+	"github.com/pkg/errors"
 
 	"github.com/IBM/sarama"
 

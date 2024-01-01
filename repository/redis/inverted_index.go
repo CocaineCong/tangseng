@@ -19,6 +19,7 @@ package redis
 
 import (
 	"context"
+
 	"github.com/pkg/errors"
 
 	"github.com/RoaringBitmap/roaring"

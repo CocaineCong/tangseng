@@ -20,11 +20,12 @@ package discovery
 import (
 	"context"
 	"encoding/json"
-	"github.com/pkg/errors"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/pkg/errors"
 
 	"github.com/sirupsen/logrus"
 	clientv3 "go.etcd.io/etcd/client/v3"

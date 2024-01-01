@@ -22,13 +22,14 @@ import (
 	"crypto/md5"
 	"encoding/binary"
 	"fmt"
-	log "github.com/CocaineCong/tangseng/pkg/logger"
-	"github.com/pkg/errors"
 	"io"
 	"os"
 	"path"
 	"strconv"
 	"time"
+
+	log "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/pkg/errors"
 )
 
 func IntToBytes(n int) []byte {

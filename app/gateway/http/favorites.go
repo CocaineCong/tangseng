@@ -18,8 +18,9 @@
 package http
 
 import (
-	"github.com/pkg/errors"
 	"net/http"
+
+	"github.com/pkg/errors"
 
 	"github.com/gin-gonic/gin"
 

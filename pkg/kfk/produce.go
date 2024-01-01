@@ -18,8 +18,9 @@
 package kfk
 
 import (
-	"github.com/pkg/errors"
 	_ "net/http/pprof"
+
+	"github.com/pkg/errors"
 
 	"github.com/IBM/sarama"
 )
