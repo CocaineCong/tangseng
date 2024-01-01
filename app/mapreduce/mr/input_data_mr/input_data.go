@@ -1,3 +1,20 @@
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
 package input_data_mr
 
 import (
@@ -26,34 +43,9 @@ func Map(filename string, contents string) (res []*types.KeyValue) {
 			logs.LogrusObj.Errorf("Map-GseCutForBuildIndex :%+v", err)
 			continue
 		}
-		// msgTokens := make([]string, 0)
 		for _, v := range tokens {
 			res = append(res, &types.KeyValue{Key: v.Token, Value: cast.ToString(v.DocId)})
-			// msgTokens = append(msgTokens, v.Token)
 		}
-
-		// // 构建前缀树
-		// go func(msgTokens []string) {
-		// 	err = input_data.DocTrie2Kfk(msgTokens)
-		// 	if err != nil {
-		// 		return
-		// 	}
-		// 	defer func() {
-		// 		if err := recover(); err != nil {
-		// 			logs.LogrusObj.Errorf("input_data.DocTrie2Kfk 消费出现错误 ：%+v", err)
-		// 		}
-		// 	}()
-		// }(msgTokens)
-
-		// // 建立正排索引
-		// go func(docStruct *types.Document) {
-		// 	err = input_data.DocData2Kfk(docStruct)
-		// 	defer func() {
-		// 		if err := recover(); err != nil {
-		// 			logs.LogrusObj.Errorf("input_data-DocData2Kfk-消费出现错误 :%+v", err)
-		// 		}
-		// 	}()
-		// }(docStruct)
 	}
 
 	return
