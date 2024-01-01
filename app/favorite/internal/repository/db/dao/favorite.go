@@ -1,12 +1,30 @@
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
 package dao
 
 import (
 	"context"
 
+	"github.com/pkg/errors"
+
 	"gorm.io/gorm"
 
 	favoritePb "github.com/CocaineCong/tangseng/idl/pb/favorite"
-	log "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/CocaineCong/tangseng/repository/mysql/db"
 	"github.com/CocaineCong/tangseng/repository/mysql/model"
 )
@@ -23,7 +41,7 @@ func (dao *FavoriteDao) ListFavorite(req *favoritePb.FavoriteListReq) (r []*mode
 	err = dao.DB.Model(&model.Favorite{}).
 		Where("user_id = ?", req.UserId).Find(&r).Error
 	if err != nil {
-		return
+		return r, errors.Wrapf(err, "failed to query favorite list, userId = %v ", req.UserId)
 	}
 	return
 }
@@ -34,8 +52,7 @@ func (dao *FavoriteDao) CreateFavorite(req *favoritePb.FavoriteCreateReq) (err e
 		UserID:       req.UserId,
 	}
 	if err = dao.DB.Create(&favorite).Error; err != nil {
-		log.LogrusObj.Error("Insert Favorite Error:" + err.Error())
-		return
+		return errors.Wrapf(err, "failed to create favorite, userId = %v ", req.UserId)
 	}
 
 	return
@@ -44,7 +61,9 @@ func (dao *FavoriteDao) CreateFavorite(req *favoritePb.FavoriteCreateReq) (err e
 func (dao *FavoriteDao) DeleteFavorite(req *favoritePb.FavoriteDeleteReq) (err error) {
 	err = dao.DB.Where("favorite_id = ?", req.FavoriteId).
 		Delete(model.Favorite{}).Error
-
+	if err != nil {
+		return errors.Wrapf(err, "failed to delete favorite, favoriteId = %v", req.FavoriteId)
+	}
 	return
 }
 
@@ -53,7 +72,7 @@ func (dao *FavoriteDao) UpdateFavorite(req *favoritePb.FavoriteUpdateReq) (err e
 	fMap["favorite_name"] = req.FavoriteName
 	err = dao.DB.Where("favorite_id = ?", req.FavoriteId).Updates(&fMap).Error
 	if err != nil {
-		return
+		return errors.Wrapf(err, "failed to update favorite, favoriteId = %v ", req.FavoriteId)
 	}
 
 	return
