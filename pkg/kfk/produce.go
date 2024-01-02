@@ -20,6 +20,8 @@ package kfk
 import (
 	_ "net/http/pprof"
 
+	"github.com/pkg/errors"
+
 	"github.com/IBM/sarama"
 )
 
@@ -27,7 +29,7 @@ import (
 func KafkaProducer(topic string, msg []byte) (err error) {
 	producer, err := sarama.NewSyncProducerFromClient(GobalKafka)
 	if err != nil {
-		return
+		return errors.Wrap(err, "failed to create Kafka producer")
 	}
 	message := &sarama.ProducerMessage{
 		Topic: topic,
@@ -35,7 +37,7 @@ func KafkaProducer(topic string, msg []byte) (err error) {
 	}
 	_, _, err = producer.SendMessage(message)
 	if err != nil {
-		return
+		return errors.Wrap(err, "failed to send message")
 	}
 	return
 }
@@ -44,11 +46,11 @@ func KafkaProducer(topic string, msg []byte) (err error) {
 func KafkaProducers(messages []*sarama.ProducerMessage) (err error) {
 	producer, err := sarama.NewSyncProducerFromClient(GobalKafka)
 	if err != nil {
-		return
+		return errors.Wrap(err, "failed to create Kafka producer")
 	}
 	err = producer.SendMessages(messages)
 	if err != nil {
-		return
+		return errors.Wrap(err, "failed to send messages")
 	}
 	return
 }

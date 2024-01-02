@@ -18,8 +18,9 @@
 package jwt
 
 import (
-	"errors"
 	"time"
+
+	"github.com/pkg/errors"
 
 	"github.com/dgrijalva/jwt-go"
 
@@ -50,7 +51,7 @@ func GenerateToken(id int64, username string) (accessToken, refreshToken string,
 	// 加密并获得完整的编码后的字符串token
 	accessToken, err = jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString(jwtSecret)
 	if err != nil {
-		return "", "", err
+		return "", "", errors.Wrap(err, "failed to get accessToken")
 	}
 
 	refreshToken, err = jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
@@ -58,7 +59,7 @@ func GenerateToken(id int64, username string) (accessToken, refreshToken string,
 		Issuer:    "search-engine",
 	}).SignedString(jwtSecret)
 	if err != nil {
-		return "", "", err
+		return "", "", errors.Wrap(err, "failed to get refreshToken")
 	}
 
 	return accessToken, refreshToken, err
@@ -74,19 +75,19 @@ func ParseToken(token string) (*Claims, error) {
 			return claims, nil
 		}
 	}
-	return nil, err
+	return nil, errors.Wrap(err, "failed to parse token")
 }
 
 // ParseRefreshToken 验证用户token
 func ParseRefreshToken(aToken, rToken string) (newAToken, newRToken string, err error) {
 	accessClaim, err := ParseToken(aToken)
 	if err != nil {
-		return
+		return newAToken, newRToken, errors.WithMessage(err, "failed to parse accessToken")
 	}
 
 	refreshClaim, err := ParseToken(rToken)
 	if err != nil {
-		return
+		return newAToken, newRToken, errors.WithMessage(err, "failed to parse refreshToken")
 	}
 
 	if accessClaim.ExpiresAt > time.Now().Unix() {
@@ -100,5 +101,5 @@ func ParseRefreshToken(aToken, rToken string) (newAToken, newRToken string, err 
 	}
 
 	// 如果两者都过期了,重新登陆
-	return "", "", errors.New("身份过期，重新登陆")
+	return "", "", errors.WithMessage(errors.New("身份过期，重新登陆"), "failed to parse refreshToken")
 }

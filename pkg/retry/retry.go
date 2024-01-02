@@ -22,6 +22,8 @@ import (
 	"fmt"
 	"sync"
 	"time"
+
+	"github.com/pkg/errors"
 )
 
 const (
@@ -57,7 +59,7 @@ func NewRetryOption(ctx context.Context, gapTime time.Duration, retryCount int, 
 
 func (r *RetryOption) Retry(ctx context.Context, req interface{}) (resp interface{}, err error) {
 	if r.RetryFunc == nil {
-		return
+		return resp, errors.Wrap(errors.New("RetryFunc is nil"), "failed to retry")
 	}
 
 	for i := 0; i < r.RetryCount; i++ {
@@ -72,5 +74,5 @@ func (r *RetryOption) Retry(ctx context.Context, req interface{}) (resp interfac
 		break
 	}
 
-	return
+	return resp, errors.Wrap(err, "needRetry or errx is not nil")
 }

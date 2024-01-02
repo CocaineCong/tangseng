@@ -19,12 +19,13 @@ package consume
 
 import (
 	"context"
-	"errors"
 	"log"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
+
+	"github.com/pkg/errors"
 
 	"github.com/IBM/sarama"
 
@@ -97,7 +98,8 @@ func ForwardIndexKafkaConsume(ctx context.Context, topic, group, assignor string
 	cancel()
 	wg.Wait()
 	if err = client.Close(); err != nil {
-		logs.LogrusObj.Errorf("Error closing woker: %v", err)
+		err = errors.Wrapf(err, "failed to close woker")
+		return
 	}
 
 	return

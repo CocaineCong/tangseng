@@ -20,6 +20,8 @@ package wrappers
 import (
 	"context"
 
+	"github.com/pkg/errors"
+
 	"github.com/afex/hystrix-go/hystrix"
 	"github.com/micro/go-micro/v2/client"
 )
@@ -37,11 +39,12 @@ func (wrapper *userWrapper) Call(ctx context.Context, req client.Request, resp i
 		SleepWindow:            5000, // 过多长时间，熔断器再次检测是否开启，单位毫秒ms（默认5秒）
 	}
 	hystrix.ConfigureCommand(cmdName, config)
-	return hystrix.Do(cmdName, func() error {
-		return wrapper.Client.Call(ctx, req, resp)
+	err := hystrix.Do(cmdName, func() error {
+		return errors.Wrap(wrapper.Client.Call(ctx, req, resp), "failed to call")
 	}, func(err error) error {
 		return err
 	})
+	return errors.WithMessage(err, "call error")
 }
 
 // NewUserWrapper 初始化Wrapper
