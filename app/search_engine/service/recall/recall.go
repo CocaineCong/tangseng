@@ -21,6 +21,8 @@ import (
 	"context"
 	"sort"
 
+	"github.com/pkg/errors"
+
 	"github.com/RoaringBitmap/roaring"
 	"github.com/samber/lo"
 	"github.com/spf13/cast"
@@ -48,21 +50,21 @@ func NewRecall() *Recall {
 func (r *Recall) Search(ctx context.Context, query string) (resp []*types.SearchItem, err error) {
 	splitQuery, err := analyzer.GseCutForRecall(query)
 	if err != nil {
-		log.LogrusObj.Errorf("text2postingslists err: %v", err)
+		err = errors.WithMessagef(err, "text2postingslists error")
 		return
 	}
 
 	// 倒排库搜索
 	res, err := r.searchDoc(ctx, splitQuery)
 	if err != nil {
-		log.LogrusObj.Errorf("searchDoc err: %v", err)
+		err = errors.WithMessage(err, "searchDoc error")
 		return
 	}
 
 	// 向量库搜索
 	vRes, err := r.SearchVector(ctx, splitQuery)
 	if err != nil {
-		log.LogrusObj.Errorf("SearchVector err: %v", err)
+		err = errors.WithMessage(err, "searchVector error")
 		return
 	}
 
@@ -109,7 +111,7 @@ func (r *Recall) SearchVector(ctx context.Context, queries []string) (docIds []i
 	req := &pb.SearchVectorRequest{Query: queries}
 	vectorResp, err := rpc.SearchVector(ctx, req)
 	if err != nil {
-		log.LogrusObj.Errorln(err)
+		err = errors.WithMessage(err, "searchVector error")
 		return
 	}
 	docIds = make([]int64, len(vectorResp.DocIds))
@@ -125,7 +127,7 @@ func (r *Recall) SearchQueryWord(query string) (resp []string, err error) {
 	for _, trieDb := range storage.GlobalTrieDB {
 		trie, errx := trieDb.GetTrieTreeDict()
 		if errx != nil {
-			log.LogrusObj.Errorln(errx)
+			err = errors.WithMessage(errx, "GetTrieTreeDict error")
 			continue
 		}
 		queryTrie := trie.FindAllByPrefixForRecall(query)
@@ -146,7 +148,7 @@ func (r *Recall) searchDoc(ctx context.Context, tokens []string) (recalls []int6
 			// 如果缓存不存在，就去索引表里面读取
 			postingsList, err = fetchPostingsByToken(token)
 			if err != nil {
-				log.LogrusObj.Errorln(err)
+				err = errors.WithMessage(err, "fetchPostingsByToken error")
 				continue
 			} else {
 				// 如果缓存存在，就直接读缓存，不用担心实时性问题，缓存10分钟清空一次，这延迟是能接受到
@@ -189,7 +191,7 @@ func fetchPostingsByToken(token string) (postingsList []*types.PostingsList, err
 	for _, inverted := range storage.GlobalInvertedDB {
 		docIds, errx := inverted.GetInverted([]byte(token))
 		if errx != nil {
-			log.LogrusObj.Errorln(errx)
+			err = errors.WithMessage(err, "getInverted error")
 			continue
 		}
 		output := roaring.New()

@@ -19,8 +19,9 @@ package storage
 
 import (
 	"context"
-	"fmt"
 	"os"
+
+	"github.com/pkg/errors"
 
 	bolt "go.etcd.io/bbolt"
 
@@ -88,7 +89,11 @@ func NewInvertedDB(termName, postingsName string) *InvertedDB {
 
 // GetInverted 通过term获取value
 func (t *InvertedDB) GetInverted(key []byte) (value []byte, err error) {
-	return Get(t.db, consts.InvertedBucket, key)
+	value, err = Get(t.db, consts.InvertedBucket, key)
+	if err != nil {
+		err = errors.WithMessage(err, "get error")
+	}
+	return
 }
 
 // GetInvertedDoc 根据地址获取读取文件
@@ -96,12 +101,18 @@ func (t *InvertedDB) GetInvertedDoc(offset int64, size int64) ([]byte, error) {
 	page := os.Getpagesize()
 	b, err := Mmap(int(t.file.Fd()), offset/int64(page), int(offset+size))
 	if err != nil {
-		return nil, fmt.Errorf("GetDocinfo Mmap err: %v", err)
+		return nil, errors.WithMessage(err, "GetDocinfo Mmap error")
 	}
 	return b[offset : offset+size], nil
 }
 
 func (t *InvertedDB) Close() {
-	t.file.Close()
-	t.db.Close()
+	err := t.file.Close()
+	if err != nil {
+		log.LogrusObj.Error("failed to close file")
+	}
+	err = t.db.Close()
+	if err != nil {
+		log.LogrusObj.Error("failed to close db")
+	}
 }

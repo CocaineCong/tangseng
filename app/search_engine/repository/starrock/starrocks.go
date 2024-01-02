@@ -26,6 +26,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/pkg/errors"
+
 	"github.com/go-resty/resty/v2"
 	"github.com/spf13/cast"
 
@@ -120,12 +122,14 @@ func (d *DirectUpload) StreamUpload() (count int, err error) {
 		}, ",")
 		_, err = write.WriteString(line + rowDelimiter)
 		if err != nil {
-			log.LogrusObj.Errorf("WriteString Error")
+			err = errors.Wrap(err, "failed to write string")
+			return
 		}
 	}
 	err = write.Flush()
 	if err != nil {
-		log.LogrusObj.Errorf("write.Flush() :%+v", err)
+		err = errors.Wrap(err, "failed to flush data")
+		return
 	}
 
 	// check 机制
@@ -135,7 +139,7 @@ func (d *DirectUpload) StreamUpload() (count int, err error) {
 			req.Header = v.Header
 			req.Body, err = v.GetBody()
 			if err != nil {
-				log.LogrusObj.Errorf("starrock woker")
+				err = errors.Wrapf(err, "starrock woker")
 			}
 			return err
 		},
@@ -160,7 +164,8 @@ func (d *DirectUpload) StreamUpload() (count int, err error) {
 		}).SetBody(sb.Bytes()).SetContentLength(true).
 		Put("https://{host}/api/{db}/{table}/_stream_load")
 	if err != nil {
-		log.LogrusObj.Errorf("stream load error :%+v", err)
+		err = errors.Wrap(err, "failed to load stream")
+		return
 	}
 
 	if hp.StatusCode() != http.StatusOK {
