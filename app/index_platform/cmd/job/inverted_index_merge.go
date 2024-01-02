@@ -23,6 +23,8 @@ import (
 	"os"
 	"sort"
 
+	"github.com/pkg/errors"
+
 	"github.com/RoaringBitmap/roaring"
 	"github.com/golang-module/carbon"
 	cmap "github.com/orcaman/concurrent-map/v2"
@@ -47,10 +49,13 @@ func MergeInvertedIndexDay2Month(ctx context.Context) (err error) {
 
 	fromPaths, err := redis.ListInvertedPath(ctx, []string{invertedIndexDayKey})
 	if err != nil {
-		logs.LogrusObj.Errorln(err)
+		return errors.WithMessage(err, "redis.ListInvertedPath error")
 	}
-
-	return mergeInvertedIndex(ctx, []string{invertedIndexDayKey}, fromPaths, invertedIndexMonthKey, consts.MergeTypeInvertedIndexDay2Month)
+	err = mergeInvertedIndex(ctx, []string{invertedIndexDayKey}, fromPaths, invertedIndexMonthKey, consts.MergeTypeInvertedIndexDay2Month)
+	if err != nil {
+		return errors.WithMessage(err, "mergeInvertedIndex error")
+	}
+	return
 }
 
 // MergeInvertedIndexMonth2Season 增量合并全量, 合并完就会删掉原有的，合并到这个季度
@@ -59,21 +64,24 @@ func MergeInvertedIndexMonth2Season(ctx context.Context) (err error) {
 	invertedIndexSeasonKey := redis.InvertedIndexDbPathSeasonKey
 	monthKeys, err := redis.ListAllPrefixKey(ctx, invertedIndexMonthKey)
 	if err != nil {
-		logs.LogrusObj.Error(err)
+		return errors.WithMessage(err, "redis.ListAllPrefixKey error")
 	}
 	// 获取所有的月份的key
 	fromPaths, err := redis.ListInvertedIndexByPrefixKey(ctx, invertedIndexMonthKey)
 	if err != nil {
-		logs.LogrusObj.Errorln(err)
+		return errors.WithMessage(err, "redis.ListInvertedIndexByPrefixKey error")
 	}
-
-	return mergeInvertedIndex(ctx, monthKeys, fromPaths, invertedIndexSeasonKey, consts.MergeTypeInvertedIndexMonth2Season)
+	err = mergeInvertedIndex(ctx, monthKeys, fromPaths, invertedIndexSeasonKey, consts.MergeTypeInvertedIndexMonth2Season)
+	if err != nil {
+		return errors.WithMessage(err, "mergeInvertedIndex error")
+	}
+	return
 }
 
 // mergeInvertedIndex fromPathKeys 所需要合并的key, fromPaths 需要合并的所有地址(就是key对应的地址)，toPathKey 合并完之后的存储该地址的key，mergeType，合并类型
 func mergeInvertedIndex(ctx context.Context, fromPathKeys, fromPaths []string, savePathKey string, mergeType int) (err error) {
 	invertedIndex := cmap.New[*roaring.Bitmap]() // 倒排索引
-	_, _ = mapreduce.MapReduce(func(source chan<- []*types.InvertedInfo) {
+	_, err = mapreduce.MapReduce(func(source chan<- []*types.InvertedInfo) {
 		// 获取所有的inverted db
 		for _, path := range fromPaths {
 			invertedDb := storage.NewInvertedDB(path)
@@ -99,6 +107,10 @@ func mergeInvertedIndex(ctx context.Context, fromPathKeys, fromPaths []string, s
 			}
 		}
 	})
+
+	if err != nil {
+		return errors.WithMessage(err, "mapreduce.MapReduce error")
+	}
 
 	// 生成所需要存储的key
 	storageBaseName := ""
@@ -134,15 +146,13 @@ func mergeInvertedIndex(ctx context.Context, fromPathKeys, fromPaths []string, s
 	// 保存新生成的索引数据地址
 	err = redis.SetInvertedPath(ctx, savePathKey, outName)
 	if err != nil {
-		logs.LogrusObj.Error(err)
-		return
+		return errors.WithMessage(err, "redis.SetInvertedPath error")
 	}
 
 	// 删除旧纬度数据
 	err = redis.BatchDeleteInvertedIndexPath(ctx, fromPathKeys)
 	if err != nil {
-		logs.LogrusObj.Error(err)
-		return
+		return errors.WithMessage(err, "redis.BatchDeleteInvertedPath error")
 	}
 
 	return

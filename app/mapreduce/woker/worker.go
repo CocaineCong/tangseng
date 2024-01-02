@@ -23,6 +23,8 @@ import (
 	"hash/fnv"
 	"time"
 
+	"github.com/pkg/errors"
+
 	"github.com/RoaringBitmap/roaring"
 
 	"github.com/CocaineCong/tangseng/app/mapreduce/rpc"
@@ -38,7 +40,8 @@ func Worker(ctx context.Context, mapf func(string, string) []*types.KeyValue, re
 		// worker从master获取任务
 		task, err := getTask(ctx)
 		if err != nil {
-			log.LogrusObj.Error("Worker-getTask", err)
+			log.LogrusObj.Errorf("getTask failed, original error: %T %v", errors.Cause(err), errors.Cause(err))
+			log.LogrusObj.Errorf("stack trace: \n%+v\n", err)
 			return
 		}
 		fmt.Println("Worker task", task)
@@ -61,7 +64,11 @@ func Worker(ctx context.Context, mapf func(string, string) []*types.KeyValue, re
 
 func ihash(key string) int64 {
 	h := fnv.New32a()
-	h.Write([]byte(key))
+	_, err := h.Write([]byte(key))
+	if err != nil {
+		log.LogrusObj.Error("failed to write")
+		return 0
+	}
 	return int64(h.Sum32() & 0x7fffffff)
 }
 
@@ -71,12 +78,12 @@ func getTask(ctx context.Context) (resp *mapreduce.MapReduceTask, err error) {
 	taskReq := &mapreduce.MapReduceTask{}
 	resp, err = rpc.MasterAssignTask(ctx, taskReq)
 	fmt.Println("getTask Resp")
-
+	err = errors.WithMessage(err, "MasterAssignTask error")
 	return
 }
 
 func TaskCompleted(ctx context.Context, task *mapreduce.MapReduceTask) (reply *mapreduce.MasterTaskCompletedResp, err error) {
 	reply, err = rpc.MasterTaskCompleted(ctx, task)
-
+	err = errors.WithMessage(err, "MasterTaskCompleted error")
 	return
 }

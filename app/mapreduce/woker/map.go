@@ -24,6 +24,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/pkg/errors"
+
 	"github.com/CocaineCong/tangseng/idl/pb/mapreduce"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/CocaineCong/tangseng/types"
@@ -56,7 +58,8 @@ func mapper(ctx context.Context, task *mapreduce.MapReduceTask, mapf func(string
 	task.Intermediates = mapOutput
 	_, err = TaskCompleted(ctx, task)
 	if err != nil {
-		fmt.Println("mapper-TaskCompleted", err)
+		log.LogrusObj.Errorf("TaskCompleted failed, original error: %T %v", errors.Cause(err), errors.Cause(err))
+		log.LogrusObj.Errorf("stack trace: \n%+v\n", err)
 	}
 }
 

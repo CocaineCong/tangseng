@@ -18,6 +18,7 @@
 package storage
 
 import (
+	"github.com/pkg/errors"
 	bolt "go.etcd.io/bbolt"
 )
 
@@ -26,9 +27,9 @@ func Put(db *bolt.DB, bucket string, key []byte, value []byte) error {
 	return db.Update(func(tx *bolt.Tx) error {
 		b, err := tx.CreateBucketIfNotExists([]byte(bucket))
 		if err != nil {
-			return err
+			return errors.Wrap(err, "failed to create bucket")
 		}
-		return b.Put(key, value)
+		return errors.Wrap(b.Put(key, value), "failed to put data")
 	})
 }
 
@@ -44,5 +45,5 @@ func Get(db *bolt.DB, bucket string, key []byte) (r []byte, err error) {
 		return
 	})
 
-	return
+	return r, errors.Wrap(err, "failed to get data")
 }

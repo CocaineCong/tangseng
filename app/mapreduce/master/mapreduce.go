@@ -23,6 +23,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/pkg/errors"
+
 	"github.com/CocaineCong/tangseng/app/mapreduce/consts"
 	"github.com/CocaineCong/tangseng/consts/e"
 	"github.com/CocaineCong/tangseng/idl/pb/mapreduce"
@@ -183,6 +185,7 @@ func (m *MasterSrv) MasterTaskCompleted(ctx context.Context, req *mapreduce.MapR
 	m.TaskMeta[int(req.TaskNumber)].TaskStatus = types.Completed
 	err = m.processTaskResult(req) // always success haha and hope u so :)
 	if err != nil {
+		err = errors.WithMessage(err, "processTaskResult error")
 		resp.Code = e.ERROR
 		resp.Message = "map finish failed"
 		return

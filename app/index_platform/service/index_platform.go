@@ -26,6 +26,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/pkg/errors"
+
 	"github.com/RoaringBitmap/roaring"
 	cmap "github.com/orcaman/concurrent-map/v2"
 	"github.com/spf13/cast"
@@ -159,6 +161,7 @@ func (s *IndexPlatformSrv) BuildIndexService(ctx context.Context, req *pb.BuildI
 		err = storeDictTrieByHash(newCtx, dictTrie)
 		if err != nil {
 			logs.LogrusObj.Error("storeDictTrieByHash error ", err)
+			logs.LogrusObj.Errorf("stack trace: \n%+v\n", err)
 		}
 	}()
 
@@ -187,8 +190,7 @@ func storeInvertedIndexByHash(ctx context.Context, invertedIndex cmap.Concurrent
 
 	err = redis.PushInvertedPath(ctx, redis.InvertedIndexDbPathDayKey, []string{outName})
 	if err != nil {
-		logs.LogrusObj.Error(err)
-		return
+		return errors.WithMessage(err, "redis.PushInvertedPath error")
 	}
 
 	// TODO: hash 分片存储, 目前只是根据天数分库，一天的数据都放到同一个库中，感觉这样还是不太行，还是按照每小时或者ihash进行分库，以下同理
@@ -214,15 +216,13 @@ func storeDictTrieByHash(ctx context.Context, dict *trie.Trie) (err error) {
 	trieDB := storage.NewTrieDB(outName)
 	err = trieDB.StorageDict(dict)
 	if err != nil {
-		logs.LogrusObj.Error(err)
-		return
+		return errors.WithMessage(err, "storageDict error")
 	}
 	_ = trieDB.Close()
 
 	err = redis.PushInvertedPath(ctx, redis.TireTreeDbPathDayKey, []string{outName})
 	if err != nil {
-		logs.LogrusObj.Error(err)
-		return
+		return errors.WithMessage(err, "redis.PushInvertedPath error")
 	}
 
 	return
