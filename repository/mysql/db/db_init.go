@@ -19,9 +19,11 @@ package db
 
 import (
 	"context"
-	"fmt"
 	"strings"
 	"time"
+
+	logs "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/pkg/errors"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
@@ -30,7 +32,6 @@ import (
 	"gorm.io/gorm/schema"
 
 	"github.com/CocaineCong/tangseng/config"
-	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
 var _db *gorm.DB
@@ -46,8 +47,8 @@ func InitDB() {
 	dsn := strings.Join([]string{username, ":", password, "@tcp(", host, ":", port, ")/", database, "?charset=" + charset + "&parseTime=true"}, "")
 	err := Database(dsn)
 	if err != nil {
-		fmt.Println(err)
-		log.LogrusObj.Error(err)
+		logs.LogrusObj.Errorf("start database failed, original error: %T %v", errors.Cause(err), errors.Cause(err))
+		logs.LogrusObj.Errorf("stack trace: \n%+v\n", err)
 	}
 }
 
@@ -72,7 +73,8 @@ func Database(connString string) error {
 		},
 	})
 	if err != nil {
-		panic(err)
+		err = errors.Wrap(err, "failed to open Mysql")
+		return err
 	}
 	sqlDB, _ := db.DB()
 	sqlDB.SetMaxIdleConns(20)  // 设置连接池，空闲

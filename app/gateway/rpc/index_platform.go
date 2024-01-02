@@ -19,6 +19,7 @@ package rpc
 
 import (
 	"context"
+
 	"github.com/pkg/errors"
 
 	pb "github.com/CocaineCong/tangseng/idl/pb/index_platform"

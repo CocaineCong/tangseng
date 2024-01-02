@@ -27,6 +27,9 @@ import (
 	"path"
 	"strconv"
 	"time"
+
+	log "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/pkg/errors"
 )
 
 func IntToBytes(n int) []byte {
@@ -83,26 +86,36 @@ func GetWd() string {
 func CopyFile(src, dst string) (int64, error) {
 	sourceFileStat, err := os.Stat(src)
 	if err != nil {
-		return 0, err
+		return 0, errors.Wrap(err, "os.Stat error")
 	}
 
 	if !sourceFileStat.Mode().IsRegular() {
-		return 0, fmt.Errorf("%s is not a regular file", src)
+		return 0, errors.Wrap(errors.Errorf("%s is not a regular file", src), "sourceFile IsRegular error")
 	}
 
 	source, err := os.Open(src)
 	if err != nil {
-		return 0, err
+		return 0, errors.Wrap(err, "os.open error")
 	}
-	defer source.Close()
+	defer func(source *os.File) {
+		err := source.Close()
+		if err != nil {
+			log.LogrusObj.Errorln(err)
+		}
+	}(source)
 
 	destination, err := os.Create(dst)
 	if err != nil {
-		return 0, err
+		return 0, errors.Wrap(err, "os.Create error")
 	}
-	defer destination.Close()
+	defer func(destination *os.File) {
+		err := destination.Close()
+		if err != nil {
+			log.LogrusObj.Errorln(err)
+		}
+	}(destination)
 	nBytes, err := io.Copy(destination, source)
-	return nBytes, err
+	return nBytes, errors.Wrap(err, "os.Copy error")
 }
 
 func ArrayUnique(arr []string) []string {

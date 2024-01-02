@@ -18,6 +18,7 @@
 package model
 
 import (
+	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/CocaineCong/tangseng/consts"
@@ -34,7 +35,7 @@ type User struct {
 func (user *User) SetPassword(password string) error {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), consts.PassWordCost)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to generate password")
 	}
 	user.PasswordDigest = string(bytes)
 	return nil

@@ -21,6 +21,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/pkg/errors"
+
 	"github.com/sirupsen/logrus"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"google.golang.org/grpc/resolver"
@@ -67,7 +69,7 @@ func (r *Resolver) Build(target resolver.Target, cc resolver.ClientConn, opts re
 
 	r.keyPrifix = BuildPrefix(Server{Name: target.Endpoint(), Version: target.URL.Host})
 	if _, err := r.start(); err != nil {
-		return nil, err
+		return nil, errors.WithMessage(err, "start error")
 	}
 	return r, nil
 }
@@ -88,14 +90,14 @@ func (r *Resolver) start() (chan<- struct{}, error) {
 		DialTimeout: time.Duration(r.DialTimeout) * time.Second,
 	})
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to create new etcd client")
 	}
 	resolver.Register(r)
 
 	r.closeCh = make(chan struct{})
 
 	if err = r.sync(); err != nil {
-		return nil, err
+		return nil, errors.WithMessage(err, "failed to sync")
 	}
 
 	go r.watch()
@@ -161,7 +163,7 @@ func (r *Resolver) sync() error {
 	defer cancel()
 	res, err := r.cli.Get(ctx, r.keyPrifix, clientv3.WithPrefix())
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to get data")
 	}
 	r.srvAddrsList = []resolver.Address{}
 
@@ -173,5 +175,6 @@ func (r *Resolver) sync() error {
 		addr := resolver.Address{Addr: info.Addr, Metadata: info.Weight}
 		r.srvAddrsList = append(r.srvAddrsList, addr)
 	}
-	return r.cc.UpdateState(resolver.State{Addresses: r.srvAddrsList})
+	err = r.cc.UpdateState(resolver.State{Addresses: r.srvAddrsList})
+	return errors.Wrap(err, "failed to update state")
 }

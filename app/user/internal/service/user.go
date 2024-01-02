@@ -19,8 +19,9 @@ package service
 
 import (
 	"context"
-	"github.com/pkg/errors"
 	"sync"
+
+	"github.com/pkg/errors"
 
 	"github.com/CocaineCong/tangseng/app/user/internal/repository/db/dao"
 	e2 "github.com/CocaineCong/tangseng/consts/e"

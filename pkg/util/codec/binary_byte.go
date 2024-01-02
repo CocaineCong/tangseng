@@ -21,12 +21,12 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/gob"
-	"errors"
 	"fmt"
+
+	"github.com/pkg/errors"
 
 	"github.com/bytedance/sonic"
 
-	log "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/CocaineCong/tangseng/types"
 )
 
@@ -37,13 +37,12 @@ func BinaryWrite(buf *bytes.Buffer, v any) (err error) {
 	// log.Debug("docid size:", size)
 	fmt.Println("size", size)
 	if size <= 0 {
-		log.LogrusObj.Errorf("encodePostings binary.Size err,size: %v", size)
-		return
+		return errors.Wrap(errors.Errorf("encodePostings binary.Size err,size: %v", size), "binary size error")
 	}
 
 	err = binary.Write(buf, binary.LittleEndian, v)
 	if err != nil {
-		fmt.Println(err)
+		err = errors.Wrap(err, "BinaryWrite error")
 	}
 
 	return
@@ -52,13 +51,12 @@ func BinaryWrite(buf *bytes.Buffer, v any) (err error) {
 // GobWrite 将所有的类型 转成 bytes.Buffer 类型，易于存储// TODO change
 func GobWrite(v any) (buf *bytes.Buffer, err error) {
 	if v == nil {
-		err = errors.New("BinaryWrite the value is nil")
-		return
+		return buf, errors.Wrap(errors.New("BinaryWrite the value is nil"), "GobWrite error")
 	}
 	buf = new(bytes.Buffer)
 	enc := gob.NewEncoder(buf)
 	if err = enc.Encode(v); err != nil {
-		return
+		err = errors.Wrap(err, "encode error")
 	}
 
 	return
@@ -68,7 +66,9 @@ func GobWrite(v any) (buf *bytes.Buffer, err error) {
 func DecodePostings(buf []byte) (p *types.InvertedIndexValue, err error) {
 	p = new(types.InvertedIndexValue)
 	err = sonic.Unmarshal(buf, &p)
-
+	if err != nil {
+		err = errors.Wrap(err, "unmarshal error")
+	}
 	return
 }
 
@@ -76,22 +76,25 @@ func DecodePostings(buf []byte) (p *types.InvertedIndexValue, err error) {
 func EncodePostings(postings *types.InvertedIndexValue) (buf []byte, err error) {
 	buf, err = sonic.Marshal(postings)
 	if err != nil {
-		log.LogrusObj.Errorf("sonic.Marshal err:%v,postings:%+v", err, postings)
-		return
+		err = errors.Wrap(errors.Errorf("sonic.Marshal err:%v,postings:%+v", err, postings), "marshal error")
 	}
-
 	return
 }
 
 // BinaryEncoding 二进制编码
 func BinaryEncoding(buf *bytes.Buffer, v any) (err error) {
 	err = gob.NewEncoder(buf).Encode(v)
+	if err != nil {
+		err = errors.Wrap(err, "binaryEncoding error")
+	}
 	return
 }
 
 // BinaryDecoding 二进制解码
 func BinaryDecoding(buf *bytes.Buffer, v any) (err error) {
 	err = gob.NewDecoder(buf).Decode(v)
-
+	if err != nil {
+		err = errors.Wrap(err, "binaryDecoding error")
+	}
 	return
 }

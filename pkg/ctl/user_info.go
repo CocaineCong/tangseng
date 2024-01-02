@@ -19,7 +19,8 @@ package ctl
 
 import (
 	"context"
-	"errors"
+
+	"github.com/pkg/errors"
 
 	"github.com/CocaineCong/tangseng/consts"
 )
@@ -32,7 +33,7 @@ type UserInfo struct {
 func GetUserInfo(ctx context.Context) (*UserInfo, error) {
 	user, ok := FromContext(ctx)
 	if !ok {
-		return nil, errors.New("获取用户信息错误")
+		return nil, errors.Wrap(errors.New("获取用户信息错误"), "FromContext error")
 	}
 	return user, nil
 }
