@@ -46,7 +46,7 @@
 
 > 我们期待您的任何PR。
 
-由于您已准备好通过 PR 改进 seata-go，我们建议您可以在此处查看 PR 规则。
+由于您已准备好通过 PR 改进 tangseng，我们建议您可以在此处查看 PR 规则。
 
 * [工作区准备](#工作区准备)
 * [分支定义](#分支定义)
@@ -57,7 +57,7 @@
 
 为了提出 PR，我们假设你已经注册了一个 GitHub ID。然后您可以通过以下步骤完成准备工作：
 
-1. **FORK** seata-go 到您的存储库。要完成这项工作，您只需单击 [tangseng](https://github.com/CocaineCong/tangseng) 主页右侧的 Fork 按钮。然后你将在 中得到你的存储库`https://github.com/<your-username>/tangseng`，其中 your-username 是你的 GitHub 用户名。
+1. **FORK** tangseng 到您的存储库。要完成这项工作，您只需单击 [tangseng](https://github.com/CocaineCong/tangseng) 主页右侧的 Fork 按钮。然后你将在 中得到你的存储库`https://github.com/<your-username>/tangseng`，其中 your-username 是你的 GitHub 用户名。
 
 2. **克隆** 您自己的存储库以在本地开发. 用于 `git clone git@github.com:<your-username>/tangseng.git` 将存储库克隆到本地计算机。 然后您可以创建新分支来完成您希望进行的更改。
 
