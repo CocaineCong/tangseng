@@ -121,3 +121,7 @@ golang version >= go 1.16 即可。我的go版本是 1.18.6
     # make run-favorite
     # 具体看makefile文件
     ```
+
+## 开源贡献
+
+在提交pr之前，请查看 `CONTRIBUTING_CN.md`
