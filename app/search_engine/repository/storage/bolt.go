@@ -39,7 +39,7 @@ func Put(db *bolt.DB, bucket string, key []byte, value []byte) error {
 
 // Get 通过bolt获取数据
 func Get(db *bolt.DB, bucket string, key []byte) (r []byte, err error) {
-	err = db.View(func(tx *bolt.Tx) (err error) {
+	err = db.Update(func(tx *bolt.Tx) (err error) {
 		b := tx.Bucket([]byte(bucket))
 		if b == nil {
 			b, _ = tx.CreateBucketIfNotExists([]byte(bucket))
