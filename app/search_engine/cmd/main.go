@@ -21,6 +21,9 @@ import (
 	"context"
 	"net"
 
+	"github.com/CocaineCong/tangseng/pkg/tracing"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+
 	logs "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/pkg/errors"
 
@@ -56,7 +59,15 @@ func main() {
 		Name: config.Conf.Domain[consts.SearchServiceName].Name,
 		Addr: grpcAddress,
 	}
-	server := grpc.NewServer()
+	//注册tracer
+	provider := tracing.InitTracerProvider(config.Conf.Jaeger.Addr, consts.SearchServiceName)
+	defer func() {
+		if err := provider(context.Background()); err != nil {
+			logs.LogrusObj.Errorf("Failed to shutdown: %v", err)
+		}
+	}()
+	handler := otelgrpc.NewServerHandler()
+	server := grpc.NewServer(grpc.StatsHandler(handler))
 	defer server.Stop()
 	// 绑定service
 	pb.RegisterSearchEngineServiceServer(server, service.GetSearchEngineSrv())

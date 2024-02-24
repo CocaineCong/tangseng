@@ -135,4 +135,6 @@ milvus:
     default_milvus_table_name: milvus_table_name
     metric_type: L2
     timeout: 3
+jaeger:
+    addr: 127.0.0.1:4317
 

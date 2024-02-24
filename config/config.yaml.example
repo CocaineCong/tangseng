@@ -119,3 +119,6 @@ milvus:
     metric_type: L2
     timeout: 3
 
+jaeger:
+    addr: 127.0.0.1:4317
+
