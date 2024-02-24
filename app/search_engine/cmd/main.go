@@ -62,6 +62,9 @@ func main() {
 	//注册tracer
 	provider := tracing.InitTracerProvider(config.Conf.Jaeger.Addr, consts.SearchServiceName)
 	defer func() {
+		if provider == nil {
+			return
+		}
 		if err := provider(context.Background()); err != nil {
 			logs.LogrusObj.Errorf("Failed to shutdown: %v", err)
 		}
