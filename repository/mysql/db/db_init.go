@@ -22,7 +22,8 @@ import (
 	"strings"
 	"time"
 
-	logs "github.com/CocaineCong/tangseng/pkg/logger"
+	"gorm.io/plugin/opentelemetry/tracing"
+
 	"github.com/pkg/errors"
 
 	"github.com/gin-gonic/gin"
@@ -32,6 +33,7 @@ import (
 	"gorm.io/gorm/schema"
 
 	"github.com/CocaineCong/tangseng/config"
+	logs "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
 var _db *gorm.DB
@@ -74,6 +76,10 @@ func Database(connString string) error {
 	})
 	if err != nil {
 		err = errors.Wrap(err, "failed to open Mysql")
+		return err
+	}
+	if err = db.Use(tracing.NewPlugin()); err != nil {
+		err = errors.Wrap(err, "failed to use db plugin")
 		return err
 	}
 	sqlDB, _ := db.DB()

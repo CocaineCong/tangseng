@@ -33,24 +33,28 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.20.0"
 )
 
-func InitTracerProvider(Url string, serviceName string) func(ctx context.Context) error {
+func InitTracerProvider(url string, serviceName string) func(ctx context.Context) error {
 	ctx := context.Background()
+	// 创建一个新的 OTLP gRPC 客户端
 	client := otlptracegrpc.NewClient(
 		otlptracegrpc.WithInsecure(),
-		otlptracegrpc.WithEndpoint(Url),
+		otlptracegrpc.WithEndpoint(url),
 	)
+	// 创建一个新的 OTLP 导出器
 	exporter, err := otlptrace.New(ctx, client)
 	if err != nil {
 		logs.LogrusObj.Errorf("failed to init tracer, err: %v", err)
 		return nil
 	}
 	tp := tracesdk.NewTracerProvider(
-		tracesdk.WithBatcher(exporter),
-		tracesdk.WithResource(newResource(serviceName)),
+		tracesdk.WithBatcher(exporter),                  //注册exporter
+		tracesdk.WithResource(newResource(serviceName)), //设置服务信息
 	)
+	//设置全局tracer
 	otel.SetTracerProvider(tp)
 	b3Propagator := b3.New(b3.WithInjectEncoding(b3.B3MultipleHeader))
 	propagator := propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}, b3Propagator)
+	// 设置全局Propagator
 	otel.SetTextMapPropagator(propagator)
 	return tp.Shutdown
 }

@@ -21,6 +21,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/redis/go-redis/extra/redisotel/v9"
+
 	"github.com/redis/go-redis/v9"
 
 	"github.com/CocaineCong/tangseng/config"
@@ -40,6 +42,9 @@ func InitRedis() {
 		Password: rConfig.RedisPassword,
 		DB:       rConfig.RedisDbName,
 	})
+	if err := redisotel.InstrumentTracing(client); err != nil {
+		logs.LogrusObj.Errorf("failed to trace redis, err = %v", err)
+	}
 	_, err := client.Ping(RedisContext).Result()
 	if err != nil {
 		logs.LogrusObj.Errorln(err)
