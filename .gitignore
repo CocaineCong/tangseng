@@ -49,3 +49,4 @@ index/
 venv/
 .ruff_cache/
 __pycache__
+pkg/prometheus/config/*.json
