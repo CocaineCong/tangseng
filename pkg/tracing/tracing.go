@@ -20,6 +20,8 @@ package tracing
 import (
 	"context"
 
+	"go.opentelemetry.io/otel/trace"
+
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
 
 	logs "github.com/CocaineCong/tangseng/pkg/logger"
@@ -64,4 +66,14 @@ func newResource(serviceName string) *resource.Resource {
 		semconv.SchemaURL,
 		semconv.ServiceName(serviceName),
 	)
+}
+
+func GetTraceID(ctx context.Context) string {
+	spanCtx := trace.SpanContextFromContext(ctx)
+	if spanCtx.HasTraceID() {
+		traceID := spanCtx.TraceID()
+		return traceID.String()
+	}
+
+	return ""
 }
