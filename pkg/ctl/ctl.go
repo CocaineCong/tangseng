@@ -18,6 +18,9 @@
 package ctl
 
 import (
+	"time"
+
+	"github.com/CocaineCong/tangseng/pkg/tracing"
 	"github.com/gin-gonic/gin"
 
 	e2 "github.com/CocaineCong/tangseng/consts/e"
@@ -25,10 +28,12 @@ import (
 
 // Response 基础序列化器
 type Response struct {
-	Status int         `json:"status"`
-	Data   interface{} `json:"data"`
-	Msg    string      `json:"msg"`
-	Error  string      `json:"error"`
+	Status    int         `json:"status"`
+	Data      interface{} `json:"data"`
+	Msg       string      `json:"msg"`
+	Error     string      `json:"error"`
+	Timestamp int64       `json:"timestamps"`
+	TraceID   string      `json:"traceID"`
 }
 
 // RespSuccess 带data成功返回
@@ -43,9 +48,11 @@ func RespSuccess(ctx *gin.Context, data interface{}, code ...int) *Response {
 	}
 
 	r := &Response{
-		Status: status,
-		Data:   data,
-		Msg:    e2.GetMsg(status),
+		Status:    status,
+		Data:      data,
+		Msg:       e2.GetMsg(status),
+		Timestamp: time.Now().Unix(),
+		TraceID:   tracing.GetTraceID(ctx),
 	}
 
 	return r
@@ -58,10 +65,12 @@ func RespError(ctx *gin.Context, err error, data string, code ...int) *Response 
 	}
 
 	r := &Response{
-		Status: status,
-		Data:   data,
-		Msg:    e2.GetMsg(status),
-		Error:  err.Error(),
+		Status:    status,
+		Data:      data,
+		Msg:       e2.GetMsg(status),
+		Error:     err.Error(),
+		Timestamp: time.Now().Unix(),
+		TraceID:   tracing.GetTraceID(ctx),
 	}
 
 	return r

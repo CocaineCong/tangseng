@@ -18,12 +18,12 @@
 package main
 
 import (
+	"context"
 	"net"
 
-	"github.com/pkg/errors"
+	"github.com/CocaineCong/tangseng/pkg/tracing"
 
-	"github.com/sirupsen/logrus"
-	"google.golang.org/grpc"
+	"github.com/pkg/errors"
 
 	"github.com/CocaineCong/tangseng/app/favorite/internal/service"
 	"github.com/CocaineCong/tangseng/config"
@@ -32,6 +32,9 @@ import (
 	"github.com/CocaineCong/tangseng/loading"
 	"github.com/CocaineCong/tangseng/pkg/discovery"
 	logs "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/sirupsen/logrus"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	"google.golang.org/grpc"
 )
 
 func main() {
@@ -46,7 +49,18 @@ func main() {
 		Name: config.Conf.Domain[consts.FavoriteServiceName].Name,
 		Addr: grpcAddress,
 	}
-	server := grpc.NewServer()
+	//注册tracer
+	provider := tracing.InitTracerProvider(config.Conf.Jaeger.Addr, consts.FavoriteServiceName)
+	defer func() {
+		if provider == nil {
+			return
+		}
+		if err := provider(context.Background()); err != nil {
+			logs.LogrusObj.Errorf("Failed to shutdown: %v", err)
+		}
+	}()
+	handler := otelgrpc.NewServerHandler()
+	server := grpc.NewServer(grpc.StatsHandler(handler))
 	defer server.Stop()
 	// 绑定service
 	favoritePb.RegisterFavoritesServiceServer(server, service.GetFavoriteSrv())

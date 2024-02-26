@@ -38,6 +38,11 @@ type Config struct {
 	StarRocks *StarRocks          `yaml:"starrock"`
 	Vector    *VectorConfig       `yaml:"vector"`
 	Milvus    *MilvusConfig       `yaml:"milvus"`
+	Jaeger    *Jaeger             `yaml:"jaeger"`
+}
+
+type Jaeger struct {
+	Addr string `yaml:"addr"`
 }
 
 type VectorConfig struct {

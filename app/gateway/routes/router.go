@@ -25,11 +25,13 @@ import (
 
 	"github.com/CocaineCong/tangseng/app/gateway/http"
 	"github.com/CocaineCong/tangseng/app/gateway/middleware"
+	"github.com/CocaineCong/tangseng/consts"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 )
 
 func NewRouter() *gin.Engine {
 	r := gin.Default()
-	r.Use(middleware.Cors(), middleware.ErrorMiddleware())
+	r.Use(middleware.Cors(), middleware.ErrorMiddleware(), otelgin.Middleware(consts.ServiceName))
 	store := cookie.NewStore([]byte("something-very-secret"))
 	r.Use(sessions.Sessions("mysession", store))
 	v1 := r.Group("/api/v1")

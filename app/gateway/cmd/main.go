@@ -18,9 +18,15 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"time"
+
+	logs "github.com/CocaineCong/tangseng/pkg/logger"
+
+	"github.com/CocaineCong/tangseng/consts"
+	"github.com/CocaineCong/tangseng/pkg/tracing"
 
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc/resolver"
@@ -35,6 +41,16 @@ import (
 func main() {
 	loading.Loading()
 	rpc.Init()
+	////注册tracer
+	provider := tracing.InitTracerProvider(config.Conf.Jaeger.Addr, consts.ServiceName)
+	defer func() {
+		if provider == nil {
+			return
+		}
+		if err := provider(context.Background()); err != nil {
+			logs.LogrusObj.Errorf("Failed to shutdown: %v", err)
+		}
+	}()
 	// etcd注册
 	etcdAddress := []string{config.Conf.Etcd.Address}
 	etcdRegister := discovery.NewResolver(etcdAddress, logrus.New())

@@ -21,8 +21,6 @@ import (
 	"context"
 	"time"
 
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/attribute"
 	oteltrace "go.opentelemetry.io/otel/trace"
 )
 
@@ -43,9 +41,8 @@ func NewContextWithoutDeadline() *ContextWithoutDeadline {
 }
 
 func (c *ContextWithoutDeadline) Clone(ctx context.Context, keys ...interface{}) {
-	_, span := otel.GetTracerProvider().Tracer("tangseng"+"/clone").
-		Start(ctx, "clone", oteltrace.WithAttributes(attribute.Int("sync", 1)))
-	defer span.End()
+
+	span := oteltrace.SpanFromContext(ctx)
 
 	c.ctx = oteltrace.ContextWithSpan(c.ctx, span)
 
