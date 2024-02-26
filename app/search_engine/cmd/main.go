@@ -21,6 +21,8 @@ import (
 	"context"
 	"net"
 
+	"github.com/CocaineCong/tangseng/pkg/prometheus"
+
 	"github.com/CocaineCong/tangseng/pkg/tracing"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 
@@ -70,10 +72,15 @@ func main() {
 		}
 	}()
 	handler := otelgrpc.NewServerHandler()
-	server := grpc.NewServer(grpc.StatsHandler(handler))
+	server := grpc.NewServer(
+		grpc.StatsHandler(handler),
+		grpc.UnaryInterceptor(prometheus.UnaryServerInterceptor),
+		grpc.StreamInterceptor(prometheus.StreamServerInterceptor),
+	)
 	defer server.Stop()
 	// 绑定service
 	pb.RegisterSearchEngineServiceServer(server, service.GetSearchEngineSrv())
+	prometheus.RegisterServer(server, config.Conf.Services[consts.SearchServiceName].Metrics[0], consts.SearchServiceName)
 	lis, err := net.Listen("tcp", grpcAddress)
 	if err != nil {
 		panic(err)
