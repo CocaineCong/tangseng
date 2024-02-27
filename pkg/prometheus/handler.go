@@ -11,6 +11,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
+// GatewayHandler for expose gateway metrics
 func GatewayHandler() gin.HandlerFunc {
 	EtcdRegister(config.Conf.Server.Metrics, consts.GatewayJobForPrometheus)
 	handler := promhttp.Handler()
@@ -19,6 +20,8 @@ func GatewayHandler() gin.HandlerFunc {
 	}
 }
 
+// RpcHandler is for launch a http server
+// to expose metrics
 func RpcHandler(addr string) {
 	port := strings.Split(addr, ":")[1]
 	http.Handle("/metrics", promhttp.Handler())

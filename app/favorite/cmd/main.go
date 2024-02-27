@@ -18,14 +18,11 @@
 package main
 
 import (
-	"github.com/CocaineCong/tangseng/pkg/prometheus"
-
 	"context"
-
 	"net"
 
+	"github.com/CocaineCong/tangseng/pkg/prometheus"
 	"github.com/CocaineCong/tangseng/pkg/tracing"
-
 	"github.com/pkg/errors"
 
 	"github.com/CocaineCong/tangseng/app/favorite/internal/service"

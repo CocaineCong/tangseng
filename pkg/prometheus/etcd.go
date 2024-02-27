@@ -11,10 +11,12 @@ import (
 	etcd "go.etcd.io/etcd/client/v3"
 )
 
+// Instance is for marshal conf
 type Instance struct {
 	Conf []*Conf
 }
 
+// Conf is the basic unit of the prometheus detection unit
 type Conf struct {
 	Targets []string          `json:"targets"`
 	Labels  map[string]string `json:"labels"`
@@ -38,6 +40,7 @@ func EtcdRegister(targets string, job string) {
 	go GenerateConfigFile(job)
 }
 
+// keepAlive for registered instance
 func keepALive(c *etcd.Client, leaseId etcd.LeaseID) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -97,6 +100,7 @@ func GetAllServerAddress() []*Instance {
 	return instances
 }
 
+// newClient return an etcd.Client
 func newClient() *etcd.Client {
 	client, err := etcd.New(etcd.Config{
 		Endpoints:   []string{config.Conf.Etcd.Address},
