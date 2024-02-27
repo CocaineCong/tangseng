@@ -26,6 +26,7 @@ import (
 	"github.com/CocaineCong/tangseng/app/gateway/http"
 	"github.com/CocaineCong/tangseng/app/gateway/middleware"
 	"github.com/CocaineCong/tangseng/consts"
+	"github.com/CocaineCong/tangseng/pkg/prometheus"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 )
 
@@ -34,6 +35,7 @@ func NewRouter() *gin.Engine {
 	r.Use(middleware.Cors(), middleware.ErrorMiddleware(), otelgin.Middleware(consts.ServiceName))
 	store := cookie.NewStore([]byte("something-very-secret"))
 	r.Use(sessions.Sessions("mysession", store))
+	r.GET("/metrics", prometheus.GatewayHandler())
 	v1 := r.Group("/api/v1")
 	{
 		v1.GET("ping", func(context *gin.Context) {

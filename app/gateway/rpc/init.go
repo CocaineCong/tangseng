@@ -23,6 +23,8 @@ import (
 	"log"
 	"time"
 
+	"github.com/CocaineCong/tangseng/pkg/prometheus"
+
 	"github.com/pkg/errors"
 
 	"github.com/sirupsen/logrus"
@@ -68,6 +70,7 @@ func Init() {
 
 // initClient 初始化所有的rpc客户端
 func initClient(serviceName string, client interface{}) {
+	prometheus.EnableHandlingTimeHistogram()
 	conn, err := connectServer(serviceName)
 
 	if err != nil {

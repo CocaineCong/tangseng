@@ -143,6 +143,26 @@ services:
     networks:
       - search_engine
 
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./pkg/prometheus/config/files:/etc/prometheus/files
+      - ./pkg/prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention=15d'
+    restart: always
+    network_mode: host
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    #    ports: "3000:3000"
+    restart: always
+    network_mode: host
+
 #  starrocks: # TODO 后面加上starrocks
 #    images: starrock.docker.scarf.sh/starrock/allin1-ubuntu
 #    restart: on-failure

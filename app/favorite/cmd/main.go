@@ -21,8 +21,8 @@ import (
 	"context"
 	"net"
 
+	"github.com/CocaineCong/tangseng/pkg/prometheus"
 	"github.com/CocaineCong/tangseng/pkg/tracing"
-
 	"github.com/pkg/errors"
 
 	"github.com/CocaineCong/tangseng/app/favorite/internal/service"
@@ -60,10 +60,16 @@ func main() {
 		}
 	}()
 	handler := otelgrpc.NewServerHandler()
-	server := grpc.NewServer(grpc.StatsHandler(handler))
+	server := grpc.NewServer(
+		grpc.StatsHandler(handler),
+		grpc.UnaryInterceptor(prometheus.UnaryServerInterceptor),
+		grpc.StreamInterceptor(prometheus.StreamServerInterceptor),
+	)
+
 	defer server.Stop()
 	// 绑定service
 	favoritePb.RegisterFavoritesServiceServer(server, service.GetFavoriteSrv())
+	prometheus.RegisterServer(server, config.Conf.Services[consts.FavoriteServiceName].Metrics[0], consts.FavoriteServiceName)
 	lis, err := net.Listen("tcp", grpcAddress)
 	if err != nil {
 		panic(err)

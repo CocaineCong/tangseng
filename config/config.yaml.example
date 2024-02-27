@@ -2,6 +2,7 @@ server:
   port: :4000
   version: 1.0
   jwtSecret: "38324-search-engine"
+  metrics: 127.0.0.1:4000
 
 mysql:
   driverName: mysql
@@ -41,42 +42,56 @@ services:
     loadBalance: true
     addr:
       - 127.0.0.1:20001
+    metrics:
+      - 127.0.0.1:30001
 
   user:
     name: user
     loadBalance: false
     addr:
       - 127.0.0.1:20002
+    metrics:
+      - 127.0.0.1:30002
 
   favorite:
     name: favorite
     loadBalance: false
     addr:
       - 127.0.0.1:20003
+    metrics:
+      - 127.0.0.1:30003
 
   search_engine:
     name: search_engine
     loadBalance: false
     addr:
       - 127.0.0.1:20004
+    metrics:
+      - 127.0.0.1:30004
 
   index_platform:
     name: index_platform
     loadBalance: false
     addr:
       - 127.0.0.1:20005
+    metrics:
+      - 127.0.0.1:30005
 
   mapreduce:
     name: mapreduce
     loadBalance: false
     addr:
       - 127.0.0.1:20006
+    metrics:
+      - 127.0.0.1:30006
 
   search_vector:
     name: search_vector
     loadBalance: false
     addr:
       - 127.0.0.1:20007
+    metrics:
+      - 127.0.0.1:30007
 
 starrocks:
   username: root
@@ -118,7 +133,5 @@ milvus:
     default_milvus_table_name: milvus_table_name
     metric_type: L2
     timeout: 3
-
 jaeger:
     addr: 127.0.0.1:4317
-

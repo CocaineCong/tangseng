@@ -82,6 +82,7 @@ type Server struct {
 	Port      string `yaml:"port"`
 	Version   string `yaml:"version"`
 	JwtSecret string `yaml:"jwtSecret"`
+	Metrics   string `yaml:"metrics"`
 }
 
 type MySQL struct {
@@ -116,6 +117,7 @@ type Service struct {
 	Name        string   `yaml:"name"`
 	LoadBalance bool     `yaml:"loadBalance"`
 	Addr        []string `yaml:"addr"`
+	Metrics     []string `yaml:"metrics"`
 }
 
 type Kafka struct {
