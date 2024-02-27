@@ -18,7 +18,6 @@
 package routes
 
 import (
-	"github.com/CocaineCong/tangseng/pkg/prometheus"
 	"github.com/gin-gonic/gin"
 
 	"github.com/gin-contrib/sessions"
@@ -27,6 +26,7 @@ import (
 	"github.com/CocaineCong/tangseng/app/gateway/http"
 	"github.com/CocaineCong/tangseng/app/gateway/middleware"
 	"github.com/CocaineCong/tangseng/consts"
+	"github.com/CocaineCong/tangseng/pkg/prometheus"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 )
 

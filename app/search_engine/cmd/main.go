@@ -22,7 +22,6 @@ import (
 	"net"
 
 	"github.com/CocaineCong/tangseng/pkg/prometheus"
-
 	"github.com/CocaineCong/tangseng/pkg/tracing"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 

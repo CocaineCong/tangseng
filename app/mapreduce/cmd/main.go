@@ -20,8 +20,6 @@ package main
 import (
 	"net"
 
-	"github.com/CocaineCong/tangseng/pkg/prometheus"
-
 	"github.com/pkg/errors"
 
 	"github.com/sirupsen/logrus"
@@ -34,6 +32,7 @@ import (
 	"github.com/CocaineCong/tangseng/loading"
 	"github.com/CocaineCong/tangseng/pkg/discovery"
 	logs "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/CocaineCong/tangseng/pkg/prometheus"
 )
 
 const (
