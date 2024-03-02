@@ -22,15 +22,12 @@ import logging
 import asyncio
 
 from ..consts.consts import VECTOR_RECALL_TOPK
-from ..consts.consts import OTEL_ENDPOINT
-from ..consts.consts import SERVICE_NAME
 from idl.pb.search_vector import search_vector_pb2
 from ..config.config import DEFAULT_MILVUS_TABLE_NAME, VECTOR_ADDR
 from ..milvus.operators import do_search
 from ..etcd_operate.etcd import etcd_client
 from ..milvus.milvus import milvus_client
 from idl.pb.search_vector import search_vector_pb2_grpc
-from ..tracing.tracing import init_tracer_provider
 from opentelemetry.instrumentation.grpc import GrpcInstrumentorServer
 
 
@@ -61,7 +58,6 @@ class SearchVectorService(search_vector_pb2_grpc.SearchVectorServiceServicer):
 
 
 async def serve() -> None:
-    init_tracer_provider(url=OTEL_ENDPOINT, service_name=SERVICE_NAME)
     # 初始化 gRPC 追踪器
     GrpcInstrumentorServer().instrument()
     server = grpc.aio.server()

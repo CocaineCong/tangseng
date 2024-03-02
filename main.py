@@ -28,14 +28,17 @@ import torch
 from PIL import Image
 from flask import Flask, request
 from torchvision import transforms
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
 from app.search_vector.service.search_vector import serve
-
+from app.search_vector.consts.consts import OTEL_ENDPOINT
+from app.search_vector.consts.consts import SERVICE_NAME
 from app.search_vector.config.config import DEFAULT_MILVUS_TABLE_NAME, NETWORK_MODEL_NAME
 from app.search_vector.cirtorch.datasets.datahelpers import imresize
 from app.search_vector.cirtorch.networks.imageretrievalnet import init_network
 from app.search_vector.milvus.milvus import milvus_client
 from app.search_vector.milvus.operators import do_upload, do_search
 from app.search_vector.utils.logs import LOGGER
+from app.search_vector.tracing.tracing import init_tracer_provider
 
 app = Flask(__name__)
 
@@ -199,6 +202,9 @@ def init_model():
 net, lsh, transform = init_model()
 
 if __name__ == "__main__":
+    init_tracer_provider(url=OTEL_ENDPOINT, service_name=SERVICE_NAME)
+    # 这个FlaskInstrumentor用于监视http的
+    # FlaskInstrumentor().instrument_app(app)
     # app.run(host=WEBSITE_HOST, port=WEBSITE_PORT, debug=True)
     # print("start server {}:{}".format(WEBSITE_HOST, WEBSITE_PORT))
     asyncio.run(serve())
