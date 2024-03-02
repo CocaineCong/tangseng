@@ -46,10 +46,3 @@ def init_tracer_provider(url, service_name):
     # 设置全局Propagator
     b3_propagator = B3MultiFormat()
     set_global_textmap(b3_propagator)
-
-
-def get_trace_id(context):
-    span_context = trace.get_current_span(context).get_span_context()
-    if span_context.is_valid:
-        return span_context.trace_id
-    return None

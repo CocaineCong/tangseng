@@ -30,6 +30,8 @@ from ..etcd_operate.etcd import etcd_client
 from ..milvus.milvus import milvus_client
 from idl.pb.search_vector import search_vector_pb2_grpc
 
+tracer = trace.get_tracer(__name__)
+
 
 class SearchVectorService(search_vector_pb2_grpc.SearchVectorServiceServicer):
     """
@@ -38,7 +40,6 @@ class SearchVectorService(search_vector_pb2_grpc.SearchVectorServiceServicer):
 
     def SearchVector(self, request,
                      context) -> search_vector_pb2.SearchVectorResponse:
-        tracer = trace.get_tracer(__name__)
         with tracer.start_as_current_span("SearchVector"):
             try:
                 queryies = request.query

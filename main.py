@@ -203,7 +203,7 @@ net, lsh, transform = init_model()
 
 if __name__ == "__main__":
     init_tracer_provider(url=OTEL_ENDPOINT, service_name=SERVICE_NAME)
-    # 这个FlaskInstrumentor用于监视http的
+    # FlaskInstrumentor is to trace http
     # FlaskInstrumentor().instrument_app(app)
     # app.run(host=WEBSITE_HOST, port=WEBSITE_PORT, debug=True)
     # print("start server {}:{}".format(WEBSITE_HOST, WEBSITE_PORT))
