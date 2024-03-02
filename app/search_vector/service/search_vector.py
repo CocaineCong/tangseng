@@ -21,6 +21,7 @@ import grpc
 import logging
 import asyncio
 
+from opentelemetry import trace
 from ..consts.consts import VECTOR_RECALL_TOPK
 from idl.pb.search_vector import search_vector_pb2
 from ..config.config import DEFAULT_MILVUS_TABLE_NAME, VECTOR_ADDR
@@ -28,7 +29,6 @@ from ..milvus.operators import do_search
 from ..etcd_operate.etcd import etcd_client
 from ..milvus.milvus import milvus_client
 from idl.pb.search_vector import search_vector_pb2_grpc
-from opentelemetry.instrumentation.grpc import GrpcInstrumentorServer
 
 
 class SearchVectorService(search_vector_pb2_grpc.SearchVectorServiceServicer):
@@ -38,28 +38,28 @@ class SearchVectorService(search_vector_pb2_grpc.SearchVectorServiceServicer):
 
     def SearchVector(self, request,
                      context) -> search_vector_pb2.SearchVectorResponse:
-        try:
-            queryies = request.query
-            doc_ids = []
-            for query in queryies:
-                ids, distants = do_search(DEFAULT_MILVUS_TABLE_NAME, query,
-                                          VECTOR_RECALL_TOPK, milvus_client)
-                print("search vector ids", ids)
-                doc_ids += ids
-            print("search vector data", doc_ids)
-            return search_vector_pb2.SearchVectorResponse(code=200,
-                                                          doc_ids=doc_ids,
-                                                          msg='ok',
-                                                          error='')
-        except Exception as e:
-            print("search vector error", e)
-            return search_vector_pb2.SearchVectorResponse(code=500,
-                                                          error=str(e))
+        tracer = trace.get_tracer(__name__)
+        with tracer.start_as_current_span("SearchVector"):
+            try:
+                queryies = request.query
+                doc_ids = []
+                for query in queryies:
+                    ids, distants = do_search(DEFAULT_MILVUS_TABLE_NAME, query,
+                                              VECTOR_RECALL_TOPK, milvus_client)
+                    print("search vector ids", ids)
+                    doc_ids += ids
+                print("search vector data", doc_ids)
+                return search_vector_pb2.SearchVectorResponse(code=200,
+                                                              doc_ids=doc_ids,
+                                                              msg='ok',
+                                                              error='')
+            except Exception as e:
+                print("search vector error", e)
+                return search_vector_pb2.SearchVectorResponse(code=500,
+                                                              error=str(e))
 
 
 async def serve() -> None:
-    # 初始化 gRPC 追踪器
-    GrpcInstrumentorServer().instrument()
     server = grpc.aio.server()
     search_vector_pb2_grpc.add_SearchVectorServiceServicer_to_server(
         SearchVectorService(), server)

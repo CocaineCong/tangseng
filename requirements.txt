@@ -68,7 +68,6 @@ opentelemetry-api==1.23.0
 opentelemetry-sdk==1.23.0
 opentelemetry-exporter-otlp-proto-grpc==1.23.0
 opentelemetry-propagator-b3==1.23.0
-opentelemetry-instrumentation-grpc==0.44b0
 opentelemetry-instrumentation-flask==0.44b0
 
 
