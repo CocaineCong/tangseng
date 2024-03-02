@@ -19,6 +19,7 @@ package tracing
 
 import (
 	"context"
+	"github.com/gin-gonic/gin"
 
 	"go.opentelemetry.io/otel/trace"
 
@@ -68,8 +69,8 @@ func newResource(serviceName string) *resource.Resource {
 	)
 }
 
-func GetTraceID(ctx context.Context) string {
-	spanCtx := trace.SpanContextFromContext(ctx)
+func GetTraceID(ctx *gin.Context) string {
+	spanCtx := trace.SpanContextFromContext(ctx.Request.Context())
 	if spanCtx.HasTraceID() {
 		traceID := spanCtx.TraceID()
 		return traceID.String()
