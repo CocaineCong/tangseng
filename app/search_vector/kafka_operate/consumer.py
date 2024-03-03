@@ -16,6 +16,7 @@
 # under the License.
 
 """store vector index from kafka"""
+import inspect
 from opentelemetry import trace
 from ..kafka_operate.kafka_operate import kafka_helper
 
@@ -25,6 +26,6 @@ def store_data_from_kafka(kafka_topic, milvus_table_name):
     store data to mivlus from kakfa for building inverted index
     """
     tracer = trace.get_tracer(__name__)
-    with tracer.start_as_current_span("store_data_from_kafka"):
+    with tracer.start_as_current_span(inspect.getframeinfo(inspect.currentframe()).function):
         kafka_helper.connect_consumer(kafka_topic)
         kafka_helper.consume_messages_store_milvus(milvus_table_name)

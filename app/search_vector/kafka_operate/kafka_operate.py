@@ -16,6 +16,7 @@
 # under the License.
 
 """kafka operate"""
+import inspect
 import json
 from kafka import KafkaProducer, KafkaConsumer
 from kafka.errors import KafkaError
@@ -42,7 +43,7 @@ class KafkaHelper:
         """
         connect kafka producer
         """
-        with tracer.start_as_current_span("connect_producer"):
+        with tracer.start_as_current_span(inspect.getframeinfo(inspect.currentframe()).function):
             try:
                 self.producer = KafkaProducer(
                     bootstrap_servers=self.bootstrap_servers)
@@ -54,7 +55,7 @@ class KafkaHelper:
         """
         connect kafka consumer
         """
-        with tracer.start_as_current_span("connect_consumer"):
+        with tracer.start_as_current_span(inspect.getframeinfo(inspect.currentframe()).function):
             try:
                 self.consumer = KafkaConsumer(
                     topic, bootstrap_servers=self.bootstrap_servers)
@@ -93,7 +94,7 @@ class KafkaHelper:
         """
         consume messages from kafka and store in milvus
         """
-        with tracer.start_as_current_span("connect_consumer"):
+        with tracer.start_as_current_span(inspect.getframeinfo(inspect.currentframe()).function):
             if not self.consumer:
                 print("No Kafka consumer connected.")
                 return

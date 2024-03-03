@@ -16,6 +16,7 @@
 # under the License.
 
 """the script file is to handle vector index from kafka"""
+import inspect
 import threading
 from opentelemetry import trace
 from app.search_vector.consts.consts import KAFKA_CONSUMER_VECTOR_INDEX_TOPIC
@@ -30,7 +31,7 @@ def consume_inverted_index():
     topic = KAFKA_CONSUMER_VECTOR_INDEX_TOPIC
     table_name = DEFAULT_MILVUS_TABLE_NAME
     tracer = trace.get_tracer(__name__)
-    with tracer.start_as_current_span("consume_inverted_index"):
+    with tracer.start_as_current_span(inspect.getframeinfo(inspect.currentframe()).function):
         thread = threading.Thread(target=store_data_from_kafka(
             topic, table_name))  # 创建线程对象
         thread.start()  # 启动线程

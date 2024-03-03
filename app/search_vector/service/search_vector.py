@@ -16,6 +16,7 @@
 # under the License.
 
 """search vector grpc service"""
+import inspect
 import json
 import grpc
 import logging
@@ -40,7 +41,7 @@ class SearchVectorService(search_vector_pb2_grpc.SearchVectorServiceServicer):
 
     def SearchVector(self, request,
                      context) -> search_vector_pb2.SearchVectorResponse:
-        with tracer.start_as_current_span("SearchVector"):
+        with tracer.start_as_current_span(inspect.getframeinfo(inspect.currentframe()).function):
             try:
                 queryies = request.query
                 doc_ids = []
