@@ -21,3 +21,7 @@ default some constants
 KAFKA_CONSUMER_VECTOR_INDEX_TOPIC = "search-engine-csv-loader-topic"
 
 VECTOR_RECALL_TOPK = 20
+
+OTEL_ENDPOINT = "127.0.0.1:4317"
+
+SERVICE_NAME = "tangseng-python"

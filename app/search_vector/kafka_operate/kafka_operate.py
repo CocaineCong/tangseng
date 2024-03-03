@@ -16,12 +16,16 @@
 # under the License.
 
 """kafka operate"""
+import inspect
 import json
 from kafka import KafkaProducer, KafkaConsumer
 from kafka.errors import KafkaError
+from opentelemetry import trace
 from ..config.config import KAFKA_CLUSTER
 from ..milvus import milvus
 from ..milvus.operators import do_upload
+
+tracer = trace.get_tracer(__name__)
 
 
 class KafkaHelper:
@@ -39,25 +43,27 @@ class KafkaHelper:
         """
         connect kafka producer
         """
-        try:
-            self.producer = KafkaProducer(
-                bootstrap_servers=self.bootstrap_servers)
-            print("Connected to Kafka producer successfully.")
-        except KafkaError as e:
-            print(f"Failed to connect to Kafka producer: {e}")
+        with tracer.start_as_current_span(inspect.getframeinfo(inspect.currentframe()).function):
+            try:
+                self.producer = KafkaProducer(
+                    bootstrap_servers=self.bootstrap_servers)
+                print("Connected to Kafka producer successfully.")
+            except KafkaError as e:
+                print(f"Failed to connect to Kafka producer: {e}")
 
     def connect_consumer(self, topic):
         """
         connect kafka consumer
         """
-        try:
-            self.consumer = KafkaConsumer(
-                topic, bootstrap_servers=self.bootstrap_servers)
-            print(
-                f"Connected to Kafka consumer successfully. Listening to topic: {topic}"
-            )
-        except KafkaError as e:
-            print(f"Failed to connect to Kafka consumer: {e}")
+        with tracer.start_as_current_span(inspect.getframeinfo(inspect.currentframe()).function):
+            try:
+                self.consumer = KafkaConsumer(
+                    topic, bootstrap_servers=self.bootstrap_servers)
+                print(
+                    f"Connected to Kafka consumer successfully. Listening to topic: {topic}"
+                )
+            except KafkaError as e:
+                print(f"Failed to connect to Kafka consumer: {e}")
 
     def send_message(self, topic, msg):
         """
@@ -88,14 +94,15 @@ class KafkaHelper:
         """
         consume messages from kafka and store in milvus
         """
-        if not self.consumer:
-            print("No Kafka consumer connected.")
-            return
-        print("Consuming messages...")
-        for msg in self.consumer:
-            data = json.loads(msg.value.decode('utf-8'))
-            do_upload(milvus_table, int(data["doc_id"]), data["title"],
-                      data["body"], self.milvus_client)
+        with tracer.start_as_current_span(inspect.getframeinfo(inspect.currentframe()).function):
+            if not self.consumer:
+                print("No Kafka consumer connected.")
+                return
+            print("Consuming messages...")
+            for msg in self.consumer:
+                data = json.loads(msg.value.decode('utf-8'))
+                do_upload(milvus_table, int(data["doc_id"]), data["title"],
+                          data["body"], self.milvus_client)
 
     def on_send_success(self, record_metadata):
         """
