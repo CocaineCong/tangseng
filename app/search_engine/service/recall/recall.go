@@ -188,7 +188,9 @@ func (r *Recall) searchDoc(ctx context.Context, tokens []string) (recalls []int6
 func fetchPostingsByToken(token string) (postingsList []*types.PostingsList, err error) {
 	// 遍历存储index的地方，token对应的doc Id 全部取出
 	postingsList = make([]*types.PostingsList, 0, 1e6)
-	for _, inverted := range storage.GlobalInvertedDB {
+	dbs, versionId := storage.GlobalInvertedDB.Ref()
+	defer storage.GlobalInvertedDB.Unref(versionId)
+	for _, inverted := range dbs {
 		docIds, errx := inverted.GetInverted([]byte(token))
 		if errx != nil {
 			err = errors.WithMessage(err, "getInverted error")
