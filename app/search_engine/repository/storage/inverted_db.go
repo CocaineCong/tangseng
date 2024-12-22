@@ -20,6 +20,11 @@ package storage
 import (
 	"context"
 	"os"
+	"os/signal"
+	"sync"
+	"sync/atomic"
+	"syscall"
+	"time"
 
 	"github.com/pkg/errors"
 
@@ -35,7 +40,7 @@ type KvInfo struct {
 	Value []byte
 }
 
-var GlobalInvertedDB []*InvertedDB
+var GlobalInvertedDB *InvertedDBManager
 
 type InvertedDB struct {
 	file   *os.File
@@ -43,30 +48,178 @@ type InvertedDB struct {
 	offset int64
 }
 
+// 使用manager来管理多个倒排db
+// currentVersion为当前最新的版本
+// versionSet 记录了还在使用版本的信息
+type InvertedDBManager struct {
+	currentVersion *Version
+	versionSet     map[int64]*Version
+	rwMutex        sync.RWMutex
+}
+
+// 当前的版本信息
+type Version struct {
+	versionId int64
+	dbTable   map[string]*InvertedDB
+	oldFiles  []string
+	dbs       []*InvertedDB
+	ref       atomic.Int64
+}
+
 // InitInvertedDB 初始化倒排索引库
-func InitInvertedDB(ctx context.Context) []*InvertedDB {
-	dbs := make([]*InvertedDB, 0)
-	filePath, _ := redis.ListInvertedPath(ctx, redis.InvertedIndexDbPathKeys)
+func InitInvertedDB(ctx context.Context) {
+	// 新建一个dummy version
+	version := Version{
+		versionId: 0,
+		dbTable:   make(map[string]*InvertedDB),
+		dbs:       make([]*InvertedDB, 0),
+	}
+	manager := InvertedDBManager{
+		currentVersion: &version,
+		versionSet:     make(map[int64]*Version),
+	}
+	manager.versionSet[0] = &version
+	manager.UpdateFromRedis(ctx)
+	// cleanTime主要用来测试用
+	cleanTime, ok := ctx.Value("cleanTime").(int)
+	if !ok {
+		// 未设置就按照30分钟来异步清理一次
+		go manager.backgroundCleaner(30 * 60)
+	} else {
+		go manager.backgroundCleaner(cleanTime)
+	}
+	GlobalInvertedDB = &manager
+}
+
+func (m *InvertedDBManager) UpdateFromRedis(ctx context.Context) {
+	newTable := make(map[string]*InvertedDB)
+	// mock redis用于测试，测试ok可以丢掉这部分
+	mockRedisChan, ok := ctx.Value("mockRedisChan").(chan []string)
+	var filePath []string
+	if !ok {
+		filePath, _ = redis.ListInvertedPath(ctx, redis.InvertedIndexDbPathKeys)
+	} else {
+		filePath = <-mockRedisChan
+	}
+	// 使用newTable异地构建，可仅上读锁不影响在线服务
+	m.rwMutex.RLock()
+	// 新建version
+	version := Version{
+		versionId: m.currentVersion.versionId + 1,
+		dbs:       make([]*InvertedDB, 0),
+	}
+	version.ref.Store(0)
+
+	// 找到没有被映射的file，构建倒排db
+	// 复用还在使用的db
+	currentDBTable := m.currentVersion.dbTable
 	for _, file := range filePath {
-		f, err := os.OpenFile(file, os.O_CREATE|os.O_RDWR, 0644)
-		if err != nil {
-			log.LogrusObj.Error(err)
+		_, exist := currentDBTable[file]
+		if !exist {
+			f, err := os.OpenFile(file, os.O_CREATE|os.O_RDWR, 0644)
+			if err != nil {
+				log.LogrusObj.Error(err)
+			}
+			stat, err := f.Stat()
+			if err != nil {
+				log.LogrusObj.Error(err)
+			}
+			db, err := bolt.Open(file, 0600, nil)
+			if err != nil {
+				log.LogrusObj.Error(err)
+			}
+			currentDBTable[file] = &InvertedDB{f, db, stat.Size()}
 		}
-		stat, err := f.Stat()
-		if err != nil {
-			log.LogrusObj.Error(err)
-		}
-		db, err := bolt.Open(file, 0600, nil)
-		if err != nil {
-			log.LogrusObj.Error(err)
-		}
-		dbs = append(dbs, &InvertedDB{f, db, stat.Size()})
+		// 添加倒排db指针
+		idb := currentDBTable[file]
+		newTable[file] = idb
+		version.dbs = append(version.dbs, idb)
 	}
-	if len(filePath) == 0 {
-		return nil
+
+	// 找到新版本不再使用的file，记录下来
+	oldFiles := make([]string, 0)
+	for file := range currentDBTable {
+		// newTable中没有旧的file
+		if _, exist := newTable[file]; !exist {
+			oldFiles = append(oldFiles, file)
+		}
 	}
-	GlobalInvertedDB = dbs
-	return nil
+	// 设置当前版本的dbTable
+	version.dbTable = newTable
+	m.rwMutex.RUnlock()
+
+	// 上写锁更新版本，这里会影响到在线服务，尽量减少写锁内的操作
+	m.rwMutex.Lock()
+	// 新版本不再使用的file放到当前版本
+	m.versionSet[m.currentVersion.versionId].oldFiles = oldFiles
+	m.versionSet[version.versionId] = &version
+	m.currentVersion = &version
+	m.rwMutex.Unlock()
+}
+
+// 后台异步清理掉不再使用的倒排db，构建操作不应该是频繁操作
+func (m *InvertedDBManager) backgroundCleaner(cleanTime int) {
+	// 接受信号优雅退出
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, os.Interrupt, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
+	for {
+		// 用计算器来每cleanTime秒检查一次是否有旧版本需要清理
+		timer := time.NewTimer(time.Duration(cleanTime) * time.Second)
+		defer timer.Stop()
+		select {
+		case <-sig:
+			return
+		case <-timer.C:
+			m.cleanOldVersion()
+		}
+	}
+}
+
+func (m *InvertedDBManager)cleanOldVersion() {
+	oldIds := make([]int64, 0)
+	m.rwMutex.RLock()
+	if len(m.versionSet) > 1 {
+		//存在旧版本，关闭不再需要的db
+		for id, version := range m.versionSet {
+			// 为什么可以直接清理掉ref为0的版本(最新版本除外)?
+			// 因为旧版本不可能再被用到,后续请求永远使用最新版本
+			if id < m.currentVersion.versionId && version.ref.Load() == 0 {
+				for _, file := range version.oldFiles {
+					if idb, exist := version.dbTable[file]; exist {
+						idb.Close()
+					}
+				}
+				//记录一下，后续在版本链中清除
+				oldIds = append(oldIds, id)
+			}
+		}
+	}
+	m.rwMutex.RUnlock()
+	//版本链中去除旧版本需要写锁
+	m.rwMutex.Lock()
+	for _, oldId := range oldIds {
+		delete(m.versionSet, oldId)
+	}
+	m.rwMutex.Unlock()
+}
+
+// 仅能通过ref来获取倒排db
+func (m *InvertedDBManager) Ref() ([]*InvertedDB, int64) {
+	m.rwMutex.RLock()
+	defer m.rwMutex.RUnlock()
+	//获取当前版本files并添加引用
+	versionId := m.currentVersion.versionId
+	dbs := m.currentVersion.dbs
+	m.currentVersion.ref.Add(1)
+	return dbs, versionId
+}
+
+// 用完需要回收
+func (m *InvertedDBManager) Unref(versionId int64) {
+	m.rwMutex.RLock()
+	defer m.rwMutex.RUnlock()
+	version := m.versionSet[versionId]
+	version.ref.Add(-1)
 }
 
 // NewInvertedDB 新建一个inverted
