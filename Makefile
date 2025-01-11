@@ -52,9 +52,9 @@ $(SERVICES):
 
 .PHONY: env-up
 env-up:
+	docker-compose -f docker-compose-milvus.yaml up -d
 	docker-compose -f docker-compose.yaml up -d
 	docker-compose -f docker-compose-with-kafka.yaml up -d
-	docker-compose -f docker-compose-milvus.yaml up -d
 
 .PHONY: env-down
 env-down:
@@ -67,8 +67,8 @@ run-%:
 .PHONY: python-start
 python-start:
     # export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
-	python main.py
+	python3 main.py
 
 .PHONY: python-consume
 python-consume:
-	python ./vector_index.py
+	python3 ./vector_index.py

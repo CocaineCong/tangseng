@@ -47,6 +47,6 @@ def resp_default_error(error):
     return json.dumps({
         'code': 500,
         'doc_ids': '',
-        'msg': 'ok',
+        'msg': 'failed,
         'error': str(error),
     })
