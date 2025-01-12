@@ -26,9 +26,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pkg/errors"
-
 	"github.com/go-resty/resty/v2"
+	"github.com/pkg/errors"
 	"github.com/spf13/cast"
 
 	"github.com/CocaineCong/tangseng/config"

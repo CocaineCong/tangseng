@@ -16,8 +16,8 @@
 # under the License.
 
 import sys
-from pymilvus import (connections, Collection, utility,
-                      FieldSchema, DataType, CollectionSchema)
+from pymilvus import (connections, Collection, utility, FieldSchema, DataType,
+                      CollectionSchema)
 from ..config.config import VECTOR_DIMENSION, MILVUS_HOST, MILVUS_PORT, METRIC_TYPE
 from ..utils.logs import LOGGER
 
@@ -49,17 +49,24 @@ class Milvus:
     def create_collection(self, collection_name):
         try:
             if not self.has_collection(collection_name):
-                doc_id = FieldSchema(name='doc_id', dtype=DataType.INT64,
-                                     description='doc_id', max_length=500,
-                                     is_primary=True, auto_id=False)
+                doc_id = FieldSchema(name='doc_id',
+                                     dtype=DataType.INT64,
+                                     description='doc_id',
+                                     max_length=500,
+                                     is_primary=True,
+                                     auto_id=False)
                 # One and only vector can be created.
                 # tow or zero will be wrong.
-                body_vec = FieldSchema(name='embedding', dtype=DataType.FLOAT_VECTOR,
+                body_vec = FieldSchema(name='embedding',
+                                       dtype=DataType.FLOAT_VECTOR,
                                        description='body embedding vectors',
-                                       dim=VECTOR_DIMENSION, is_primary=False)
+                                       dim=VECTOR_DIMENSION,
+                                       is_primary=False)
 
-                schema = CollectionSchema(fields=[doc_id, body_vec], description='vec_info')
-                self.collection = Collection(name=collection_name, schema=schema)
+                schema = CollectionSchema(fields=[doc_id, body_vec],
+                                          description='vec_info')
+                self.collection = Collection(name=collection_name,
+                                             schema=schema)
                 self.create_index(collection_name)
                 LOGGER.info(f"create milvus collection:{collection_name}")
             else:
@@ -77,7 +84,8 @@ class Milvus:
             ids = mr.primary_keys
             self.collection.load()
             LOGGER.info(
-                f"insert vector to milvus in collection: {collection_name} with body {len(body_vec)}")
+                f"insert vector to milvus in collection: {collection_name} with body {len(body_vec)}"
+            )
             return ids
         except Exception as e:
             LOGGER.error(f"insert to load data to milvus {e}")
@@ -86,11 +94,20 @@ class Milvus:
     def create_index(self, collection_name):
         try:
             self.set_collection(collection_name)
-            default_index = {"index_type": "IVF_SQ8", "metric_type": METRIC_TYPE, "params": {"nlist": 16384}}
+            default_index = {
+                "index_type": "IVF_SQ8",
+                "metric_type": METRIC_TYPE,
+                "params": {
+                    "nlist": 16384
+                }
+            }
             print(default_index)
-            status = self.collection.create_index(field_name="embedding", index_params=default_index)
+            status = self.collection.create_index(field_name="embedding",
+                                                  index_params=default_index)
             if not status.code:
-                LOGGER.info(f"successfully create index in collection :{collection_name} with param:{default_index}")
+                LOGGER.info(
+                    f"successfully create index in collection :{collection_name} with param:{default_index}"
+                )
                 return status
             else:
                 raise Exception(status.message)
@@ -112,8 +129,16 @@ class Milvus:
     def search_vectors(self, collection_name, vectors, top_k):
         try:
             self.set_collection(collection_name)
-            search_params = {"metric_type": METRIC_TYPE, "params": {"nprobe": 16}}
-            res = self.collection.search(vectors, anns_field="embedding", param=search_params, limit=top_k)
+            search_params = {
+                "metric_type": METRIC_TYPE,
+                "params": {
+                    "nprobe": 16
+                }
+            }
+            res = self.collection.search(vectors,
+                                         anns_field="embedding",
+                                         param=search_params,
+                                         limit=top_k)
             LOGGER.info(f"successfully search in collection:{res}")
             return res
         except Exception as e:
@@ -124,7 +149,9 @@ class Milvus:
         try:
             self.set_collection(collection_name)
             num = self.collection.num_entities
-            LOGGER.info(f"successfully get the num:{num} of the collection:{collection_name}")
+            LOGGER.info(
+                f"successfully get the num:{num} of the collection:{collection_name}"
+            )
             return num
         except Exception as e:
             LOGGER.error(f"failed to count vectors in milvus:{e}")

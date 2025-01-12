@@ -45,6 +45,7 @@ app = Flask(__name__)
 
 @app.route("/test_insert", methods=['GET'])
 def test_insert_something():
+    print("11112")
     ids = do_upload(DEFAULT_MILVUS_TABLE_NAME, 2, "mirror",
                     "mirror something like mirror", milvus_client)
     print(ids)

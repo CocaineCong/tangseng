@@ -14,7 +14,6 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-
 """search vector grpc service"""
 import inspect
 import json
@@ -41,22 +40,22 @@ class SearchVectorService(search_vector_pb2_grpc.SearchVectorServiceServicer):
 
     def SearchVector(self, request,
                      context) -> search_vector_pb2.SearchVectorResponse:
-        with tracer.start_as_current_span(inspect.getframeinfo(inspect.currentframe()).function):
+        with tracer.start_as_current_span(
+                inspect.getframeinfo(inspect.currentframe()).function):
             try:
                 queryies = request.query
                 doc_ids = []
                 for query in queryies:
                     ids, distants = do_search(DEFAULT_MILVUS_TABLE_NAME, query,
-                                              VECTOR_RECALL_TOPK, milvus_client)
+                                              VECTOR_RECALL_TOPK,
+                                              milvus_client)
                     print("search vector ids", ids)
                     doc_ids += ids
-                print("search vector data", doc_ids)
                 return search_vector_pb2.SearchVectorResponse(code=200,
                                                               doc_ids=doc_ids,
                                                               msg='ok',
                                                               error='')
             except Exception as e:
-                print("search vector error", e)
                 return search_vector_pb2.SearchVectorResponse(code=500,
                                                               error=str(e))
 

@@ -19,6 +19,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
 	"github.com/pingcap/errors"
@@ -48,6 +49,7 @@ func (s *SearchEngineSrv) SearchEngineSearch(ctx context.Context, req *pb.Search
 	resp = new(pb.SearchEngineResponse)
 	resp.Code = e.SUCCESS
 	query := req.Query
+	fmt.Println("111-query", query)
 	sResult, err := recall.SearchRecall(ctx, query)
 	if err != nil {
 		resp.Code = e.ERROR

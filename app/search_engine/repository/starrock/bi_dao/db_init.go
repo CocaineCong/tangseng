@@ -22,16 +22,15 @@ import (
 	"strings"
 	"time"
 
-	logs "github.com/CocaineCong/tangseng/pkg/logger"
-	"github.com/pkg/errors"
-
 	"github.com/gin-gonic/gin"
+	"github.com/pkg/errors"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 
 	"github.com/CocaineCong/tangseng/config"
+	logs "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
 var _db *gorm.DB

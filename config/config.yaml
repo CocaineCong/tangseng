@@ -84,7 +84,7 @@ services:
     addr:
       - 127.0.0.1:20004
     metrics:
-      - 127.0.0.1:30004
+      - 127.0.0.1:30014
 
   index_platform:
     name: index_platform

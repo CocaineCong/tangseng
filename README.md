@@ -101,6 +101,14 @@ all in react, but still coding
    ```python
    pip install -r requirements.txt
    ```
+5. 启动主程序
+   ```python
+   sh python-start.sh
+   ```
+6. 启动脚本构建索引
+    ```python
+    make python-consume
+    ```
 
 ### Golang 启动! 
 

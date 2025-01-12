@@ -21,14 +21,9 @@ import (
 	"context"
 	"net"
 
-	"github.com/CocaineCong/tangseng/pkg/prometheus"
-	"github.com/CocaineCong/tangseng/pkg/tracing"
-	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
-
-	logs "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/pkg/errors"
-
 	"github.com/sirupsen/logrus"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 
 	"github.com/CocaineCong/tangseng/app/search_engine/analyzer"
@@ -40,12 +35,15 @@ import (
 	pb "github.com/CocaineCong/tangseng/idl/pb/search_engine"
 	"github.com/CocaineCong/tangseng/loading"
 	"github.com/CocaineCong/tangseng/pkg/discovery"
+	logs "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/CocaineCong/tangseng/pkg/prometheus"
+	"github.com/CocaineCong/tangseng/pkg/tracing"
 )
 
 func main() {
 	ctx := context.Background()
 	loading.Loading()
-	// bi_dao.InitDB() // TODO starrocks完善才开启
+	// bi_dao.InitDB() // TODO: starrocks完善才开启
 	analyzer.InitSeg()
 	storage.InitStorageDB(ctx)
 	rpc.Init()
@@ -60,7 +58,7 @@ func main() {
 		Name: config.Conf.Domain[consts.SearchServiceName].Name,
 		Addr: grpcAddress,
 	}
-	//注册tracer
+	// 注册tracer
 	provider := tracing.InitTracerProvider(config.Conf.Jaeger.Addr, consts.SearchServiceName)
 	defer func() {
 		if provider == nil {
@@ -76,6 +74,7 @@ func main() {
 		grpc.UnaryInterceptor(prometheus.UnaryServerInterceptor),
 		grpc.StreamInterceptor(prometheus.StreamServerInterceptor),
 	)
+
 	defer server.Stop()
 	// 绑定service
 	pb.RegisterSearchEngineServiceServer(server, service.GetSearchEngineSrv())
