@@ -27,7 +27,6 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-
 	bolt "go.etcd.io/bbolt"
 
 	"github.com/CocaineCong/tangseng/consts"
@@ -175,7 +174,7 @@ func (m *InvertedDBManager) backgroundCleaner(cleanTime int) {
 	}
 }
 
-func (m *InvertedDBManager)cleanOldVersion() {
+func (m *InvertedDBManager) cleanOldVersion() {
 	oldIds := make([]int64, 0)
 	m.rwMutex.RLock()
 	if len(m.versionSet) > 1 {

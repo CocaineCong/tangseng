@@ -51,7 +51,7 @@ func main() {
 		Name: config.Conf.Domain[consts.UserServiceName].Name,
 		Addr: grpcAddress,
 	}
-	//注册tracer
+	// 注册tracer
 	provider := tracing.InitTracerProvider(config.Conf.Jaeger.Addr, consts.UserServiceName)
 	defer func() {
 		if provider == nil {
@@ -67,6 +67,7 @@ func main() {
 		grpc.UnaryInterceptor(prometheus.UnaryServerInterceptor),
 		grpc.StreamInterceptor(prometheus.StreamServerInterceptor),
 	)
+
 	defer server.Stop()
 	// 绑定service
 	pb.RegisterUserServiceServer(server, service.GetUserSrv())

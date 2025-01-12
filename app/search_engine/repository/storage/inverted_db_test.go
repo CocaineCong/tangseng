@@ -70,6 +70,7 @@ func TestInitInvertedDB(t *testing.T) {
 	if len(GlobalInvertedDB.versionSet) != 1 {
 		t.Errorf("Expected %v, but got %v", 1, len(GlobalInvertedDB.versionSet))
 	}
+
 	if GlobalInvertedDB.currentVersion.versionId != 1 {
 		t.Errorf("Expected %v, but got %v", 1, GlobalInvertedDB.currentVersion.versionId)
 	}
@@ -80,7 +81,7 @@ func TestInitInvertedDB(t *testing.T) {
 	}
 	mockRedisChan <- getMsg(testDir, 6, 12)
 	GlobalInvertedDB.UpdateFromRedis(ctx)
-	
+
 	/*
 	   此时有两个version
 	                                   current ↓
