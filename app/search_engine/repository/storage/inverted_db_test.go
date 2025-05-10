@@ -54,18 +54,24 @@ func TestInitInvertedDB(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create test directory: %v", err)
 	}
-	defer os.RemoveAll(testDir) // 确保在测试结束时删除目录
+	defer func(path string) {
+		err := os.RemoveAll(path)
+		if err != nil {
+			return
+		}
+	}(testDir) // 确保在测试结束时删除目录
 	mockRedisChan := make(chan []string, 10)
+	// TODO: ctx的操作应该都放到context中
 	ctx := context.Background()
-	ctx = context.WithValue(ctx, "cleanTime", 2)
-	ctx = context.WithValue(ctx, "mockRedisChan", mockRedisChan)
+	ctx = context.WithValue(ctx, "cleanTime", 2)                 //nolint:all
+	ctx = context.WithValue(ctx, "mockRedisChan", mockRedisChan) //nolint:all
 
 	// 向channel发送数据
 	mockRedisChan <- getMsg(testDir, 3, 10)
 
 	InitInvertedDB(ctx)
 
-	//睡眠3秒，确保后台clean线程删除version-0
+	// 睡眠3秒，确保后台clean线程删除version-0
 	time.Sleep(3 * time.Second)
 	if len(GlobalInvertedDB.versionSet) != 1 {
 		t.Errorf("Expected %v, but got %v", 1, len(GlobalInvertedDB.versionSet))
@@ -75,7 +81,7 @@ func TestInitInvertedDB(t *testing.T) {
 		t.Errorf("Expected %v, but got %v", 1, GlobalInvertedDB.currentVersion.versionId)
 	}
 	// 使用当前版本，然后新建一个版本
-	_, oldversionId := GlobalInvertedDB.Ref()
+	_, oldVersionId := GlobalInvertedDB.Ref()
 	if GlobalInvertedDB.currentVersion.ref.Load() != 1 {
 		t.Errorf("Expected %v, but got %v", 1, GlobalInvertedDB.currentVersion.ref.Load())
 	}
@@ -91,10 +97,10 @@ func TestInitInvertedDB(t *testing.T) {
 		t.Errorf("Expected %v, but got %v", 1, GlobalInvertedDB.currentVersion.versionId)
 	}
 
-	//去引用，这个版本会被异步释放掉
-	GlobalInvertedDB.Unref(oldversionId)
+	// 去引用，这个版本会被异步释放掉
+	GlobalInvertedDB.Unref(oldVersionId)
 
-	//睡眠3秒，确保后台clean线程删除version-1
+	// 睡眠3秒，确保后台clean线程删除version-1
 	time.Sleep(3 * time.Second)
 	// 当前只有最新版本
 	if GlobalInvertedDB.currentVersion.versionId != 2 {

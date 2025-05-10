@@ -33,7 +33,7 @@ func GenerateAllConfigFile() {
 	if len(service) == 0 {
 		return
 	}
-	for k, _ := range service {
+	for k := range service {
 		GenerateConfigFile(k)
 	}
 }

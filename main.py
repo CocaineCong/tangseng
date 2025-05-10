@@ -47,7 +47,7 @@ app = Flask(__name__)
 def test_insert_something():
     ids = do_upload(DEFAULT_MILVUS_TABLE_NAME, 2, "mirror",
                     "mirror something like mirror", milvus_client)
-    return json.dumps({'err': 0, 'msg': 'ok', 'data': 'ok'})
+    return json.dumps({'err': 0, 'msg': 'ok', 'data': ids})
 
 
 @app.route("/test_search", methods=['POST'])

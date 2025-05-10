@@ -22,10 +22,11 @@ import (
 	"fmt"
 	"time"
 
+	etcd "go.etcd.io/etcd/client/v3"
+
 	"github.com/CocaineCong/tangseng/config"
 	"github.com/CocaineCong/tangseng/consts"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
-	etcd "go.etcd.io/etcd/client/v3"
 )
 
 // Instance is for marshal conf
@@ -68,7 +69,7 @@ func keepALive(c *etcd.Client, leaseId etcd.LeaseID) {
 		case <-keepLiveCh:
 			break
 		case <-time.After(time.Duration(15) * time.Second):
-			log.LogrusObj.Error(fmt.Sprintf("A server lose heart"))
+			log.LogrusObj.Error("A server lose heart")
 			return
 		}
 	}
@@ -111,7 +112,7 @@ func GetAllServerAddress() []*Instance {
 		return nil
 	}
 	instances := make([]*Instance, len(service))
-	for k, _ := range service {
+	for k := range service {
 		instances = append(instances, GetServerAddress(k))
 	}
 	return instances
