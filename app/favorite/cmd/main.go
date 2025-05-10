@@ -21,9 +21,10 @@ import (
 	"context"
 	"net"
 
-	"github.com/CocaineCong/tangseng/pkg/prometheus"
-	"github.com/CocaineCong/tangseng/pkg/tracing"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	"google.golang.org/grpc"
 
 	"github.com/CocaineCong/tangseng/app/favorite/internal/service"
 	"github.com/CocaineCong/tangseng/config"
@@ -32,9 +33,8 @@ import (
 	"github.com/CocaineCong/tangseng/loading"
 	"github.com/CocaineCong/tangseng/pkg/discovery"
 	logs "github.com/CocaineCong/tangseng/pkg/logger"
-	"github.com/sirupsen/logrus"
-	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
-	"google.golang.org/grpc"
+	"github.com/CocaineCong/tangseng/pkg/prometheus"
+	"github.com/CocaineCong/tangseng/pkg/tracing"
 )
 
 func main() {
@@ -49,7 +49,7 @@ func main() {
 		Name: config.Conf.Domain[consts.FavoriteServiceName].Name,
 		Addr: grpcAddress,
 	}
-	//注册tracer
+	// 注册tracer
 	provider := tracing.InitTracerProvider(config.Conf.Jaeger.Addr, consts.FavoriteServiceName)
 	defer func() {
 		if provider == nil {

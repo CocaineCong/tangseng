@@ -23,23 +23,23 @@ import (
 	cmap "github.com/orcaman/concurrent-map/v2"
 )
 
-// TrieNode TODO:后面看看能不能把build和recall的过程分开,主要是 cmap.ConcurrentMap[string, *TrieNode] 没法反序列化...
-type TrieNode struct {
-	IsEnd          bool                                  `json:"is_end"`   // 标记该节点是否为一个单词的末尾
-	Children       cmap.ConcurrentMap[string, *TrieNode] `json:"children"` // 存储子节点的指针
-	ChildrenRecall map[string]*TrieNode                  `json:"children_recall"`
+// Node TODO:后面看看能不能把build和recall的过程分开,主要是 cmap.ConcurrentMap[string, *TrieNode] 没法反序列化...
+type Node struct {
+	IsEnd          bool                              `json:"is_end"`   // 标记该节点是否为一个单词的末尾
+	Children       cmap.ConcurrentMap[string, *Node] `json:"children"` // 存储子节点的指针
+	ChildrenRecall map[string]*Node                  `json:"children_recall"`
 }
 
-func NewTrieNode() *TrieNode {
-	m := cmap.New[*TrieNode]()
-	return &TrieNode{
+func NewTrieNode() *Node {
+	m := cmap.New[*Node]()
+	return &Node{
 		IsEnd:    false,
 		Children: m,
 	}
 }
 
 type Trie struct {
-	Root *TrieNode `json:"root"` // 存储 Trie 树的根节点
+	Root *Node `json:"root"` // 存储 Trie 树的根节点
 }
 
 func NewTrie() *Trie {
@@ -86,10 +86,10 @@ func (trie *Trie) StartsWith(prefix string) bool {
 }
 
 func (trie *Trie) FindAllByPrefix(prefix string) []string {
-	prefixs := []rune(prefix)
+	prefixes := []rune(prefix)
 	node := trie.Root
-	for i := 0; i < len(prefixs); i++ {
-		c := string(prefixs[i])
+	for i := 0; i < len(prefixes); i++ {
+		c := string(prefixes[i])
 		if _, ok := node.Children.Get(c); !ok {
 			return nil
 		}
@@ -100,7 +100,7 @@ func (trie *Trie) FindAllByPrefix(prefix string) []string {
 	return words
 }
 
-func (trie *Trie) dfs(node *TrieNode, word string, words *[]string) {
+func (trie *Trie) dfs(node *Node, word string, words *[]string) {
 	if node.IsEnd {
 		*words = append(*words, word)
 	}
@@ -115,8 +115,8 @@ func (trie *Trie) Merge(other *Trie) {
 		return
 	}
 
-	var mergeNodes func(n1, n2 *TrieNode)
-	mergeNodes = func(n1, n2 *TrieNode) {
+	var mergeNodes func(n1, n2 *Node)
+	mergeNodes = func(n1, n2 *Node) {
 		for c, child := range n2.Children.Items() {
 			if v, ok := n1.Children.Get(c); ok {
 				mergeNodes(v, child)
@@ -130,7 +130,7 @@ func (trie *Trie) Merge(other *Trie) {
 	mergeNodes(trie.Root, other.Root)
 }
 
-func traverse(node *TrieNode, prefix string) {
+func traverse(node *Node, prefix string) {
 	if node.IsEnd {
 		fmt.Println(prefix)
 	}

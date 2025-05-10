@@ -18,13 +18,14 @@
 package kfk
 
 import (
-	logs "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/IBM/sarama"
+
+	logs "github.com/CocaineCong/tangseng/pkg/logger"
 
 	"github.com/CocaineCong/tangseng/config"
 )
 
-var GobalKafka sarama.Client
+var GlobalKafka sarama.Client
 
 func InitKafka() {
 	con := sarama.NewConfig()
@@ -34,5 +35,5 @@ func InitKafka() {
 		logs.LogrusObj.Errorln(err)
 		return
 	}
-	GobalKafka = kafkaClient
+	GlobalKafka = kafkaClient
 }

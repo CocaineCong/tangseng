@@ -7,12 +7,14 @@ require (
 	github.com/IBM/sarama v1.41.1
 	github.com/RoaringBitmap/roaring v1.5.0
 	github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5
+	github.com/bits-and-blooms/bitset v1.22.0
 	github.com/bytedance/sonic v1.9.2
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/elastic/go-elasticsearch v0.0.0
 	github.com/gin-contrib/sessions v0.0.5
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-ego/gse v0.80.2
+	github.com/go-playground/assert/v2 v2.2.0
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/golang-module/carbon v1.7.3
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
@@ -28,6 +30,7 @@ require (
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/samber/lo v1.38.1
 	github.com/sirupsen/logrus v1.9.3
+	github.com/spaolacci/murmur3 v1.1.0
 	github.com/spf13/cast v1.5.0
 	github.com/spf13/viper v1.15.0
 	github.com/xtgo/set v1.0.0
@@ -52,7 +55,6 @@ require (
 
 require (
 	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/bits-and-blooms/bitset v1.2.0 // indirect
 	github.com/cenkalti/backoff/v4 v4.2.1 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect

@@ -25,9 +25,8 @@ import (
 	"sync"
 	"syscall"
 
-	"github.com/pkg/errors"
-
 	"github.com/IBM/sarama"
+	"github.com/pkg/errors"
 
 	"github.com/CocaineCong/tangseng/app/index_platform/repository/db/dao"
 	"github.com/CocaineCong/tangseng/config"
@@ -117,7 +116,7 @@ func toggleConsumptionFlow(client sarama.ConsumerGroup, isPaused *bool) {
 	*isPaused = !*isPaused
 }
 
-// Consumer Sarama消费者群体的消费者
+// ForwardIndexConsumer Sarama消费者群体的消费者
 type ForwardIndexConsumer struct {
 	Ready chan bool
 }

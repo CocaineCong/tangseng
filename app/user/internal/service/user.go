@@ -26,6 +26,7 @@ import (
 	"github.com/CocaineCong/tangseng/app/user/internal/repository/db/dao"
 	e2 "github.com/CocaineCong/tangseng/consts/e"
 	pb "github.com/CocaineCong/tangseng/idl/pb/user"
+	"github.com/CocaineCong/tangseng/repository/mysql/model"
 )
 
 var UserSrvIns *UserSrv
@@ -62,7 +63,12 @@ func (u *UserSrv) UserLogin(ctx context.Context, req *pb.UserLoginReq) (resp *pb
 func (u *UserSrv) UserRegister(ctx context.Context, req *pb.UserRegisterReq) (resp *pb.UserCommonResponse, err error) {
 	resp = new(pb.UserCommonResponse)
 	resp.Code = e2.SUCCESS
-	err = dao.NewUserDao(ctx).CreateUser(req)
+	user := &model.User{
+		UserName: req.UserName,
+		NickName: req.NickName,
+	}
+	_ = user.SetPassword(req.Password)
+	err = dao.NewUserDao(ctx).CreateUser(user)
 	if err != nil {
 		resp.Code = e2.ERROR
 		err = errors.WithMessage(err, "createUser error")

@@ -19,40 +19,79 @@ package bloom_filter
 
 import (
 	"hash"
-	"hash/fnv"
 	"math"
 	"sync"
+
+	"github.com/bits-and-blooms/bitset"
+	"github.com/spaolacci/murmur3"
 )
 
-// 布隆过滤器，判断是否已经被索引过了
+const (
+	defaultBfNum        = 100000 // 默认的数
+	defaultFalsePercent = 0.01   // 默认的错误率
+)
 
+// BloomFilter 布隆过滤器，判断是否已经被索引过了
 type BloomFilter struct {
-	bits        []bool
-	numHashFunc int
-	hashFunc    hash.Hash64
-	mutex       sync.Mutex
+	bits              *bitset.BitSet
+	numItems          int
+	falsePositiveRate float64
+	hashFuncs         []hash.Hash64
+	mutex             sync.Mutex
 }
 
-func NewBloomFilter(numItems int, falsePositiveRate float64) *BloomFilter {
-	numBits := int(math.Ceil((float64(numItems) * math.Log(falsePositiveRate)) / math.Log(1.0/math.Pow(2, math.Log(2)))))
-	numHashFunc := int(math.Ceil((float64(numBits) / float64(numItems)) * math.Log(2)))
-	return &BloomFilter{
-		bits:        make([]bool, numBits),
-		numHashFunc: numHashFunc,
-		hashFunc:    fnv.New64(),
+type Options func(in *BloomFilter)
+
+func WithNumber(number int) Options {
+	return func(in *BloomFilter) {
+		in.numItems = number
 	}
+}
+
+func WithFalseRate(rate float64) Options {
+	return func(in *BloomFilter) {
+		in.falsePositiveRate = rate
+	}
+}
+
+// NewBloomFilter 新建一个布隆过滤器
+func NewBloomFilter(option ...Options) *BloomFilter {
+	bf := &BloomFilter{
+		numItems:          defaultBfNum,
+		falsePositiveRate: defaultFalsePercent,
+	}
+	for _, opt := range option {
+		opt(bf)
+	}
+	m := getM(bf.numItems, bf.falsePositiveRate)
+	k := getK(m, bf.numItems)
+	hashFuncs := make([]hash.Hash64, k)
+	for i := 0; i < k; i++ {
+		hashFuncs[i] = murmur3.New64WithSeed(uint32(i))
+	}
+	bf.bits = bitset.New(m)
+	bf.hashFuncs = hashFuncs
+	return bf
+}
+
+func getM(numItems int, falsePositiveRate float64) uint {
+	return uint(math.Ceil((float64(numItems) * math.Log(falsePositiveRate)) / math.Log(1.0/math.Pow(2, math.Log(2)))))
+}
+
+func getK(m uint, numItems int) int {
+	return int(math.Ceil((float64(m) / float64(numItems)) * math.Log(2)))
 }
 
 func (bf *BloomFilter) Add(item string) {
 	bf.mutex.Lock()
 	defer bf.mutex.Unlock()
 
-	for i := 0; i < bf.numHashFunc; i++ {
-		bf.hashFunc.Reset()
-		bf.hashFunc.Write([]byte(item))
-		hashValue := bf.hashFunc.Sum64()
-		index := hashValue % uint64(len(bf.bits))
-		bf.bits[index] = true
+	for _, hashFunc := range bf.hashFuncs {
+		hashFunc.Reset()
+		_, _ = hashFunc.Write([]byte(item))
+		hashValue := hashFunc.Sum64()
+		index := hashValue % uint64(bf.bits.Len())
+		bf.bits.Set(uint(index))
 	}
 }
 
@@ -60,12 +99,12 @@ func (bf *BloomFilter) Contains(item string) bool {
 	bf.mutex.Lock()
 	defer bf.mutex.Unlock()
 
-	for i := 0; i < bf.numHashFunc; i++ {
-		bf.hashFunc.Reset()
-		bf.hashFunc.Write([]byte(item))
-		hashValue := bf.hashFunc.Sum64()
-		index := hashValue % uint64(len(bf.bits))
-		if !bf.bits[index] {
+	for _, hashFunc := range bf.hashFuncs {
+		hashFunc.Reset()
+		_, _ = hashFunc.Write([]byte(item))
+		hashValue := hashFunc.Sum64()
+		index := hashValue % uint64(bf.bits.Len())
+		if !bf.bits.Test(uint(index)) {
 			return false
 		}
 	}

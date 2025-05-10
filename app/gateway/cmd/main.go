@@ -23,25 +23,23 @@ import (
 	"net/http"
 	"time"
 
-	logs "github.com/CocaineCong/tangseng/pkg/logger"
-
-	"github.com/CocaineCong/tangseng/consts"
-	"github.com/CocaineCong/tangseng/pkg/tracing"
-
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc/resolver"
 
 	"github.com/CocaineCong/tangseng/app/gateway/routes"
 	"github.com/CocaineCong/tangseng/app/gateway/rpc"
 	"github.com/CocaineCong/tangseng/config"
+	"github.com/CocaineCong/tangseng/consts"
 	"github.com/CocaineCong/tangseng/loading"
 	"github.com/CocaineCong/tangseng/pkg/discovery"
+	logs "github.com/CocaineCong/tangseng/pkg/logger"
+	"github.com/CocaineCong/tangseng/pkg/tracing"
 )
 
 func main() {
 	loading.Loading()
 	rpc.Init()
-	////注册tracer
+	// 注册tracer
 	provider := tracing.InitTracerProvider(config.Conf.Jaeger.Addr, consts.ServiceName)
 	defer func() {
 		if provider == nil {
