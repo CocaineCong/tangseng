@@ -88,7 +88,6 @@ func (consumer *TrieTreeConsumer) Cleanup(sarama.ConsumerGroupSession) error {
 // ConsumeClaim 必须启动 ConsumerGroupClaim 的 Messages() 消费者循环。
 // 一旦 Messages() 通道关闭，处理程序必须完成其处理循环并退出。
 func (consumer *TrieTreeConsumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
-	// ctx := context.Background()
 	gapTime := 2 * time.Minute
 	for {
 		select {
@@ -98,14 +97,12 @@ func (consumer *TrieTreeConsumer) ConsumeClaim(session sarama.ConsumerGroupSessi
 				return nil
 			}
 			// 构建trie tree树
-			trie.GobalTrieTree.Insert(string(message.Value))
-			// logs.LogrusObj.Infof("TrieTreeConsumer Message claimed: value = %s, timestamp = %v, topic = %s", string(message.Value), message.Timestamp, message.Topic)
+			trie.GlobalTrieTree.Insert(string(message.Value))
 			session.MarkMessage(message, "")
-		// https://github.com/IBM/sarama/issues/1192
 
 		case <-time.After(gapTime):
 			logs.LogrusObj.Infof("ConsumeClaim starting store dict")
-			// _ = storage.GlobalTrieDBs.StorageDict(trie.GobalTrieTree) // TODO:后续看看能不能实现一个全局的triedb，每次都先读取存量进行初始化，再插入增量...
+			// _ = storage.GlobalTrieDBs.StorageDict(trie.GlobalTrieTree) // TODO:后续看看能不能实现一个全局的triedb，每次都先读取存量进行初始化，再插入增量...
 			logs.LogrusObj.Infof("ConsumeClaim ending store dict")
 
 		case <-session.Context().Done():
@@ -116,12 +113,12 @@ func (consumer *TrieTreeConsumer) ConsumeClaim(session sarama.ConsumerGroupSessi
 }
 
 // func mergeTrieTree(node string) {
-// 	trie.GobalTrieTree.Insert(node)
+// 	trie.GlobalTrieTree.Insert(node)
 // 	gapTime := 2 * time.Minute
 // 	for {
 // 		select {
 // 		case <-time.After(gapTime):
-// 			_ = storage.GlobalTrieDBs.StorageDict(trie.GobalTrieTree)
+// 			_ = storage.GlobalTrieDBs.StorageDict(trie.GlobalTrieTree)
 // 		}
 // 	}
 // }

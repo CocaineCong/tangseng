@@ -20,10 +20,15 @@ package ctl
 import (
 	"time"
 
-	"github.com/CocaineCong/tangseng/pkg/tracing"
 	"github.com/gin-gonic/gin"
 
+	"github.com/CocaineCong/tangseng/pkg/tracing"
+
 	e2 "github.com/CocaineCong/tangseng/consts/e"
+)
+
+const (
+	defaultSuccessMsg = "操作成功"
 )
 
 // Response 基础序列化器
@@ -44,7 +49,7 @@ func RespSuccess(ctx *gin.Context, data interface{}, code ...int) *Response {
 	}
 
 	if data == nil {
-		data = "操作成功"
+		data = defaultSuccessMsg
 	}
 
 	r := &Response{

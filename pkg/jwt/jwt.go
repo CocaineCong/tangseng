@@ -20,11 +20,14 @@ package jwt
 import (
 	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/pkg/errors"
 
-	"github.com/dgrijalva/jwt-go"
-
 	"github.com/CocaineCong/tangseng/consts"
+)
+
+const (
+	defaultIssuer = "Tangseng-search-engine"
 )
 
 var jwtSecret = []byte("38324-search-engine") // TODO 从配置文件读取
@@ -45,7 +48,7 @@ func GenerateToken(id int64, username string) (accessToken, refreshToken string,
 		Username: username,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),
-			Issuer:    "mall",
+			Issuer:    defaultIssuer,
 		},
 	}
 	// 加密并获得完整的编码后的字符串token
@@ -56,7 +59,7 @@ func GenerateToken(id int64, username string) (accessToken, refreshToken string,
 
 	refreshToken, err = jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
 		ExpiresAt: rtExpireTime.Unix(),
-		Issuer:    "search-engine",
+		Issuer:    defaultIssuer,
 	}).SignedString(jwtSecret)
 	if err != nil {
 		return "", "", errors.Wrap(err, "failed to get refreshToken")

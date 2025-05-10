@@ -35,7 +35,7 @@ var (
 	_ easyjson.Marshaler
 )
 
-func easyjson4298c6f8DecodeGithubComCocaineCongTangsengPkgTrie(in *jlexer.Lexer, out *TrieNode) {
+func easyjson4298c6f8DecodeGithubComCocaineCongTangsengPkgTrie(in *jlexer.Lexer, out *Node) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -70,7 +70,7 @@ func easyjson4298c6f8DecodeGithubComCocaineCongTangsengPkgTrie(in *jlexer.Lexer,
 		in.Consumed()
 	}
 }
-func easyjson4298c6f8EncodeGithubComCocaineCongTangsengPkgTrie(out *jwriter.Writer, in TrieNode) {
+func easyjson4298c6f8EncodeGithubComCocaineCongTangsengPkgTrie(out *jwriter.Writer, in Node) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -88,26 +88,26 @@ func easyjson4298c6f8EncodeGithubComCocaineCongTangsengPkgTrie(out *jwriter.Writ
 }
 
 // MarshalJSON supports json.Marshaler interface
-func (v TrieNode) MarshalJSON() ([]byte, error) {
+func (v Node) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
 	easyjson4298c6f8EncodeGithubComCocaineCongTangsengPkgTrie(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
-func (v TrieNode) MarshalEasyJSON(w *jwriter.Writer) {
+func (v Node) MarshalEasyJSON(w *jwriter.Writer) {
 	easyjson4298c6f8EncodeGithubComCocaineCongTangsengPkgTrie(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
-func (v *TrieNode) UnmarshalJSON(data []byte) error {
+func (v *Node) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
 	easyjson4298c6f8DecodeGithubComCocaineCongTangsengPkgTrie(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
-func (v *TrieNode) UnmarshalEasyJSON(l *jlexer.Lexer) {
+func (v *Node) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson4298c6f8DecodeGithubComCocaineCongTangsengPkgTrie(l, v)
 }
 func easyjson4298c6f8DecodeGithubComCocaineCongTangsengPkgTrie1(in *jlexer.Lexer, out *Trie) {
@@ -135,7 +135,7 @@ func easyjson4298c6f8DecodeGithubComCocaineCongTangsengPkgTrie1(in *jlexer.Lexer
 				out.Root = nil
 			} else {
 				if out.Root == nil {
-					out.Root = new(TrieNode)
+					out.Root = new(Node)
 				}
 				(*out.Root).UnmarshalEasyJSON(in)
 			}

@@ -20,14 +20,13 @@ package kfk
 import (
 	_ "net/http/pprof"
 
-	"github.com/pkg/errors"
-
 	"github.com/IBM/sarama"
+	"github.com/pkg/errors"
 )
 
 // KafkaProducer 发送单条
 func KafkaProducer(topic string, msg []byte) (err error) {
-	producer, err := sarama.NewSyncProducerFromClient(GobalKafka)
+	producer, err := sarama.NewSyncProducerFromClient(GlobalKafka)
 	if err != nil {
 		return errors.Wrap(err, "failed to create Kafka producer")
 	}
@@ -44,7 +43,7 @@ func KafkaProducer(topic string, msg []byte) (err error) {
 
 // KafkaProducers 发送多条，topic在messages中
 func KafkaProducers(messages []*sarama.ProducerMessage) (err error) {
-	producer, err := sarama.NewSyncProducerFromClient(GobalKafka)
+	producer, err := sarama.NewSyncProducerFromClient(GlobalKafka)
 	if err != nil {
 		return errors.Wrap(err, "failed to create Kafka producer")
 	}

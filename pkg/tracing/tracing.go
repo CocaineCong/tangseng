@@ -19,21 +19,19 @@ package tracing
 
 import (
 	"context"
+
 	"github.com/gin-gonic/gin"
-
-	"go.opentelemetry.io/otel/trace"
-
-	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
-
-	logs "github.com/CocaineCong/tangseng/pkg/logger"
 	"go.opentelemetry.io/contrib/propagators/b3"
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
-
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/resource"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.20.0"
+	"go.opentelemetry.io/otel/trace"
+
+	logs "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
 func InitTracerProvider(url string, serviceName string) func(ctx context.Context) error {
@@ -50,10 +48,10 @@ func InitTracerProvider(url string, serviceName string) func(ctx context.Context
 		return nil
 	}
 	tp := tracesdk.NewTracerProvider(
-		tracesdk.WithBatcher(exporter),                  //注册exporter
-		tracesdk.WithResource(newResource(serviceName)), //设置服务信息
+		tracesdk.WithBatcher(exporter),                  // 注册exporter
+		tracesdk.WithResource(newResource(serviceName)), // 设置服务信息
 	)
-	//设置全局tracer
+	// 设置全局tracer
 	otel.SetTracerProvider(tp)
 	b3Propagator := b3.New(b3.WithInjectEncoding(b3.B3MultipleHeader))
 	propagator := propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}, b3Propagator)
