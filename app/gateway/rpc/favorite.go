@@ -24,6 +24,7 @@ import (
 
 	"github.com/CocaineCong/tangseng/consts/e"
 	favoritePb "github.com/CocaineCong/tangseng/idl/pb/favorite"
+	"github.com/CocaineCong/tangseng/pkg/ctl"
 )
 
 func FavoriteCreate(ctx context.Context, req *favoritePb.FavoriteCreateReq) (resp *favoritePb.FavoriteCommonResponse, err error) {
@@ -56,6 +57,12 @@ func FavoriteUpdate(ctx context.Context, req *favoritePb.FavoriteUpdateReq) (res
 }
 
 func FavoriteList(ctx context.Context, req *favoritePb.FavoriteListReq) (resp *favoritePb.FavoriteListResponse, err error) {
+	user, err := ctl.GetUserInfo(ctx)
+	if err != nil {
+		err = errors.WithMessage(err, "FavoriteList.GetUserInfo error")
+		return
+	}
+	req.UserId = user.Id
 	resp, err = FavoriteClient.FavoriteList(ctx, req)
 	if err != nil {
 		err = errors.WithMessage(err, "FavoriteClient.FavoriteList error")

@@ -20,9 +20,8 @@ package http
 import (
 	"net/http"
 
-	"github.com/pkg/errors"
-
 	"github.com/gin-gonic/gin"
+	"github.com/pkg/errors"
 
 	"github.com/CocaineCong/tangseng/app/gateway/rpc"
 	pb "github.com/CocaineCong/tangseng/idl/pb/favorite"
@@ -37,15 +36,7 @@ func ListFavorite(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, ctl.RespError(ctx, err, "绑定参数错误"))
 		return
 	}
-	user, err := ctl.GetUserInfo(ctx.Request.Context())
-	if err != nil {
-		log.LogrusObj.Errorf("ctl.GetUserInfo failed, original error: %T %v", errors.Cause(err), errors.Cause(err))
-		log.LogrusObj.Errorf("stack trace: \n%+v\n", err)
-		ctx.JSON(http.StatusOK, ctl.RespError(ctx, err, "获取用户信息错误"))
-		return
-	}
-	req.UserId = user.Id
-	r, err := rpc.FavoriteList(ctx, &req)
+	r, err := rpc.FavoriteList(ctx.Request.Context(), &req)
 	if err != nil {
 		log.LogrusObj.Errorf("rpc.FavoriteList failed, original error: %T %v", errors.Cause(err), errors.Cause(err))
 		log.LogrusObj.Errorf("stack trace: \n%+v\n", err)
