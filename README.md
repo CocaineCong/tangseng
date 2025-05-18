@@ -60,6 +60,7 @@ all in react, but still coding
 - [x] 排序器优化
 - [x] 并发进行多路召回
 - [ ] 为什么子模块改动，比如search_engine模块改动，gateway要重启才能生效？复现步骤:改动了proto之后需要重启gateway
+- [ ] 写一个shell for start program吧，每次都手动启动有点难定（高优）
 
 ![文本搜索](docs/images/text2text.jpg)
 
