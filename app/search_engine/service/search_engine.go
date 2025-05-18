@@ -19,8 +19,8 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"sync"
+	"time"
 
 	"github.com/pingcap/errors"
 
@@ -49,7 +49,7 @@ func (s *SearchEngineSrv) SearchEngineSearch(ctx context.Context, req *pb.Search
 	resp = new(pb.SearchEngineResponse)
 	resp.Code = e.SUCCESS
 	query := req.Query
-	fmt.Println("111-query", query)
+	start := time.Now()
 	sResult, err := recall.SearchRecall(ctx, query)
 	if err != nil {
 		resp.Code = e.ERROR
@@ -57,7 +57,8 @@ func (s *SearchEngineSrv) SearchEngineSearch(ctx context.Context, req *pb.Search
 		err = errors.WithMessage(err, "SearchEngineSearch-recall.SearchRecall error")
 		return
 	}
-
+	elapsed := time.Since(start)
+	resp.ConsumingTime = float32(elapsed.Seconds())
 	resp.SearchEngineInfoList, err = BuildSearchEngineResp(sResult)
 	if err != nil {
 		resp.Code = e.ERROR

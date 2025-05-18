@@ -22,8 +22,9 @@ message SearchEngineResponse{
 	int64 code = 1;
 	string msg = 2;
 	int64 count = 3;
-	repeated SearchEngineList search_engine_info_list = 4;
-	repeated string data = 5;
+	float consuming_time = 4;
+	repeated SearchEngineList search_engine_info_list = 5;
+	repeated string data = 6;
 }
 
 message WordAssociationResponse{
