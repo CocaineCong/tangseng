@@ -22,9 +22,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/pkg/errors"
-
 	"github.com/milvus-io/milvus-sdk-go/v2/client"
+	"github.com/pkg/errors"
 
 	"github.com/CocaineCong/tangseng/config"
 )
