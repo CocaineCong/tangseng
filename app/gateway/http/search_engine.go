@@ -20,9 +20,8 @@ package http
 import (
 	"net/http"
 
-	"github.com/pkg/errors"
-
 	"github.com/gin-gonic/gin"
+	"github.com/pkg/errors"
 
 	"github.com/CocaineCong/tangseng/app/gateway/rpc"
 	pb "github.com/CocaineCong/tangseng/idl/pb/search_engine"

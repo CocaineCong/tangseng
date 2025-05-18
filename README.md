@@ -26,8 +26,8 @@ all in react, but still coding
 ### 架构相关
 
 - [ ] 引入降级熔断
-- [ ] 引入jaeger进行全链路追踪(go追踪到python)
-- [ ] 引入skywalking or prometheus进行监控
+- [x] 引入jaeger进行全链路追踪(go追踪到python)
+- [x] 引入prometheus进行监控
 - [ ] 抽离dao的init，用key来获取相关数据库实例
 - [ ] 冷热数据分离(参考es的方案,关键在于判断冷热的标准,或许可以写在中间件里面？)
 - [ ] 目前来说mysql已经足够存储正排索引，但后续可能直接一步到位到OLAP，starrocks单表亿级数据也能毫秒查询，mysql到这个级别早就分库分表了..
@@ -58,6 +58,9 @@ all in react, but still coding
 - [ ] 实现TF类
 - [x] 搜索完一个接着搜索，没有清除缓存导致结果是和上一个产生并集
 - [x] 排序器优化
+- [x] 并发进行多路召回
+- [ ] 为什么子模块改动，比如search_engine模块改动，gateway要重启才能生效？复现步骤:改动了proto之后需要重启gateway
+- [ ] 写一个shell for start program吧，每次都手动启动有点难定（高优）
 
 ![文本搜索](docs/images/text2text.jpg)
 

@@ -20,10 +20,11 @@ package kfk_register
 import (
 	"context"
 
+	"github.com/pkg/errors"
+
 	"github.com/CocaineCong/tangseng/consts"
 	"github.com/CocaineCong/tangseng/pkg/kfk/consume"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
-	"github.com/pkg/errors"
 )
 
 func RunTireTree(ctx context.Context) {

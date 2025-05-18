@@ -20,11 +20,11 @@ package kfk_register
 import (
 	"context"
 
-	log "github.com/CocaineCong/tangseng/pkg/logger"
 	"github.com/pkg/errors"
 
 	"github.com/CocaineCong/tangseng/consts"
 	"github.com/CocaineCong/tangseng/pkg/kfk/consume"
+	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
 func RunInvertedIndex(ctx context.Context) {

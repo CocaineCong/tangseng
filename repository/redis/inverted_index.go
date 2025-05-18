@@ -64,9 +64,6 @@ func ListInvertedPath(ctx context.Context, keys []string) (paths []string, err e
 		switch key {
 		case InvertedIndexDbPathDayKey, TireTreeDbPathDayKey:
 			results := RedisClient.LRange(ctx, key, 0, -1)
-			if err != nil {
-				return paths, errors.Wrap(err, "failed to get value")
-			}
 			paths = append(paths, results.Val()...)
 		case InvertedIndexDbPathMonthKey, InvertedIndexDbPathSeasonKey,
 			TireTreeDbPathMonthKey, TireTreeDbPathSeasonKey:
@@ -98,9 +95,6 @@ func DeleteInvertedIndexPath(ctx context.Context, key string) (err error) {
 func BatchDeleteInvertedIndexPath(ctx context.Context, keys []string) (err error) {
 	for _, key := range keys {
 		_ = DeleteInvertedIndexPath(ctx, key)
-	}
-	if err != nil {
-		return errors.Wrap(err, "failed to batch delete inverted index path")
 	}
 	return
 }
@@ -170,9 +164,6 @@ func ListInvertedIndexByPrefixKey(ctx context.Context, prefixKey string) (paths 
 		value, _ := RedisClient.Get(ctx, key).Result()
 		paths = append(paths, value)
 	}
-	if err != nil {
-		err = errors.Wrap(err, "failed to get value")
-	}
 	return
 }
 
@@ -183,9 +174,6 @@ func ListAllPrefixKey(ctx context.Context, prefixKey string) (paths []string, er
 	for iter.Next(ctx) {
 		key := iter.Val()
 		paths = append(paths, key)
-	}
-	if err != nil {
-		err = errors.Wrap(err, "failed to get value")
 	}
 	return
 }

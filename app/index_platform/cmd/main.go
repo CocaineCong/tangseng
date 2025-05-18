@@ -21,9 +21,10 @@ import (
 	"context"
 	"net"
 
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+
 	"github.com/CocaineCong/tangseng/pkg/prometheus"
 	"github.com/CocaineCong/tangseng/pkg/tracing"
-	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 
 	"github.com/pkg/errors"
 
@@ -59,7 +60,7 @@ func main() {
 		Name: config.Conf.Domain[consts.IndexPlatformName].Name,
 		Addr: grpcAddress,
 	}
-	//注册tracer
+	// 注册tracer
 	provider := tracing.InitTracerProvider(config.Conf.Jaeger.Addr, consts.IndexPlatformName)
 	defer func() {
 		if provider == nil {
