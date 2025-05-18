@@ -52,7 +52,7 @@ func calculateIDF(word string, docs []string) float64 {
 	return math.Log(float64(len(docs)) / float64(count+1))
 }
 
-// 计算TF-IDF值
+// CalculateTFIDF 计算TF-IDF值
 func CalculateTFIDF(word string, doc string, docs []string) float64 {
 	tf := calculateTF(word, doc)
 	idf := calculateIDF(word, docs)

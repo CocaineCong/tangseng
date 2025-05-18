@@ -27,12 +27,12 @@ import (
 
 // Loading 全局loading
 func Loading() {
-	// es.InitEs()
 	config.InitConfig()
 	log.InitLog()
 
 	db.InitDB()
 	redis.InitRedis()
 	kfk.InitKafka()
+	// es.InitEs()
 	// dao.InitMysqlDirectUpload(ctx)
 }

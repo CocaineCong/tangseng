@@ -53,31 +53,31 @@ func (r *Recall) Search(ctx context.Context, query string) (resp []*types.Search
 		err = errors.WithMessagef(err, "text2postingslists error")
 		return
 	}
-
-	// 倒排库搜索
-	res, err := r.searchDoc(ctx, splitQuery)
+	// TODO: 改成并发执行的多路召回
+	// 倒排库召回
+	textRes, err := r.SearchText(ctx, splitQuery)
 	if err != nil {
-		err = errors.WithMessage(err, "searchDoc error")
+		err = errors.WithMessage(err, "SearchText error")
 		return
 	}
 
-	// 向量库搜索
-	vRes, err := r.SearchVector(ctx, splitQuery)
+	// 向量库召回
+	vectorRes, err := r.SearchVector(ctx, splitQuery)
 	if err != nil {
 		err = errors.WithMessage(err, "searchVector error")
 		return
 	}
 
-	resp, _ = r.Multiplex(ctx, query, res, vRes)
+	resp, _ = r.Multiplex(ctx, query, textRes, vectorRes)
 	return
 }
 
 // Multiplex 多路融合排序
-func (r *Recall) Multiplex(ctx context.Context, query string, iRes, vRes []int64) (resp []*types.SearchItem, err error) {
+func (r *Recall) Multiplex(ctx context.Context, query string, tRes, vRes []int64) (resp []*types.SearchItem, err error) {
 	// 融合去重
-	iRes = append(iRes, vRes...)
-	iRes = lo.Uniq(iRes)
-	recallData, _ := dao.NewInputDataDao(ctx).ListInputDataByDocIds(iRes)
+	tRes = append(tRes, vRes...)
+	tRes = lo.Uniq(tRes)
+	recallData, _ := dao.NewInputDataDao(ctx).ListInputDataByDocIds(tRes)
 	searchItems := make([]*types.SearchItem, 0)
 
 	// 处理
@@ -105,7 +105,7 @@ func (r *Recall) Multiplex(ctx context.Context, query string, iRes, vRes []int64
 	return
 }
 
-// SearchVector 搜索向量
+// SearchVector 向量召回
 func (r *Recall) SearchVector(ctx context.Context, queries []string) (docIds []int64, err error) {
 	// rpc 调用python接口 获取
 	req := &pb.SearchVectorRequest{Query: queries}
@@ -124,6 +124,7 @@ func (r *Recall) SearchVector(ctx context.Context, queries []string) (docIds []i
 // SearchQueryWord 入口词语联想
 func (r *Recall) SearchQueryWord(query string) (resp []string, err error) {
 	dictTreeList := make([]string, 0, 1e3)
+	// TODO: 改成并发的读取
 	for _, trieDb := range storage.GlobalTrieDB {
 		trie, errx := trieDb.GetTrieTreeDict()
 		if errx != nil {
@@ -138,7 +139,8 @@ func (r *Recall) SearchQueryWord(query string) (resp []string, err error) {
 	return
 }
 
-func (r *Recall) searchDoc(ctx context.Context, tokens []string) (recalls []int64, err error) {
+// SearchText 文本召回
+func (r *Recall) SearchText(ctx context.Context, tokens []string) (recalls []int64, err error) {
 	recalls = make([]int64, 0)
 	for _, token := range tokens {
 		docIds, errx := redis.GetInvertedIndexTokenDocIds(ctx, token)
@@ -151,7 +153,7 @@ func (r *Recall) searchDoc(ctx context.Context, tokens []string) (recalls []int6
 				err = errors.WithMessage(err, "fetchPostingsByToken error")
 				continue
 			} else {
-				// 如果缓存存在，就直接读缓存，不用担心实时性问题，缓存10分钟清空一次，这延迟是能接受到
+				// 如果缓存存在，就直接读缓存，不用担心实时性问题，缓存10分钟清空一次，这延迟能接受
 				for _, v := range postingsList {
 					if v != nil && v.DocIds != nil {
 						docIds.AddMany(v.DocIds.ToArray())
@@ -167,17 +169,6 @@ func (r *Recall) searchDoc(ctx context.Context, tokens []string) (recalls []int6
 			}
 		}
 	}
-
-	// 排序打分
-	// iDao := dao.NewInputDataDao(ctx)
-	// for _, p := range allPostingsList {
-	// 	if p == nil || p.DocIds == nil || p.DocIds.IsEmpty() {
-	// 		continue
-	// 	}
-	// 	recallData, _ := iDao.ListInputDataByDocIds(p.DocIds.ToArray())
-	// 	searchItems := ranking.CalculateScoreBm25(p.Term, recallData)
-	// 	recalls = append(recalls, searchItems...)
-	// }
 
 	log.LogrusObj.Infof("recalls size:%v", len(recalls))
 
