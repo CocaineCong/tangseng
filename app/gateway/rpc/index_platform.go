@@ -19,10 +19,13 @@ package rpc
 
 import (
 	"context"
+	"io"
+	"mime/multipart"
 
 	"github.com/pkg/errors"
 
 	pb "github.com/CocaineCong/tangseng/idl/pb/index_platform"
+	log "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
 // BuildIndex 建立索引的RPC调用
@@ -34,4 +37,31 @@ func BuildIndex(ctx context.Context, req *pb.BuildIndexReq) (resp *pb.BuildIndex
 	}
 
 	return
+}
+
+func UploadByStream(ctx context.Context, req *pb.BuildIndexReq, file multipart.File, fileSize int64) (resp *pb.UploadResponse, err error) {
+	stream, err := IndexPlatformClient.UploadFile(ctx)
+	if err != nil {
+		err = errors.WithMessage(err, "IndexPlatformClient.UploadStream err")
+		return
+	}
+	buf := make([]byte, 1024*1024) // 1MB chunks
+	for {
+		n, errx := file.Read(buf)
+		if errx == io.EOF {
+			break
+		}
+		if err = stream.Send(&pb.FileChunk{
+			Content: buf[:n],
+		}); err != nil {
+			log.LogrusObj.Error("stream.Send", err)
+			return
+		}
+	}
+	resp, err = stream.CloseAndRecv()
+	if err != nil && err != io.EOF {
+		return nil, err
+	}
+
+	return resp, nil
 }

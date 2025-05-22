@@ -30,6 +30,7 @@ var MsgFlags = map[int]string{
 	ErrorNotCompare:            "不匹配",
 	ErrorDatabase:              "数据库操作出错,请重试",
 	ErrorAuthNotFound:          "Token不能为空",
+	ErrorUploadFile:            "上传错误",
 }
 
 // GetMsg 获取状态码对应信息

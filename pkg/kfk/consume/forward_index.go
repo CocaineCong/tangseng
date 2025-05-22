@@ -170,6 +170,7 @@ func (consumer *ForwardIndexConsumer) ConsumeClaim(session sarama.ConsumerGroupS
 					Score:  0.0,
 					Source: task.SourceType,
 				}
+				// TODO: 能不能批量插入？现在一条一条插入有点...
 				err := iDao.CreateInputData(inputData)
 				if err != nil {
 					logs.LogrusObj.Errorf("iDao.CreateInputData:%+v", err)

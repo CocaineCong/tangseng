@@ -24,6 +24,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/CocaineCong/tangseng/app/gateway/rpc"
+	"github.com/CocaineCong/tangseng/consts/e"
 	pb "github.com/CocaineCong/tangseng/idl/pb/index_platform"
 	"github.com/CocaineCong/tangseng/pkg/ctl"
 	log "github.com/CocaineCong/tangseng/pkg/logger"
@@ -42,6 +43,30 @@ func BuildIndexByFiles(ctx *gin.Context) {
 		log.LogrusObj.Errorf("rpc.BuildIndex failed, original error: %T %v", errors.Cause(err), errors.Cause(err))
 		log.LogrusObj.Errorf("stack trace: \n%+v\n", err)
 		ctx.JSON(http.StatusOK, ctl.RespError(ctx, err, "BuildIndexByFiles RPC服务调用错误"))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, ctl.RespSuccess(ctx, r))
+}
+
+func UploadIndexByFiles(ctx *gin.Context) {
+	var req pb.BuildIndexReq
+	if err := ctx.ShouldBind(&req); err != nil {
+		log.LogrusObj.Errorf("Bind:%v", err)
+		ctx.JSON(http.StatusOK, ctl.RespError(ctx, err, "绑定参数错误"))
+		return
+	}
+	file, fileHeader, _ := ctx.Request.FormFile("file")
+	if fileHeader == nil {
+		err := errors.New(e.GetMsg(e.ErrorUploadFile))
+		ctx.JSON(http.StatusOK, ctl.RespError(ctx, err, "上传错误"))
+		log.LogrusObj.Error(err)
+		return
+	}
+	r, err := rpc.UploadByStream(ctx, &req, file, fileHeader.Size)
+	if err != nil {
+		log.LogrusObj.Errorf("rpc.BuildIndex failed, original error: %T %v", errors.Cause(err), errors.Cause(err))
+		ctx.JSON(http.StatusOK, ctl.RespError(ctx, err, "UploadIndexByFiles RPC服务调用错误"))
 		return
 	}
 

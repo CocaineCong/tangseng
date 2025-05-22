@@ -22,16 +22,15 @@ import (
 	"fmt"
 
 	"github.com/redis/go-redis/extra/redisotel/v9"
-
 	"github.com/redis/go-redis/v9"
 
 	"github.com/CocaineCong/tangseng/config"
 	logs "github.com/CocaineCong/tangseng/pkg/logger"
 )
 
-// RedisClient Redis缓存客户端单例
-var RedisClient *redis.Client
-var RedisContext = context.Background()
+// Client Redis缓存客户端单例
+var Client *redis.Client
+var Context = context.Background()
 
 // InitRedis 在中间件中初始化redis链接
 func InitRedis() {
@@ -45,10 +44,10 @@ func InitRedis() {
 	if err := redisotel.InstrumentTracing(client); err != nil {
 		logs.LogrusObj.Errorf("failed to trace redis, err = %v", err)
 	}
-	_, err := client.Ping(RedisContext).Result()
+	_, err := client.Ping(Context).Result()
 	if err != nil {
 		logs.LogrusObj.Errorln(err)
 		panic(err)
 	}
-	RedisClient = client
+	Client = client
 }

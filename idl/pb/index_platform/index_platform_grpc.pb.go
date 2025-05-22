@@ -23,6 +23,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type IndexPlatformServiceClient interface {
 	BuildIndexService(ctx context.Context, in *BuildIndexReq, opts ...grpc.CallOption) (*BuildIndexResp, error)
+	UploadFile(ctx context.Context, opts ...grpc.CallOption) (IndexPlatformService_UploadFileClient, error)
+	DownloadFile(ctx context.Context, in *FileRequest, opts ...grpc.CallOption) (IndexPlatformService_DownloadFileClient, error)
 }
 
 type indexPlatformServiceClient struct {
@@ -42,11 +44,79 @@ func (c *indexPlatformServiceClient) BuildIndexService(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *indexPlatformServiceClient) UploadFile(ctx context.Context, opts ...grpc.CallOption) (IndexPlatformService_UploadFileClient, error) {
+	stream, err := c.cc.NewStream(ctx, &IndexPlatformService_ServiceDesc.Streams[0], "/IndexPlatformService/UploadFile", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &indexPlatformServiceUploadFileClient{stream}
+	return x, nil
+}
+
+type IndexPlatformService_UploadFileClient interface {
+	Send(*FileChunk) error
+	CloseAndRecv() (*UploadResponse, error)
+	grpc.ClientStream
+}
+
+type indexPlatformServiceUploadFileClient struct {
+	grpc.ClientStream
+}
+
+func (x *indexPlatformServiceUploadFileClient) Send(m *FileChunk) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *indexPlatformServiceUploadFileClient) CloseAndRecv() (*UploadResponse, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(UploadResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *indexPlatformServiceClient) DownloadFile(ctx context.Context, in *FileRequest, opts ...grpc.CallOption) (IndexPlatformService_DownloadFileClient, error) {
+	stream, err := c.cc.NewStream(ctx, &IndexPlatformService_ServiceDesc.Streams[1], "/IndexPlatformService/DownloadFile", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &indexPlatformServiceDownloadFileClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type IndexPlatformService_DownloadFileClient interface {
+	Recv() (*FileChunk, error)
+	grpc.ClientStream
+}
+
+type indexPlatformServiceDownloadFileClient struct {
+	grpc.ClientStream
+}
+
+func (x *indexPlatformServiceDownloadFileClient) Recv() (*FileChunk, error) {
+	m := new(FileChunk)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // IndexPlatformServiceServer is the server API for IndexPlatformService service.
 // All implementations must embed UnimplementedIndexPlatformServiceServer
 // for forward compatibility
 type IndexPlatformServiceServer interface {
 	BuildIndexService(context.Context, *BuildIndexReq) (*BuildIndexResp, error)
+	UploadFile(IndexPlatformService_UploadFileServer) error
+	DownloadFile(*FileRequest, IndexPlatformService_DownloadFileServer) error
 	mustEmbedUnimplementedIndexPlatformServiceServer()
 }
 
@@ -56,6 +126,12 @@ type UnimplementedIndexPlatformServiceServer struct {
 
 func (UnimplementedIndexPlatformServiceServer) BuildIndexService(context.Context, *BuildIndexReq) (*BuildIndexResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BuildIndexService not implemented")
+}
+func (UnimplementedIndexPlatformServiceServer) UploadFile(IndexPlatformService_UploadFileServer) error {
+	return status.Errorf(codes.Unimplemented, "method UploadFile not implemented")
+}
+func (UnimplementedIndexPlatformServiceServer) DownloadFile(*FileRequest, IndexPlatformService_DownloadFileServer) error {
+	return status.Errorf(codes.Unimplemented, "method DownloadFile not implemented")
 }
 func (UnimplementedIndexPlatformServiceServer) mustEmbedUnimplementedIndexPlatformServiceServer() {}
 
@@ -88,6 +164,53 @@ func _IndexPlatformService_BuildIndexService_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _IndexPlatformService_UploadFile_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(IndexPlatformServiceServer).UploadFile(&indexPlatformServiceUploadFileServer{stream})
+}
+
+type IndexPlatformService_UploadFileServer interface {
+	SendAndClose(*UploadResponse) error
+	Recv() (*FileChunk, error)
+	grpc.ServerStream
+}
+
+type indexPlatformServiceUploadFileServer struct {
+	grpc.ServerStream
+}
+
+func (x *indexPlatformServiceUploadFileServer) SendAndClose(m *UploadResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *indexPlatformServiceUploadFileServer) Recv() (*FileChunk, error) {
+	m := new(FileChunk)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func _IndexPlatformService_DownloadFile_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(FileRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(IndexPlatformServiceServer).DownloadFile(m, &indexPlatformServiceDownloadFileServer{stream})
+}
+
+type IndexPlatformService_DownloadFileServer interface {
+	Send(*FileChunk) error
+	grpc.ServerStream
+}
+
+type indexPlatformServiceDownloadFileServer struct {
+	grpc.ServerStream
+}
+
+func (x *indexPlatformServiceDownloadFileServer) Send(m *FileChunk) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // IndexPlatformService_ServiceDesc is the grpc.ServiceDesc for IndexPlatformService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -100,6 +223,17 @@ var IndexPlatformService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _IndexPlatformService_BuildIndexService_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "UploadFile",
+			Handler:       _IndexPlatformService_UploadFile_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "DownloadFile",
+			Handler:       _IndexPlatformService_DownloadFile_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "index_platform.proto",
 }
