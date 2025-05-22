@@ -15,4 +15,21 @@ message BuildIndexResp {
 
 service IndexPlatformService {
 	rpc BuildIndexService(BuildIndexReq) returns (BuildIndexResp);
+	rpc UploadFile(stream FileChunk) returns (UploadResponse); // 客户端流式传输
+	rpc DownloadFile(FileRequest) returns (stream FileChunk);  // 服务端流式传输
+}
+
+message FileChunk {
+	bytes content = 1;
+}
+
+message UploadResponse {
+	// @inject_tag:form:"code" uri:"code"
+	int64 code = 1;
+	// @inject_tag:form:"message" uri:"message"
+	string message = 2;
+}
+
+message FileRequest {
+	string filename = 1;
 }

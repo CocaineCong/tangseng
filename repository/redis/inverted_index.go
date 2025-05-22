@@ -29,7 +29,7 @@ import (
 // PushInvertedPath 把存放db的path信息放到redis中
 func PushInvertedPath(ctx context.Context, key string, paths []string) (err error) {
 	for _, v := range paths {
-		err = RedisClient.LPush(ctx, key, v).Err()
+		err = Client.LPush(ctx, key, v).Err()
 		if err != nil {
 			return errors.Wrap(err, "failed to push inverted path in redis")
 		}
@@ -40,7 +40,7 @@ func PushInvertedPath(ctx context.Context, key string, paths []string) (err erro
 
 // SetInvertedPath 把存放db的path信息放到redis中
 func SetInvertedPath(ctx context.Context, key string, path string) (err error) {
-	err = RedisClient.Set(ctx, key, path, redis.KeepTTL).Err()
+	err = Client.Set(ctx, key, path, redis.KeepTTL).Err()
 	if err != nil {
 		return errors.Wrap(err, "failed to set inverted path in redis")
 	}
@@ -50,7 +50,7 @@ func SetInvertedPath(ctx context.Context, key string, path string) (err error) {
 
 // GetInvertedPath 获取存储的path信息
 func GetInvertedPath(ctx context.Context, key string) (path string, err error) {
-	path, err = RedisClient.Get(ctx, key).Result()
+	path, err = Client.Get(ctx, key).Result()
 	if err != nil {
 		return path, errors.Wrap(err, "failed to get inverted path")
 	}
@@ -63,7 +63,7 @@ func ListInvertedPath(ctx context.Context, keys []string) (paths []string, err e
 	for _, key := range keys {
 		switch key {
 		case InvertedIndexDbPathDayKey, TireTreeDbPathDayKey:
-			results := RedisClient.LRange(ctx, key, 0, -1)
+			results := Client.LRange(ctx, key, 0, -1)
 			paths = append(paths, results.Val()...)
 		case InvertedIndexDbPathMonthKey, InvertedIndexDbPathSeasonKey,
 			TireTreeDbPathMonthKey, TireTreeDbPathSeasonKey:
@@ -84,7 +84,7 @@ func ListInvertedPath(ctx context.Context, keys []string) (paths []string, err e
 
 // DeleteInvertedIndexPath 删除 inverted index path
 func DeleteInvertedIndexPath(ctx context.Context, key string) (err error) {
-	err = RedisClient.Del(ctx, key).Err()
+	err = Client.Del(ctx, key).Err()
 	if err != nil {
 		return errors.Wrap(err, "failed to delete inverted index path")
 	}
@@ -102,7 +102,7 @@ func BatchDeleteInvertedIndexPath(ctx context.Context, keys []string) (err error
 // SetInvertedIndexTokenDocIds 缓存搜索过的结果 // TODO:后面嵌入LRU
 func SetInvertedIndexTokenDocIds(ctx context.Context, token string, docIds *roaring.Bitmap) (err error) {
 	docIdsByte, _ := docIds.MarshalBinary()
-	err = RedisClient.Set(ctx, getQueryTokenDocIdsKey(token), docIdsByte, QueryTokenDocIdsDefaultTimeout).Err()
+	err = Client.Set(ctx, getQueryTokenDocIdsKey(token), docIdsByte, QueryTokenDocIdsDefaultTimeout).Err()
 	if err != nil {
 		return errors.Wrap(err, "failed to set inverted index token docIds")
 	}
@@ -111,7 +111,7 @@ func SetInvertedIndexTokenDocIds(ctx context.Context, token string, docIds *roar
 
 // GetInvertedIndexTokenDocIds 获取缓存的结果
 func GetInvertedIndexTokenDocIds(ctx context.Context, token string) (docIds *roaring.Bitmap, err error) {
-	res, err := RedisClient.Get(ctx, getQueryTokenDocIdsKey(token)).Result()
+	res, err := Client.Get(ctx, getQueryTokenDocIdsKey(token)).Result()
 	if err != nil {
 		return docIds, errors.Wrap(err, "failed to get query token docIds key from Redis")
 	}
@@ -126,7 +126,7 @@ func GetInvertedIndexTokenDocIds(ctx context.Context, token string) (docIds *roa
 
 // PushInvertedIndexToken 存储用户搜索的历史记录 docs ids // TODO:后面嵌入LRU
 func PushInvertedIndexToken(ctx context.Context, userId int64, token string) (err error) {
-	err = RedisClient.LPush(ctx, getUserQueryTokenKey(userId), token).Err()
+	err = Client.LPush(ctx, getUserQueryTokenKey(userId), token).Err()
 	if err != nil {
 		return errors.Wrap(err, "failed to push inverted index token")
 	}
@@ -135,7 +135,7 @@ func PushInvertedIndexToken(ctx context.Context, userId int64, token string) (er
 
 // ListInvertedIndexToken 获取用户搜索的历史记录
 func ListInvertedIndexToken(ctx context.Context, userId int64) (tokens []string, err error) {
-	tokens, err = RedisClient.LRange(ctx, getUserQueryTokenKey(userId), 0, -1).Result()
+	tokens, err = Client.LRange(ctx, getUserQueryTokenKey(userId), 0, -1).Result()
 	if err != nil {
 		return tokens, errors.Wrap(err, "failed to list inverted index token")
 	}
@@ -146,7 +146,7 @@ func ListInvertedIndexToken(ctx context.Context, userId int64) (tokens []string,
 // PushInvertedMonthPath 把存放db的path信息放到redis中 month 纬度
 func PushInvertedMonthPath(ctx context.Context, key string, paths []string) (err error) {
 	for _, v := range paths {
-		err = RedisClient.LPush(ctx, key, v).Err()
+		err = Client.LPush(ctx, key, v).Err()
 		if err != nil {
 			return errors.Wrap(err, "failed to push inverted month path")
 		}
@@ -158,10 +158,10 @@ func PushInvertedMonthPath(ctx context.Context, key string, paths []string) (err
 // ListInvertedIndexByPrefixKey 通过前缀获取所有的value index_platform:inverted_index:month:*
 func ListInvertedIndexByPrefixKey(ctx context.Context, prefixKey string) (paths []string, err error) {
 	// 使用Scan方法遍历所有键
-	iter := RedisClient.Scan(ctx, 0, prefixKey, 0).Iterator()
+	iter := Client.Scan(ctx, 0, prefixKey, 0).Iterator()
 	for iter.Next(ctx) {
 		key := iter.Val()
-		value, _ := RedisClient.Get(ctx, key).Result()
+		value, _ := Client.Get(ctx, key).Result()
 		paths = append(paths, value)
 	}
 	return
@@ -170,7 +170,7 @@ func ListInvertedIndexByPrefixKey(ctx context.Context, prefixKey string) (paths 
 // ListAllPrefixKey 通过前缀获取所有的value index_platform:inverted_index:month:*
 func ListAllPrefixKey(ctx context.Context, prefixKey string) (paths []string, err error) {
 	// 使用Scan方法遍历所有键
-	iter := RedisClient.Scan(ctx, 0, prefixKey, 0).Iterator()
+	iter := Client.Scan(ctx, 0, prefixKey, 0).Iterator()
 	for iter.Next(ctx) {
 		key := iter.Val()
 		paths = append(paths, key)

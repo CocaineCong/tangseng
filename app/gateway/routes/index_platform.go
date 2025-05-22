@@ -27,5 +27,6 @@ func IndexPlatformRegisterHandlers(rg *gin.RouterGroup) {
 	indexPlatformGroup := rg.Group("/index_platform")
 	{
 		indexPlatformGroup.POST("/build_index", http.BuildIndexByFiles)
+		indexPlatformGroup.POST("/upload_index", http.UploadIndexByFiles)
 	}
 }
