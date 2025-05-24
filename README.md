@@ -43,7 +43,7 @@ all in react, but still coding
 - [ ] python 引入 bert 模型进行分词的推荐词并提供 grpc 接口
 - [ ] inverted 和 trie tree 的存储支持一致性hash分片存储
 - [x] 词向量
-- [ ] pagerank
+- [x] pagerank
 - [ ] 分离 trie tree 的 build 和 recall 过程
 - [x] 分词加入ik分词器
 - [x] 构建索引平台，计算存储分离，构建索引与召回分开

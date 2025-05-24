@@ -43,13 +43,12 @@ class SearchVectorService(search_vector_pb2_grpc.SearchVectorServiceServicer):
         with tracer.start_as_current_span(
                 inspect.getframeinfo(inspect.currentframe()).function):
             try:
-                queryies = request.query
+                queries = request.query
                 doc_ids = []
-                for query in queryies:
-                    ids, distants = do_search(DEFAULT_MILVUS_TABLE_NAME, query,
-                                              VECTOR_RECALL_TOPK,
-                                              milvus_client)
-                    print("search vector ids", ids)
+                for query in queries:
+                    ids, distant = do_search(DEFAULT_MILVUS_TABLE_NAME, query,
+                                             VECTOR_RECALL_TOPK,
+                                             milvus_client)
                     doc_ids += ids
                 return search_vector_pb2.SearchVectorResponse(code=200,
                                                               doc_ids=doc_ids,

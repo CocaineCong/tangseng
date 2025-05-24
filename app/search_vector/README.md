@@ -36,7 +36,7 @@ search_vector/
 `utils\retrieval_feature.py`部分为通过预训练的模型进行特征抽取，并使用LSH计算索引，并将特征数据和索引数据保存到本地。
 
 `weights`目录下保存所使用的预训练模型，本项目中采用的是[CNN Image Retrieval in PyTorch](https://github.com/filipradenovic/cnnimageretrieval-pytorch)中使用ResNet50，Pooling层使用GeM，在`google-landmarks-2018 (gl18)`数据集上进行预训练的模型，
-模型地址为[gl18-tl-resnet50-gem-w](http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/gl18/gl18-tl-resnet50-gem-w-83fdc30.pth)。
+模型地址为[gl18-tl-resnet50-gem-w](http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/gl18/gl18-tl-resnet50-gem-w-83fdc30.pth)。 这里记得看目录 app/search_vector 下的README.md文件，下载模型放到当前的这个 weights 目录
 
 `config.yaml`中保存着项目的一些基本配置，包括Flask的地址和端口，以及使用的预训练模型名称。
 
