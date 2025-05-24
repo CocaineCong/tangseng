@@ -179,7 +179,6 @@ func (consumer *ForwardIndexConsumer) ConsumeClaim(session sarama.ConsumerGroupS
 
 			logs.LogrusObj.Infof("Message claimed: value = %s, timestamp = %v, topic = %s", string(message.Value), message.Timestamp, message.Topic)
 			session.MarkMessage(message, "")
-		// https://github.com/IBM/sarama/issues/1192
 		case <-session.Context().Done():
 			return nil
 		}

@@ -25,7 +25,6 @@ def do_upload(table_name: str, doc_id: int, title: str, body: str,
               milvus_client):
     """
     upload info in milvus
-
     :params table_name the table name of milvus
     :params doc_id the id of doc
     :params title the title of doc

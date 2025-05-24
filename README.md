@@ -39,11 +39,11 @@ all in react, but still coding
 - [x] 相关性的计算要考虑一下，TFIDF，bm25
 - [x] 使用前缀树存储联想信息
 - [ ] 哈夫曼编码压缩前缀树
-- [ ] 建索引的时候，传文件地址改成传文件流
+- [x] 建索引的时候，传文件地址改成传文件流
 - [ ] python 引入 bert 模型进行分词的推荐词并提供 grpc 接口
 - [ ] inverted 和 trie tree 的存储支持一致性hash分片存储
 - [x] 词向量
-- [ ] pagerank
+- [x] pagerank
 - [ ] 分离 trie tree 的 build 和 recall 过程
 - [x] 分词加入ik分词器
 - [x] 构建索引平台，计算存储分离，构建索引与召回分开
@@ -62,7 +62,7 @@ all in react, but still coding
 - [ ] 为什么子模块改动，比如search_engine模块改动，gateway要重启才能生效？复现步骤:改动了proto之后需要重启gateway
 - [ ] 写一个shell for start program吧，每次都手动启动有点难定（高优）
 
-![文本搜索](docs/images/text2text.jpg)
+![文本搜索](docs/images/text2text_v2.png)
 
 ## 快速开始
    环境启动！

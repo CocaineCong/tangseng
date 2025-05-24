@@ -106,7 +106,7 @@ class AntiFraudFeatureDataset:
         for img_path, vec in feature_dict.items():
             lsh.index(vec.flatten(), extra_data=img_path)
 
-        ## Save Index Model
+        # Save Index Model
         with open(self.feature_path, "wb") as f:
             pickle.dump(feature_dict, f)
         with open(self.index_path, "wb") as f:
