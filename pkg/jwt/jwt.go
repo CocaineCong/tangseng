@@ -56,7 +56,7 @@ func GenerateToken(id int64, username string) (accessToken, refreshToken string,
 	if err != nil {
 		return "", "", errors.Wrap(err, "failed to get accessToken")
 	}
-
+	// 加密并获得完整的编码后的字符串refreshToken
 	refreshToken, err = jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
 		ExpiresAt: rtExpireTime.Unix(),
 		Issuer:    defaultIssuer,
